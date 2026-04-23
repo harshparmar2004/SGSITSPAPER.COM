@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
-import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 
@@ -21,6 +21,7 @@ export default function AdminLayout() {
   const navItems = [
     { name: 'Overview', path: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Programs & Departments', path: '/admin/departments', icon: Layers, exact: false },
+    { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false },
     { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false },
     { name: 'Upload PYQ', path: '/admin/upload', icon: PlusCircle, exact: false },
     { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false },

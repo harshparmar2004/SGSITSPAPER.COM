@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, limit, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { PYQ, DEPARTMENTS, SEMESTERS, EXAM_TYPES } from '../types';
 import { Button, Input, Select } from '../components/ui';
@@ -78,6 +78,27 @@ export default function StudentView() {
     const lower = searchQuery.toLowerCase();
     return p.subjectName.toLowerCase().includes(lower) || p.subjectCode.toLowerCase().includes(lower);
   });
+
+  const handleDownload = async (pyq: PYQ) => {
+    if (user) {
+      try {
+        await addDoc(collection(db, "downloads"), {
+          pyqId: pyq.id,
+          userId: user.uid,
+          userEmail: user.email,
+          department: pyq.department,
+          course: pyq.course || 'B.Tech',
+          subjectCode: pyq.subjectCode,
+          subjectName: pyq.subjectName,
+          examType: pyq.examType,
+          downloadedAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.error("Error recording download analytics", err);
+      }
+    }
+    window.open(pyq.fileUrl, '_blank');
+  };
 
   if (loginLoading) {
     return (
@@ -167,7 +188,7 @@ export default function StudentView() {
                       <div className="text-xs text-gray-400">{pyq.month} {pyq.examYear}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Button variant="outline" size="sm" onClick={() => window.open(pyq.fileUrl, '_blank')} className="space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="space-x-2">
                         <ExternalLink className="w-4 h-4" />
                         <span>Open PDF</span>
                       </Button>

@@ -9,6 +9,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUpload from './pages/AdminUpload';
 import AdminStudents from './pages/AdminStudents'; // Import newly created component
 import AdminReports from './pages/AdminReports';
+import AdminAnalytics from './pages/AdminAnalytics';
 import AdminDepartments from './pages/AdminDepartments';
 import AdminLayout from './components/AdminLayout';
 
@@ -94,6 +95,7 @@ export default function App() {
             <Route path="upload" element={<AdminUpload />} />
             <Route path="students" element={<AdminStudents />} />
             <Route path="departments" element={<AdminDepartments />} />
+            <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="reports" element={<AdminReports />} />
           </Route>
         </Routes>
