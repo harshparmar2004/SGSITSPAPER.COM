@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedAdmin() {
+      return request.auth.token.email == "harshparma007@gmail.com" && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (isBootstrappedAdmin() || exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidPYQ(data) {
+      return data.keys().hasAll([
+        "department", "course", "year", "semester", "subjectCode",
+        "subjectName", "examType", "month", "examYear", "session",
+        "fileUrl", "fileName", "fileSize", "uploadedAt", "uploadedBy"
+      ]) &&
+      data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
+      data.course is string && data.course.size() > 0 && data.course.size() <= 100 &&
+      data.year is string && data.year.size() > 0 && data.year.size() <= 50 &&
+      data.semester is string && data.semester.size() > 0 && data.semester.size() <= 50 &&
+      data.subjectCode is string && data.subjectCode.size() > 0 && data.subjectCode.size() <= 50 &&
+      data.subjectName is string && data.subjectName.size() > 0 && data.subjectName.size() <= 200 &&
+      data.examType is string && data.examType.size() > 0 && data.examType.size() <= 50 &&
+      data.month is string && data.month.size() > 0 && data.month.size() <= 50 &&
+      data.examYear is string && data.examYear.size() > 0 && data.examYear.size() <= 50 &&
+      data.session is string && data.session.size() > 0 && data.session.size() <= 100 &&
+      (data.get('section', '') is string && data.get('section', '').size() <= 50) &&
+      data.fileUrl is string && data.fileUrl.size() > 0 && data.fileUrl.size() <= 1024 &&
+      data.fileName is string && data.fileName.size() > 0 && data.fileName.size() <= 255 &&
+      data.fileSize is number && data.fileSize <= 2097152 && // 2MB
+      data.uploadedAt == request.time &&
+      data.uploadedBy == request.auth.uid;
+    }
+
+    match /admins/{adminUid} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isAdmin() || request.auth.uid == userId;
+      allow write: if request.auth.uid == userId || isAdmin();
+    }
+
+    match /pyqs/{pyqId} {
+      // Only authenticated students and admins can read PYQs
+      allow read: if isSignedIn();
+      
+      // Only admins can upload
+      allow create: if isAdmin() && isValidPYQ(incoming());
+      
+      // Admins can update things if they really need to, though we won't implement it first.
+      allow update: if false; // Not needed per spec, but could add.
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "SGSITS PYQ Resource Hub",
+  "description": "A platform for students to browse and download previous year question papers. Admins can upload PDFs with subject metadata.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

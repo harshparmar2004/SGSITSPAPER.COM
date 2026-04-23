@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "An administrator allowed to upload PYQs.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "PYQ": {
+      "title": "PYQ",
+      "description": "Previous Year Question Paper document.",
+      "type": "object",
+      "properties": {
+        "department": { "type": "string" },
+        "course": { "type": "string" },
+        "year": { "type": "string" },
+        "semester": { "type": "string" },
+        "subjectCode": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "examType": { "type": "string" },
+        "month": { "type": "string" },
+        "examYear": { "type": "string" },
+        "session": { "type": "string" },
+        "section": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "fileName": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "uploadedAt": { "type": "string" },
+        "uploadedBy": { "type": "string" }
+      },
+      "required": [
+        "department",
+        "course",
+        "year",
+        "semester",
+        "subjectCode",
+        "subjectName",
+        "examType",
+        "month",
+        "examYear",
+        "session",
+        "fileUrl",
+        "fileName",
+        "fileSize",
+        "uploadedAt",
+        "uploadedBy"
+      ]
+    }
+  },
+  "firestore": {
+    "/admins/{adminUid}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Store admin users by their UID."
+    },
+    "/pyqs/{pyqId}": {
+      "schema": { "$ref": "#/entities/PYQ" },
+      "description": "Store all PYQs."
+    }
+  }
+}
