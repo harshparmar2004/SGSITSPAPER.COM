@@ -15,8 +15,8 @@ export const loginWithGoogle = async () => {
     await signInWithPopup(auth, googleProvider);
   } catch (error: any) {
     console.error("Error signing in with Google", error);
-    if (error.code === 'auth/popup-closed-by-user') {
-      alert("The login popup was closed before finishing. Please try again. If you are having trouble, try opening the app in a new tab using the top-right button.");
+    if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+      alert("The login popup was closed or cancelled. Please try again. If you are having trouble, try opening the app in a new tab using the top-right icon.");
     } else {
       alert("Failed to login with Google: " + error.message);
     }
