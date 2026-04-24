@@ -115,6 +115,32 @@ export default function AdminDepartments() {
     await updatePrograms(updatedPrograms);
   };
 
+  const handleDeleteProgram = async (e: React.MouseEvent, courseName: string) => {
+    e.stopPropagation(); // prevent toggling the block
+    if (window.confirm(`Are you sure you want to delete the program "${courseName}"?`)) {
+      if (window.confirm(`DOUBLE CHECK: Deleting "${courseName}" will remove it from the upload list. Existing uploaded PYQs will not be deleted, but they may be hidden from filters if this program is gone. Are you absolutely sure?`)) {
+        const updated = programs.filter(p => p.course !== courseName);
+        await updatePrograms(updated);
+      }
+    }
+  };
+
+  const handleDeleteDepartment = async (courseName: string, deptName: string) => {
+    if (window.confirm(`Are you sure you want to delete department "${deptName}" from "${courseName}"?`)) {
+       if (window.confirm(`DOUBLE CHECK: Deleting this department will remove it from the list. Existing PYQs will not be deleted. Proceed?`)) {
+         const progIndex = programs.findIndex(p => p.course === courseName);
+         if (progIndex !== -1) {
+           const updatedPrograms = [...programs];
+           updatedPrograms[progIndex] = {
+             ...updatedPrograms[progIndex],
+             departments: updatedPrograms[progIndex].departments.filter(d => d !== deptName)
+           };
+           await updatePrograms(updatedPrograms);
+         }
+       }
+    }
+  };
+
   if (configLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -186,6 +212,13 @@ export default function AdminDepartments() {
                     <div className="hidden sm:flex text-sm text-gray-400 font-medium bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm">
                        {prog.departments.length} Active Branches
                     </div>
+                    <button 
+                      onClick={(e) => handleDeleteProgram(e, course)}
+                      className="p-1.5 text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                      title="Delete Program"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                     <div className={`p-1.5 rounded-full transition-colors ${isExpanded ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-500'}`}>
                       {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                     </div>
@@ -221,11 +254,23 @@ export default function AdminDepartments() {
                                </div>
                              </div>
                              
-                             {isActive && (
-                               <div className="bg-white border border-indigo-100 w-8 h-8 rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
-                                 <FileText className="w-3.5 h-3.5 text-indigo-500" />
-                               </div>
-                             )}
+                             <div className="flex items-center gap-2">
+                               {isActive && (
+                                 <div className="bg-white border border-indigo-100 w-8 h-8 rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
+                                   <FileText className="w-3.5 h-3.5 text-indigo-500" />
+                                 </div>
+                               )}
+                               <button
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   handleDeleteDepartment(course, dept);
+                                 }}
+                                 className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                 title="Delete Department"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </button>
+                             </div>
                            </div>
                          );
                       })}
