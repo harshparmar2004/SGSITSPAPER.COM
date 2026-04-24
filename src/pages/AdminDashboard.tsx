@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteDoc, doc, getAggregateFromServer, sum } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { PYQ } from '../types';
 import { Button } from '../components/ui';
@@ -12,7 +12,9 @@ export default function AdminDashboard() {
   const [recentPyqs, setRecentPyqs] = useState<PYQ[]>([]);
   const [totalPyqs, setTotalPyqs] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [storageUsed, setStorageUsed] = useState(0);
   const [loading, setLoading] = useState(true);
+  const STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Mock data for charts if DB is empty
@@ -56,6 +58,15 @@ export default function AdminDashboard() {
       const pyqColl = collection(db, "pyqs");
       const pyqSnapshot = await getCountFromServer(pyqColl);
       setTotalPyqs(pyqSnapshot.data().count);
+
+      try {
+        const aggSnapshot = await getAggregateFromServer(pyqColl, {
+          totalBytes: sum('fileSize')
+        });
+        setStorageUsed(aggSnapshot.data().totalBytes || 0);
+      } catch (e) {
+        console.log("Could not aggregate storage", e);
+      }
 
       const usersColl = collection(db, "users");
       const usersCountSnapshot = await getCountFromServer(usersColl);
@@ -144,11 +155,11 @@ export default function AdminDashboard() {
           </div>
           <div className="mt-1">
              <div className="flex justify-between text-xs text-gray-600 mb-1.5 font-medium">
-                <span>1.2 GB Used</span>
+                <span>{storageUsed > 1024 * 1024 * 1024 ? (storageUsed / (1024 * 1024 * 1024)).toFixed(2) + ' GB' : (storageUsed / (1024 * 1024)).toFixed(2) + ' MB'} Used</span>
                 <span>5.0 GB Total</span>
              </div>
              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '24%' }}></div>
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.min((storageUsed / STORAGE_LIMIT) * 100, 100)}%` }}></div>
              </div>
           </div>
         </div>
