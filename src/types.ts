@@ -18,7 +18,7 @@ export interface PYQ {
   uploadedBy: string;
 }
 
-export const DEPARTMENTS = [
+export const DEFAULT_DEPARTMENTS = [
   "Computer Engineering",
   "Information Technology",
   "Electronics and Telecommunication",
@@ -29,7 +29,7 @@ export const DEPARTMENTS = [
   "Biomedical Engineering"
 ];
 
-export const COURSES = [
+export const DEFAULT_COURSES = [
   "B.Tech",
   "M.Tech",
   "MBA",

@@ -99,5 +99,10 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidDownload(incoming());
       allow update, delete: if false;
     }
+
+    match /settings/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
   }
 }

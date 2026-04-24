@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
-import { DEPARTMENTS, COURSES, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
+import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
 import { Button, Input, Select } from '../components/ui';
 import { UploadCloud, Loader2, ArrowLeft } from 'lucide-react';
 import { Link, Navigate, useNavigate } from 'react-router';
 import { useAuth } from '../hooks/useAuth';
+import { useAcademicConfig } from '../hooks/useAcademicConfig';
 
 export default function AdminUpload() {
   const { user, isAdmin, loginLoading } = useAuth();
+  const { programs } = useAcademicConfig();
   
   const [formData, setFormData] = useState({
-    department: DEPARTMENTS[0],
-    course: COURSES[0],
+    department: '',
+    course: '',
     year: YEARS[0],
     semester: SEMESTERS[0],
     subjectCode: '',
@@ -24,6 +26,20 @@ export default function AdminUpload() {
     session: '',
     section: ''
   });
+
+  // Dynamic config based on selections
+  const availableCourses = programs.map(p => p.course);
+  const selectedProgramObj = programs.find(p => p.course === formData.course);
+  const availableDepartments = selectedProgramObj ? selectedProgramObj.departments : [];
+
+  const handleCourseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newCourse = e.target.value;
+    setFormData(prev => ({ 
+      ...prev, 
+      course: newCourse,
+      department: '' 
+    }));
+  };
   
   const [file, setFile] = useState<File | null>(null);
   const [uploadMethod, setUploadMethod] = useState<'link' | 'storage'>('link');
@@ -170,15 +186,17 @@ export default function AdminUpload() {
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Department *</label>
-              <Select name="department" value={formData.department} onChange={handleChange} required>
-                {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+              <label className="text-sm font-medium text-gray-900">Course *</label>
+              <Select name="course" value={formData.course} onChange={handleCourseChange} required>
+                <option value="">Select Course/Program</option>
+                {availableCourses.map(c => <option key={c} value={c}>{c}</option>)}
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Course *</label>
-              <Select name="course" value={formData.course} onChange={handleChange} required>
-                {COURSES.map(c => <option key={c} value={c}>{c}</option>)}
+              <label className="text-sm font-medium text-gray-900">Department *</label>
+              <Select name="department" value={formData.department} onChange={handleChange} required disabled={!formData.course}>
+                <option value="">{formData.course ? 'Select Department' : 'Select Course First'}</option>
+                {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
               </Select>
             </div>
             

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { collection, query, getDocs, limit, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { PYQ, DEPARTMENTS, COURSES, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
+import { PYQ, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
 import { Button, Input, Select } from '../components/ui';
 import { ExternalLink, Loader2, FileDown, DownloadCloud, Search } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useAcademicConfig } from '../hooks/useAcademicConfig';
 import { Navigate } from 'react-router';
 import JSZip from 'jszip';
 
@@ -26,6 +27,13 @@ export default function StudentView() {
   const [examYear, setExamYear] = useState('');
   const [session, setSession] = useState('');
   const [section, setSection] = useState('');
+
+  const { programs, loading: configLoading } = useAcademicConfig();
+
+  // Dynamic lists based on selections
+  const availableCourses = programs.map(p => p.course);
+  const selectedProgramObj = programs.find(p => p.course === course);
+  const availableDepartments = selectedProgramObj ? selectedProgramObj.departments : [];
 
   useEffect(() => {
     if (!user) return;
@@ -187,17 +195,17 @@ export default function StudentView() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
           {/* Row 1 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-            <Select value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full">
-              <option value="">All Departments</option>
-              {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+            <label className="block text-sm font-medium text-gray-700 mb-1">Course / Program</label>
+            <Select value={course} onChange={(e) => { setCourse(e.target.value); setDepartment(''); }} className="w-full">
+              <option value="">All Courses</option>
+              {availableCourses.map(d => <option key={d} value={d}>{d}</option>)}
             </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
-            <Select value={course} onChange={(e) => setCourse(e.target.value)} className="w-full">
-              <option value="">All Courses</option>
-              {COURSES.map(d => <option key={d} value={d}>{d}</option>)}
+            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+            <Select value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full" disabled={!course}>
+              <option value="">{course ? 'All Departments' : 'Select Course First'}</option>
+              {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
             </Select>
           </div>
 
