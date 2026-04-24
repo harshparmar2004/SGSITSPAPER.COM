@@ -50,6 +50,26 @@
         "uploadedAt",
         "uploadedBy"
       ]
+    },
+    "Download": {
+      "title": "Download",
+      "description": "Analytics tracking record for a pyq download.",
+      "type": "object",
+      "properties": {
+        "pyqId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "department": { "type": "string" },
+        "course": { "type": "string" },
+        "subjectCode": { "type": "string" },
+        "subjectName": { "type": "string" },
+        "examType": { "type": "string" },
+        "downloadedAt": { "type": "string" }
+      },
+      "required": [
+        "pyqId", "userId", "userEmail", "department", "course",
+        "subjectCode", "subjectName", "examType", "downloadedAt"
+      ]
     }
   },
   "firestore": {
@@ -60,6 +80,10 @@
     "/pyqs/{pyqId}": {
       "schema": { "$ref": "#/entities/PYQ" },
       "description": "Store all PYQs."
+    },
+    "/downloads/{downloadId}": {
+      "schema": { "$ref": "#/entities/Download" },
+      "description": "Store all download analytics."
     }
   }
 }

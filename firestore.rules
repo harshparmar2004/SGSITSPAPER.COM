@@ -53,6 +53,24 @@ service cloud.firestore {
       data.uploadedBy == request.auth.uid;
     }
 
+    function isValidDownload(data) {
+      return data.keys().hasAll([
+        "pyqId", "userId", "userEmail", "department", "course",
+        "subjectCode", "subjectName", "examType", "downloadedAt"
+      ]) &&
+      data.keys().size() == 9 &&
+      data.pyqId is string && data.pyqId.size() > 0 && data.pyqId.size() <= 128 &&
+      data.userId == request.auth.uid &&
+      data.userEmail == request.auth.token.email &&
+      data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
+      data.course is string && data.course.size() > 0 && data.course.size() <= 100 &&
+      data.subjectCode is string && data.subjectCode.size() > 0 && data.subjectCode.size() <= 50 &&
+      data.subjectName is string && data.subjectName.size() > 0 && data.subjectName.size() <= 200 &&
+      data.examType is string && data.examType.size() > 0 && data.examType.size() <= 50 &&
+      data.downloadedAt == request.time &&
+      exists(/databases/$(database)/documents/pyqs/$(data.pyqId));
+    }
+
     match /admins/{adminUid} {
       allow read: if isAdmin();
       allow create: if isAdmin();
@@ -74,6 +92,12 @@ service cloud.firestore {
       // Admins can update things if they really need to, though we won't implement it first.
       allow update: if false; // Not needed per spec, but could add.
       allow delete: if isAdmin();
+    }
+
+    match /downloads/{downloadId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() && isValidDownload(incoming());
+      allow update, delete: if false;
     }
   }
 }

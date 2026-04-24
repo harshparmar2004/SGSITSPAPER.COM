@@ -26,6 +26,8 @@ export default function AdminUpload() {
   });
   
   const [file, setFile] = useState<File | null>(null);
+  const [uploadMethod, setUploadMethod] = useState<'link' | 'storage'>('link');
+  const [externalLink, setExternalLink] = useState('');
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -71,10 +73,15 @@ export default function AdminUpload() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
+    if (uploadMethod === 'storage' && !file) {
       setError('Please select a PDF file to upload.');
       return;
     }
+    if (uploadMethod === 'link' && !externalLink) {
+      setError('Please provide an external link to the PDF.');
+      return;
+    }
+
     setError('');
     setUploading(true);
     setSuccess(false);
@@ -88,26 +95,39 @@ export default function AdminUpload() {
         return;
       }
 
-      // 2. Upload file
-      const fileName = `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-      const storagePath = `pyqs/${formData.department}/${formData.semester}/${fileName}`;
-      const storageRef = ref(storage, storagePath);
-      
-      const uploadTask = await uploadBytesResumable(storageRef, file);
-      const fileUrl = await getDownloadURL(uploadTask.ref);
+      let fileUrl = '';
+      let fileName = '';
+      let fileSize = 0;
+
+      // 2. Upload file or use link
+      if (uploadMethod === 'storage' && file) {
+        fileName = `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        const storagePath = `pyqs/${formData.department}/${formData.semester}/${fileName}`;
+        const storageRef = ref(storage, storagePath);
+        
+        const uploadTask = await uploadBytesResumable(storageRef, file);
+        fileUrl = await getDownloadURL(uploadTask.ref);
+        fileName = file.name;
+        fileSize = file.size;
+      } else {
+        fileUrl = externalLink;
+        fileName = `${formData.subjectCode}_External_Link_${formData.examYear}`;
+        fileSize = 0; // External links don't have predictable sizes initially
+      }
 
       // 3. Save to Firestore
       await addDoc(collection(db, "pyqs"), {
         ...formData,
         fileUrl,
-        fileName: file.name,
-        fileSize: file.size,
+        fileName,
+        fileSize,
         uploadedAt: serverTimestamp(),
         uploadedBy: user?.uid || 'unknown'
       });
 
       setSuccess(true);
       setFile(null);
+      setExternalLink('');
       // Reset some fields
       setFormData(prev => ({
         ...prev,
@@ -116,7 +136,10 @@ export default function AdminUpload() {
         session: '',
         section: ''
       }));
-      (document.getElementById('file-upload') as HTMLInputElement).value = "";
+      if (uploadMethod === 'storage') {
+        const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+        if (fileInput) fileInput.value = "";
+      }
       
     } catch (err: any) {
       console.error("Upload failed", err);
@@ -211,28 +234,60 @@ export default function AdminUpload() {
           </div>
 
           <div className="pt-4 border-t border-gray-100">
-            <label className="block text-sm font-medium text-gray-900 mb-2">Upload PDF File *</label>
-            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 bg-gray-50/50 hover:bg-gray-50 transition-colors">
-              <div className="text-center">
-                <UploadCloud className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                <div className="mt-4 flex flex-col items-center text-sm leading-6 text-gray-600">
-                  <label
-                    htmlFor="file-upload"
-                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                  >
-                    <span>Upload a file</span>
-                    <input id="file-upload" name="file-upload" type="file" accept="application/pdf" className="sr-only" onChange={handleFileChange} />
-                  </label>
-                  <p className="pl-1 mt-1">or drag and drop</p>
-                </div>
-                <p className="text-xs leading-5 text-gray-500 mt-2">PDF up to 2MB</p>
-                {file && <p className="text-sm font-medium text-indigo-600 mt-4">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
+            <div className="flex items-center justify-between mb-4">
+              <label className="block text-sm font-medium text-gray-900">File Source *</label>
+              <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg">
+                <button
+                  type="button"
+                  onClick={() => setUploadMethod('link')}
+                  className={`text-xs px-3 py-1.5 rounded-md transition-colors ${uploadMethod === 'link' ? 'bg-white shadow-sm text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  External Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setUploadMethod('storage')}
+                  className={`text-xs px-3 py-1.5 rounded-md transition-colors ${uploadMethod === 'storage' ? 'bg-white shadow-sm text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Upload File
+                </button>
               </div>
             </div>
+
+            {uploadMethod === 'link' ? (
+              <div className="space-y-2">
+                <Input 
+                  placeholder="e.g. https://drive.google.com/file/d/..." 
+                  name="externalLink" 
+                  type="url"
+                  value={externalLink} 
+                  onChange={(e) => setExternalLink(e.target.value)} 
+                />
+                <p className="text-xs text-gray-500">Paste a public link to the PDF hosted on Google Drive, Dropbox, or any other service. (Free and does not require Storage setup).</p>
+              </div>
+            ) : (
+              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 bg-gray-50/50 hover:bg-gray-50 transition-colors">
+                <div className="text-center">
+                  <UploadCloud className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                  <div className="mt-4 flex flex-col items-center text-sm leading-6 text-gray-600">
+                    <label
+                      htmlFor="file-upload"
+                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                    >
+                      <span>Upload a file</span>
+                      <input id="file-upload" name="file-upload" type="file" accept="application/pdf" className="sr-only" onChange={handleFileChange} />
+                    </label>
+                    <p className="pl-1 mt-1">or drag and drop</p>
+                  </div>
+                  <p className="text-xs leading-5 text-gray-500 mt-2">PDF up to 2MB (Requires Firebase Storage setup)</p>
+                  {file && <p className="text-sm font-medium text-indigo-600 mt-4">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={uploading || !file} className="w-full md:w-auto min-w-[150px]">
+            <Button type="submit" disabled={uploading || (uploadMethod === 'storage' && !file) || (uploadMethod === 'link' && !externalLink)} className="w-full md:w-auto min-w-[150px]">
               {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
               {uploading ? 'Uploading...' : 'Submit PYQ'}
             </Button>
