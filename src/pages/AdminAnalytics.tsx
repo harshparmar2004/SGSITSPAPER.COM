@@ -19,91 +19,59 @@ export default function AdminAnalytics() {
     fetchAnalytics();
   }, []);
 
-  const generateMockAnalytics = () => {
-    // If the database has 0 downloads, generate aesthetic realistic mock data
-    const last7Days = Array.from({length: 7}, (_, i) => ({
-      date: format(subDays(new Date(), 6 - i), 'MMM dd'),
-      downloads: Math.floor(Math.random() * 40) + 15
-    }));
-    setDownloadTrends(last7Days);
-
-    setDeptData([
-      { name: 'CS', value: 145 },
-      { name: 'IT', value: 92 },
-      { name: 'EC', value: 65 },
-      { name: 'ME', value: 40 },
-      { name: 'CE', value: 30 },
-    ]);
-
-    setExamTypeData([
-      { name: 'Mid Sem', value: 210 },
-      { name: 'End Sem', value: 145 },
-      { name: 'MHT', value: 17 }
-    ]);
-
-    setTopPapers([
-      { name: 'Data Structures', code: 'CS-302', dept: 'CS', downloads: 87, type: 'Mid Sem' },
-      { name: 'Operating Systems', code: 'CS-403', dept: 'CS', downloads: 65, type: 'End Sem' },
-      { name: 'Database Management', code: 'IT-401', dept: 'IT', downloads: 54, type: 'Mid Sem' },
-      { name: 'Analog Electronics', code: 'EC-301', dept: 'EC', downloads: 41, type: 'Mid Sem' },
-      { name: 'Algorithms', code: 'CS-401', dept: 'CS', downloads: 38, type: 'End Sem' },
-    ]);
-    
-    setTotalDownloads(372);
-  };
-
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
       const downQuery = query(collection(db, "downloads"), orderBy("downloadedAt", "desc"), limit(500));
       const snap = await getDocs(downQuery);
       
-      if (snap.empty) {
-        generateMockAnalytics();
-      } else {
-        const docs = snap.docs.map(d => d.data());
-        setTotalDownloads(docs.length);
+      const docs = snap.docs.map(d => d.data());
+      setTotalDownloads(docs.length);
 
-        // Calculate trends
-        const trendsRaw: Record<string, number> = {};
-        for(let i=0; i<7; i++) trendsRaw[format(subDays(new Date(), 6 - i), 'MMM dd')] = 0;
+      // Calculate trends
+      const trendsRaw: Record<string, number> = {};
+      for(let i=0; i<7; i++) trendsRaw[format(subDays(new Date(), 6 - i), 'MMM dd')] = 0;
 
-        const deptRaw: Record<string, number> = {};
-        const typeRaw: Record<string, number> = {};
-        const papersRaw: Record<string, any> = {};
+      const deptRaw: Record<string, number> = {};
+      const typeRaw: Record<string, number> = {};
+      const papersRaw: Record<string, any> = {};
 
-        docs.forEach((doc: any) => {
-          if (doc.downloadedAt) {
-             const dStr = format(new Date(doc.downloadedAt.seconds * 1000), 'MMM dd');
-             if (trendsRaw[dStr] !== undefined) trendsRaw[dStr]++;
-          }
-          if (doc.department) deptRaw[doc.department] = (deptRaw[doc.department] || 0) + 1;
-          if (doc.examType) typeRaw[doc.examType] = (typeRaw[doc.examType] || 0) + 1;
-          
-          if (doc.pyqId) {
-            if (!papersRaw[doc.pyqId]) {
-              papersRaw[doc.pyqId] = {
-                name: doc.subjectName || 'Unknown',
-                code: doc.subjectCode || 'UNK',
-                dept: doc.department || '-',
-                type: doc.examType || '-',
-                downloads: 0
-              };
-            }
-            papersRaw[doc.pyqId].downloads += 1;
-          }
-        });
-
-        setDownloadTrends(Object.entries(trendsRaw).map(([date, downloads]) => ({ date, downloads })));
-        setDeptData(Object.entries(deptRaw).map(([name, value]) => ({ name, value })).sort((a,b)=>b.value-a.value));
-        setExamTypeData(Object.entries(typeRaw).map(([name, value]) => ({ name, value })).sort((a,b)=>b.value-a.value));
+      docs.forEach((doc: any) => {
+        if (doc.downloadedAt) {
+           const dStr = format(new Date(doc.downloadedAt.seconds * 1000), 'MMM dd');
+           if (trendsRaw[dStr] !== undefined) trendsRaw[dStr]++;
+        }
+        if (doc.department) deptRaw[doc.department] = (deptRaw[doc.department] || 0) + 1;
+        if (doc.examType) typeRaw[doc.examType] = (typeRaw[doc.examType] || 0) + 1;
         
-        const sortedPapers = Object.values(papersRaw).sort((a: any, b: any) => b.downloads - a.downloads).slice(0, 8);
-        setTopPapers(sortedPapers);
-      }
+        if (doc.pyqId) {
+          if (!papersRaw[doc.pyqId]) {
+            papersRaw[doc.pyqId] = {
+              name: doc.subjectName || 'Unknown',
+              code: doc.subjectCode || 'UNK',
+              dept: doc.department || '-',
+              type: doc.examType || '-',
+              downloads: 0
+            };
+          }
+          papersRaw[doc.pyqId].downloads += 1;
+        }
+      });
+
+      setDownloadTrends(Object.entries(trendsRaw).map(([date, downloads]) => ({ date, downloads })));
+      setDeptData(Object.entries(deptRaw).map(([name, value]) => ({ name, value })).sort((a,b)=>b.value-a.value));
+      setExamTypeData(Object.entries(typeRaw).map(([name, value]) => ({ name, value })).sort((a,b)=>b.value-a.value));
+      
+      const sortedPapers = Object.values(papersRaw).sort((a: any, b: any) => b.downloads - a.downloads).slice(0, 8);
+      setTopPapers(sortedPapers);
     } catch (e) {
       console.error(e);
-      generateMockAnalytics();
+      // Ensure we don't crash on error, just display empty
+      setTotalDownloads(0);
+      setDownloadTrends([]);
+      setDeptData([]);
+      setExamTypeData([]);
+      setTopPapers([]);
     }
     setLoading(false);
   };

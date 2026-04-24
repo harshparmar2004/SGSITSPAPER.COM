@@ -10,6 +10,7 @@ import AdminUpload from './pages/AdminUpload';
 import AdminStudents from './pages/AdminStudents'; // Import newly created component
 import AdminReports from './pages/AdminReports';
 import AdminAnalytics from './pages/AdminAnalytics';
+import AdminAllPYQs from './pages/AdminAllPYQs';
 import AdminMonthlyUploads from './pages/AdminMonthlyUploads';
 import AdminDepartments from './pages/AdminDepartments';
 import AdminLayout from './components/AdminLayout';
@@ -94,6 +95,7 @@ export default function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="upload" element={<AdminUpload />} />
+            <Route path="manage-pyqs" element={<AdminAllPYQs />} />
             <Route path="students" element={<AdminStudents />} />
             <Route path="monthly-uploads" element={<AdminMonthlyUploads />} />
             <Route path="departments" element={<AdminDepartments />} />

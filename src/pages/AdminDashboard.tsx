@@ -25,33 +25,6 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  const generateChartData = (docs: PYQ[]) => {
-    // Generate last 7 days for area chart
-    const last7Days = Array.from({length: 7}, (_, i) => {
-      const d = subDays(new Date(), 6 - i);
-      return { date: format(d, 'MMM dd'), uploads: Math.floor(Math.random() * 5) + 1 }; // Base random activity
-    });
-    
-    // Group subjects for bar chart
-    const subCounts: Record<string, number> = { 'CS': 12, 'IT': 8, 'EC': 5 };
-    
-    docs.forEach(pyq => {
-      // Add real data to subjects
-      subCounts[pyq.department] = (subCounts[pyq.department] || 0) + 1;
-      
-      // If we wanted to accurately map uploads by date, we'd do it here
-      if (pyq.uploadedAt) {
-         const d = new Date(pyq.uploadedAt.seconds * 1000);
-         const dateStr = format(d, 'MMM dd');
-         const day = last7Days.find(day => day.date === dateStr);
-         if (day) day.uploads += 1;
-      }
-    });
-
-    setUploadData(last7Days);
-    setSubjectData(Object.entries(subCounts).map(([name, count]) => ({ name, count })));
-  };
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -81,7 +54,30 @@ export default function AdminDashboard() {
       });
       
       setRecentPyqs(pyqData.slice(0, 10)); // Show only 10 in table
-      generateChartData(pyqData); // Generate charts from last 50
+      
+      // Generate last 7 days for area chart
+      const last7Days = Array.from({length: 7}, (_, i) => {
+        const d = subDays(new Date(), 6 - i);
+        return { date: format(d, 'MMM dd'), uploads: 0 };
+      });
+      
+      // Group subjects for bar chart
+      const subCounts: Record<string, number> = {};
+      
+      pyqData.forEach(pyq => {
+        // Add real data to subjects
+        subCounts[pyq.department] = (subCounts[pyq.department] || 0) + 1;
+        
+        if (pyq.uploadedAt) {
+           const d = new Date(pyq.uploadedAt.seconds * 1000);
+           const dateStr = format(d, 'MMM dd');
+           const day = last7Days.find(day => day.date === dateStr);
+           if (day) day.uploads += 1;
+        }
+      });
+
+      setUploadData(last7Days);
+      setSubjectData(Object.entries(subCounts).map(([name, count]) => ({ name, count })));
 
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
