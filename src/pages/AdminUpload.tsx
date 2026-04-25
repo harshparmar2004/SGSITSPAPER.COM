@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
-import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
+import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from '../types';
 import { Button, Input, Select } from '../components/ui';
 import { UploadCloud, Loader2, ArrowLeft } from 'lucide-react';
 import { Link, Navigate, useNavigate } from 'react-router';
@@ -14,6 +14,7 @@ export default function AdminUpload() {
   const { programs } = useAcademicConfig();
   
   const [formData, setFormData] = useState({
+    documentType: DOCUMENT_TYPES[0],
     department: '',
     course: '',
     year: YEARS[0],
@@ -104,11 +105,13 @@ export default function AdminUpload() {
 
     try {
       // 1. Check duplicate
-      const isDupe = await checkDuplicate();
-      if (isDupe) {
-        setError('A PYQ for this Subject Code, Exam Year, and Exam Type already exists.');
-        setUploading(false);
-        return;
+      if (formData.documentType === 'PYQ') {
+        const isDupe = await checkDuplicate();
+        if (isDupe) {
+          setError('A PYQ for this Subject Code, Exam Year, and Exam Type already exists.');
+          setUploading(false);
+          return;
+        }
       }
 
       let fileUrl = '';
@@ -117,7 +120,11 @@ export default function AdminUpload() {
 
       // 2. Upload file or use link
       if (uploadMethod === 'storage' && file) {
-        fileName = `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        if (formData.documentType === 'PYQ') {
+          fileName = `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        } else {
+          fileName = `${formData.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        }
         const storagePath = `pyqs/${formData.department}/${formData.semester}/${fileName}`;
         const storageRef = ref(storage, storagePath);
         
@@ -175,7 +182,7 @@ export default function AdminUpload() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Upload New PYQ</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Upload Study Material</h1>
         <p className="mt-2 text-lg text-gray-600">Fill in the metadata and upload a PDF. Max size 2MB.</p>
       </div>
 
@@ -184,6 +191,24 @@ export default function AdminUpload() {
         {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-md border border-green-200 text-sm">Upload successful! You can upload another.</div>}
         
         <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-2 mb-4">
+            <label className="text-sm font-medium text-gray-900 block">Document Type *</label>
+            <div className="flex gap-4">
+              {DOCUMENT_TYPES.map(type => (
+                <label key={type} className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="documentType"
+                    value={type}
+                    checked={formData.documentType === type}
+                    onChange={handleChange}
+                    className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="text-sm text-gray-700">{type === 'PYQ' ? 'Previous Year Question (PYQ)' : 'Handwritten Notes'}</span>
+                </label>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-900">Course *</label>
@@ -222,30 +247,35 @@ export default function AdminUpload() {
               <Input placeholder="e.g. Data Structures" name="subjectName" value={formData.subjectName} onChange={handleChange} required />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Exam Type *</label>
-              <Select name="examType" value={formData.examType} onChange={handleChange} required>
-                {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
-              </Select>
-            </div>
-            <div className="space-y-2 flex gap-4">
-               <div className="flex-1 space-y-2">
-                 <label className="text-sm font-medium text-gray-900">Month *</label>
-                 <Select name="month" value={formData.month} onChange={handleChange} required>
-                   {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                 </Select>
-               </div>
-               <div className="flex-1 space-y-2">
-                 <label className="text-sm font-medium text-gray-900">Exam Year *</label>
-                 <Input name="examYear" value={formData.examYear} onChange={handleChange} required />
-               </div>
-            </div>
+            {formData.documentType === 'PYQ' && (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Exam Type *</label>
+                  <Select name="examType" value={formData.examType} onChange={handleChange} required={formData.documentType === 'PYQ'}>
+                    {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
+                  </Select>
+                </div>
+                <div className="space-y-2 flex gap-4">
+                   <div className="flex-1 space-y-2">
+                     <label className="text-sm font-medium text-gray-900">Month *</label>
+                     <Select name="month" value={formData.month} onChange={handleChange} required={formData.documentType === 'PYQ'}>
+                       {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
+                     </Select>
+                   </div>
+                   <div className="flex-1 space-y-2">
+                     <label className="text-sm font-medium text-gray-900">Exam Year *</label>
+                     <Input name="examYear" value={formData.examYear} onChange={handleChange} required={formData.documentType === 'PYQ'} />
+                   </div>
+                </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Session *</label>
-              <Input placeholder="e.g. 2023-2024" name="session" value={formData.session} onChange={handleChange} required />
-            </div>
-            <div className="space-y-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Session *</label>
+                  <Input placeholder="e.g. 2023-2024" name="session" value={formData.session} onChange={handleChange} required={formData.documentType === 'PYQ'} />
+                </div>
+              </>
+            )}
+            
+            <div className={`space-y-2 ${formData.documentType === 'PYQ' ? '' : 'md:col-span-2'}`}>
               <label className="text-sm font-medium text-gray-900">Section (Optional)</label>
               <Input placeholder="e.g. A" name="section" value={formData.section} onChange={handleChange} />
             </div>
@@ -307,7 +337,7 @@ export default function AdminUpload() {
           <div className="flex justify-end pt-4">
             <Button type="submit" disabled={uploading || (uploadMethod === 'storage' && !file) || (uploadMethod === 'link' && !externalLink)} className="w-full md:w-auto min-w-[150px]">
               {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
-              {uploading ? 'Uploading...' : 'Submit PYQ'}
+              {uploading ? 'Uploading...' : 'Submit Material'}
             </Button>
           </div>
         </form>

@@ -91,7 +91,11 @@ export default function AdminAllPYQs() {
       let fileSize = 0;
 
       if (replaceMethod === 'storage' && file) {
-        fileName = `${replacingPyq.subjectCode}_${replacingPyq.examType}_${replacingPyq.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        if (replacingPyq.documentType === 'Notes') {
+          fileName = `${replacingPyq.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        } else {
+          fileName = `${replacingPyq.subjectCode}_${replacingPyq.examType || 'Exam'}_${replacingPyq.examYear || '0000'}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        }
         const storagePath = `pyqs/${replacingPyq.department}/${replacingPyq.semester}/${fileName}`;
         const storageRef = ref(storage, storagePath);
         
@@ -192,8 +196,16 @@ export default function AdminAllPYQs() {
                       <div className="text-gray-500 text-xs mt-0.5">{pyq.semester}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900 font-medium">{pyq.examType}</div>
-                      <div className="text-gray-500 text-xs mt-0.5">{pyq.month} {pyq.examYear}</div>
+                      <div className="text-gray-900 font-medium">
+                        {pyq.documentType === 'Notes' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                             Notes
+                           </span>
+                        ) : pyq.examType ? (
+                           pyq.examType
+                        ) : 'PYQ'}
+                      </div>
+                      <div className="text-gray-500 text-xs mt-0.5">{pyq.documentType === 'Notes' ? '' : `${pyq.month || ''} ${pyq.examYear || ''}`}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

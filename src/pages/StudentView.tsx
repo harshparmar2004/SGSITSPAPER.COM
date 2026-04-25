@@ -23,10 +23,8 @@ export default function StudentView() {
   const [subjectCode, setSubjectCode] = useState('');
   const [subjectName, setSubjectName] = useState('');
   const [examType, setExamType] = useState('');
-  const [month, setMonth] = useState('');
-  const [examYear, setExamYear] = useState('');
-  const [session, setSession] = useState('');
   const [section, setSection] = useState('');
+  const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes'>('PYQ');
 
   const { programs, loading: configLoading } = useAcademicConfig();
 
@@ -70,10 +68,14 @@ export default function StudentView() {
     if (semester && p.semester !== semester) return false;
     if (subjectCode && !p.subjectCode.toLowerCase().includes(subjectCode.toLowerCase())) return false;
     if (subjectName && !p.subjectName.toLowerCase().includes(subjectName.toLowerCase())) return false;
+    
+    // Filter by document type ('PYQ' or 'Notes'). If documentType is missing in older docs, treat it as 'PYQ'
+    const isNotes = p.documentType === 'Notes';
+    if (activeTab === 'PYQ' && isNotes) return false;
+    if (activeTab === 'Notes' && !isNotes) return false;
+    
+    // Some fields like examType might be undefined for Notes
     if (examType && p.examType !== examType) return false;
-    if (month && p.month !== month) return false;
-    if (examYear && p.examYear !== examYear) return false;
-    if (session && p.session !== session) return false;
     if (section && p.section !== section) return false;
     return true;
   });
@@ -133,7 +135,13 @@ export default function StudentView() {
           const response = await fetch(pyq.fileUrl);
           if (response.ok) {
             const blob = await response.blob();
-            const filename = `${pyq.subjectCode}_${pyq.subjectName.replace(/[^a-zA-Z0-9]/g, '_')}_${pyq.examType}_${pyq.examYear}.pdf`;
+            const safeSubject = pyq.subjectName.replace(/[^a-zA-Z0-9]/g, '_');
+            let filename = '';
+            if (pyq.documentType === 'Notes') {
+              filename = `${pyq.subjectCode}_${safeSubject}_Notes_${pyq.id.substring(0, 5)}.pdf`;
+            } else {
+              filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.month || 'X'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
+            }
             zip.file(filename, blob);
           }
         } catch (e) {
@@ -181,8 +189,23 @@ export default function StudentView() {
       <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome, {studentName}! 👋</h1>
-          <p className="mt-2 text-lg text-gray-600">Find and download previous year question papers instantly.</p>
+          <p className="mt-2 text-lg text-gray-600">Find and download previous year question papers and handwritten notes instantly.</p>
         </div>
+      </div>
+
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full max-w-sm mb-6">
+        <button
+          onClick={() => setActiveTab('PYQ')}
+          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Previous Year Questions
+        </button>
+        <button
+          onClick={() => setActiveTab('Notes')}
+          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Notes' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Handwritten Notes
+        </button>
       </div>
 
       {/* Advanced Filter Form */}
@@ -236,35 +259,16 @@ export default function StudentView() {
           </div>
 
           {/* Row 4 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Exam Type</label>
-            <Select value={examType} onChange={(e) => setExamType(e.target.value)} className="w-full">
-              <option value="">All Exam Types</option>
-              {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
-            </Select>
-          </div>
-          <div>
-             <div className="grid grid-cols-2 gap-4">
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
-                  <Select value={month} onChange={(e) => setMonth(e.target.value)} className="w-full">
-                    <option value="">All Months</option>
-                    {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                  </Select>
-               </div>
-               <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Exam Year</label>
-                  <Input placeholder="e.g. 2026" value={examYear} onChange={(e) => setExamYear(e.target.value)} className="w-full" />
-               </div>
-             </div>
-          </div>
-
-          {/* Row 5 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Session</label>
-            <Input placeholder="e.g. 2023-2024" value={session} onChange={(e) => setSession(e.target.value)} className="w-full" />
-          </div>
-          <div>
+          {activeTab === 'PYQ' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Exam Type</label>
+              <Select value={examType} onChange={(e) => setExamType(e.target.value)} className="w-full">
+                <option value="">All Exam Types</option>
+                {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
+              </Select>
+            </div>
+          )}
+          <div className={activeTab === 'Notes' ? 'md:col-span-2' : ''}>
             <label className="block text-sm font-medium text-gray-700 mb-1">Section (Optional)</label>
             <Input placeholder="e.g. A" value={section} onChange={(e) => setSection(e.target.value)} className="w-full" />
           </div>
@@ -300,8 +304,8 @@ export default function StudentView() {
                 <tr>
                   <th className="px-6 py-4">Title / Code</th>
                   <th className="px-6 py-4">Program / Sem</th>
-                  <th className="px-6 py-4">Session / Dept</th>
-                  <th className="px-6 py-4">Type / Year</th>
+                  <th className="px-6 py-4">Department</th>
+                  <th className="px-6 py-4">{activeTab === 'PYQ' ? 'Exam Type' : 'Type'}</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
@@ -317,12 +321,18 @@ export default function StudentView() {
                       <div className="text-gray-500 text-xs mt-0.5">{pyq.semester}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900">{pyq.session}</div>
-                      <div className="text-gray-500 text-xs mt-0.5">{pyq.department}</div>
+                      <div className="text-gray-900 text-sm font-medium">{pyq.department}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900 font-medium">{pyq.examType}</div>
-                      <div className="text-gray-500 text-xs mt-0.5">{pyq.month} {pyq.examYear}</div>
+                      <div className="text-gray-900 font-medium">
+                        {pyq.documentType === 'Notes' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                             Notes
+                           </span>
+                        ) : pyq.examType ? (
+                           pyq.examType
+                        ) : 'PYQ'}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">

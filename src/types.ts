@@ -7,16 +7,22 @@ export interface PYQ {
   subjectCode: string;
   subjectName: string;
   examType: string;
-  month: string;
-  examYear: string;
-  session: string;
+  month?: string;
+  examYear?: string;
+  session?: string;
   section?: string;
   fileUrl: string;
   fileName: string;
   fileSize: number;
   uploadedAt: any; // Firestore Timestamp
   uploadedBy: string;
+  documentType?: string; // 'PYQ' or 'Notes'
 }
+
+export const DOCUMENT_TYPES = [
+  "PYQ",
+  "Notes"
+];
 
 export const DEFAULT_DEPARTMENTS = [
   "Computer Engineering",

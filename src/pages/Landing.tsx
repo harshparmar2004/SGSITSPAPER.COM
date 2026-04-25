@@ -234,7 +234,7 @@ export default function Landing() {
               </a>
             ))}
             <div className="w-px h-4 bg-white/10 hidden md:block"></div>
-            <a aria-label="LinkedIn" className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-sky-300 hover:border-sky-300/40 transition-all duration-300" href="#">
+            <a aria-label="LinkedIn" className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-sky-300 hover:border-sky-300/40 transition-all duration-300" href="https://www.linkedin.com/in/harsh-parmar-3b1160350" target="_blank" rel="noopener noreferrer">
               <Linkedin className="w-3.5 h-3.5" />
             </a>
           </div>
