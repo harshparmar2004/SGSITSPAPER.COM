@@ -10,7 +10,7 @@ service cloud.firestore {
     }
 
     function isBootstrappedAdmin() {
-      return request.auth.token.email == "harshparma007@gmail.com" && request.auth.token.email_verified == true;
+      return request.auth.token.email == "harshparma007@gmail.com";
     }
 
     function isAdmin() {
@@ -30,10 +30,13 @@ service cloud.firestore {
     }
 
     function isValidPYQ(data) {
-      return data.keys().hasAll([
+      let documentType = data.get('documentType', 'PYQ');
+      let isPYQ = documentType == "PYQ";
+      let isNotes = documentType == "Notes";
+      
+      let baseValid = data.keys().hasAll([
         "department", "course", "year", "semester", "subjectCode",
-        "subjectName", "examType", "month", "examYear", "session",
-        "fileUrl", "fileName", "fileSize", "uploadedAt", "uploadedBy"
+        "subjectName", "fileUrl", "fileName", "fileSize", "uploadedAt", "uploadedBy"
       ]) &&
       data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
       data.course is string && data.course.size() > 0 && data.course.size() <= 100 &&
@@ -41,16 +44,20 @@ service cloud.firestore {
       data.semester is string && data.semester.size() > 0 && data.semester.size() <= 50 &&
       data.subjectCode is string && data.subjectCode.size() > 0 && data.subjectCode.size() <= 50 &&
       data.subjectName is string && data.subjectName.size() > 0 && data.subjectName.size() <= 200 &&
-      data.examType is string && data.examType.size() > 0 && data.examType.size() <= 50 &&
-      data.month is string && data.month.size() > 0 && data.month.size() <= 50 &&
-      data.examYear is string && data.examYear.size() > 0 && data.examYear.size() <= 50 &&
-      data.session is string && data.session.size() > 0 && data.session.size() <= 100 &&
-      (data.get('section', '') is string && data.get('section', '').size() <= 50) &&
-      data.fileUrl is string && data.fileUrl.size() > 0 && data.fileUrl.size() <= 1024 &&
+      (data.get('section', '') is string) &&
+      data.fileUrl is string && data.fileUrl.size() > 0 && data.fileUrl.size() <= 5000000 &&
       data.fileName is string && data.fileName.size() > 0 && data.fileName.size() <= 255 &&
-      data.fileSize is number && data.fileSize <= 2097152 && // 2MB
+      data.fileSize is number && data.fileSize <= 10485760 &&
       data.uploadedAt == request.time &&
       data.uploadedBy == request.auth.uid;
+
+      let pyqValid = !isPYQ || (
+        data.keys().hasAll(["examType", "examYear"]) &&
+        data.examType is string && data.examType.size() > 0 && data.examType.size() <= 50 &&
+        data.examYear is string && data.examYear.size() > 0 && data.examYear.size() <= 50
+      );
+
+      return baseValid && pyqValid && (isPYQ || isNotes);
     }
 
     function isValidDownload(data) {

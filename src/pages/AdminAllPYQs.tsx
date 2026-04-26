@@ -21,6 +21,9 @@ export default function AdminAllPYQs() {
   const [replaceLoading, setReplaceLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Delete Modal State
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; pyq: PYQ; step: 1 | 2 } | null>(null);
+
   useEffect(() => {
     fetchPyqs();
   }, []);
@@ -38,8 +41,14 @@ export default function AdminAllPYQs() {
     setLoading(false);
   };
 
-  const handleDelete = async (pyq: PYQ) => {
-    if (!window.confirm(`Are you sure you want to delete ${pyq.subjectCode} - ${pyq.subjectName}?`)) return;
+  const handleDeleteClick = (pyq: PYQ) => {
+    setDeleteModal({ isOpen: true, pyq, step: 1 });
+  };
+
+  const executeDelete = async () => {
+    if (!deleteModal) return;
+    const { pyq } = deleteModal;
+    
     try {
       if (pyq.fileSize && pyq.fileSize > 0) {
         // Assume it's from storage
@@ -49,9 +58,11 @@ export default function AdminAllPYQs() {
       }
       await deleteDoc(doc(db, "pyqs", pyq.id));
       setPyqs(prev => prev.filter(p => p.id !== pyq.id));
+      setDeleteModal(null);
     } catch (e) {
       console.error("Error deleting PYQ", e);
-      alert("Error deleting PYQ");
+      setError("Error deleting PYQ");
+      setDeleteModal(null);
     }
   };
 
@@ -62,8 +73,8 @@ export default function AdminAllPYQs() {
         setError('Only PDF files are allowed.');
         return;
       }
-      if (selectedFile.size > 2 * 1024 * 1024) {
-        setError('File size must be less than 2MB.');
+      if (selectedFile.size > 700 * 1024) {
+        setError('File size must be less than 700KB to fit in Firestore limit.');
         return;
       }
       setError('');
@@ -96,11 +107,23 @@ export default function AdminAllPYQs() {
         } else {
           fileName = `${replacingPyq.subjectCode}_${replacingPyq.examType || 'Exam'}_${replacingPyq.examYear || '0000'}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         }
-        const storagePath = `pyqs/${replacingPyq.department}/${replacingPyq.semester}/${fileName}`;
-        const storageRef = ref(storage, storagePath);
-        
-        const uploadTask = await uploadBytesResumable(storageRef, file);
-        fileUrl = await getDownloadURL(uploadTask.ref);
+
+        // Read file as Data URL to bypass the need for Firebase Storage setup
+        const readFileAsDataUrl = (file: File): Promise<string> => {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        };
+
+        try {
+          fileUrl = await readFileAsDataUrl(file);
+        } catch (err: any) {
+          throw new Error('Failed to read file: ' + err.message);
+        }
+
         fileName = file.name;
         fileSize = file.size;
       } else {
@@ -147,6 +170,31 @@ export default function AdminAllPYQs() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {deleteModal.step === 1 ? 'Confirm Deletion' : 'DOUBLE CHECK!'}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {deleteModal.step === 1 ? (
+                <>Are you sure you want to delete <span className="font-semibold text-gray-900">"{deleteModal.pyq.subjectCode} - {deleteModal.pyq.subjectName}"</span>?</>
+              ) : (
+                <>Deleting this item is permanent and cannot be undone. Are you absolutely sure?</>
+              )}
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setDeleteModal(null)}>Cancel</Button>
+              {deleteModal.step === 1 ? (
+                <Button variant="danger" onClick={() => setDeleteModal({ ...deleteModal, step: 2 })}>Yes, continue</Button>
+              ) : (
+                <Button variant="danger" onClick={executeDelete}>I am absolutely sure, Delete</Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage PYQs</h1>
@@ -175,7 +223,7 @@ export default function AdminAllPYQs() {
                 <tr>
                   <th className="px-6 py-4">Title / Code</th>
                   <th className="px-6 py-4">Department / Program</th>
-                  <th className="px-6 py-4">Session / Semester</th>
+                  <th className="px-6 py-4">Semester</th>
                   <th className="px-6 py-4">Type / Year</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
@@ -192,8 +240,7 @@ export default function AdminAllPYQs() {
                       <div className="text-gray-500 text-xs mt-0.5">{pyq.course}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900">{pyq.session}</div>
-                      <div className="text-gray-500 text-xs mt-0.5">{pyq.semester}</div>
+                      <div className="text-gray-900 font-medium">{pyq.semester}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-gray-900 font-medium">
@@ -205,7 +252,7 @@ export default function AdminAllPYQs() {
                            pyq.examType
                         ) : 'PYQ'}
                       </div>
-                      <div className="text-gray-500 text-xs mt-0.5">{pyq.documentType === 'Notes' ? '' : `${pyq.month || ''} ${pyq.examYear || ''}`}</div>
+                      <div className="text-gray-500 text-xs mt-0.5">{pyq.documentType === 'Notes' ? '' : `${pyq.examYear || ''}`}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -222,7 +269,7 @@ export default function AdminAllPYQs() {
                         <Button 
                           variant="primary" 
                           size="sm" 
-                          onClick={() => handleDelete(pyq)}
+                          onClick={() => handleDeleteClick(pyq)}
                           className="h-8 shadow-sm bg-red-50 text-red-700 hover:bg-red-100 border-red-200"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

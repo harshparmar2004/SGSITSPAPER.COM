@@ -25,6 +25,16 @@ export default function AdminDepartments() {
   const [newProgramName, setNewProgramName] = useState('');
   const [newDepartmentNames, setNewDepartmentNames] = useState<Record<string, string>>({});
 
+  type DeleteModalState = {
+    isOpen: boolean;
+    type: 'program' | 'department';
+    courseName: string;
+    deptName?: string;
+    step: 1 | 2;
+  } | null;
+
+  const [deleteModal, setDeleteModal] = useState<DeleteModalState>(null);
+
   useEffect(() => {
     if (programs.length > 0) {
       // Expand all by default initially
@@ -117,28 +127,32 @@ export default function AdminDepartments() {
 
   const handleDeleteProgram = async (e: React.MouseEvent, courseName: string) => {
     e.stopPropagation(); // prevent toggling the block
-    if (window.confirm(`Are you sure you want to delete the program "${courseName}"?`)) {
-      if (window.confirm(`DOUBLE CHECK: Deleting "${courseName}" will remove it from the upload list. Existing uploaded PYQs will not be deleted, but they may be hidden from filters if this program is gone. Are you absolutely sure?`)) {
-        const updated = programs.filter(p => p.course !== courseName);
-        await updatePrograms(updated);
-      }
-    }
+    setDeleteModal({ isOpen: true, type: 'program', courseName, step: 1 });
   };
 
   const handleDeleteDepartment = async (courseName: string, deptName: string) => {
-    if (window.confirm(`Are you sure you want to delete department "${deptName}" from "${courseName}"?`)) {
-       if (window.confirm(`DOUBLE CHECK: Deleting this department will remove it from the list. Existing PYQs will not be deleted. Proceed?`)) {
-         const progIndex = programs.findIndex(p => p.course === courseName);
-         if (progIndex !== -1) {
-           const updatedPrograms = [...programs];
-           updatedPrograms[progIndex] = {
-             ...updatedPrograms[progIndex],
-             departments: updatedPrograms[progIndex].departments.filter(d => d !== deptName)
-           };
-           await updatePrograms(updatedPrograms);
-         }
-       }
+    setDeleteModal({ isOpen: true, type: 'department', courseName, deptName, step: 1 });
+  };
+
+  const executeDelete = async () => {
+    if (!deleteModal) return;
+    const { type, courseName, deptName } = deleteModal;
+    
+    if (type === 'program') {
+      const updated = programs.filter(p => p.course !== courseName);
+      await updatePrograms(updated);
+    } else if (type === 'department' && deptName) {
+      const progIndex = programs.findIndex(p => p.course === courseName);
+      if (progIndex !== -1) {
+        const updatedPrograms = [...programs];
+        updatedPrograms[progIndex] = {
+          ...updatedPrograms[progIndex],
+          departments: updatedPrograms[progIndex].departments.filter(d => d !== deptName)
+        };
+        await updatePrograms(updatedPrograms);
+      }
     }
+    setDeleteModal(null);
   };
 
   if (configLoading) {
@@ -151,6 +165,31 @@ export default function AdminDepartments() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {deleteModal.step === 1 ? 'Confirm Deletion' : 'DOUBLE CHECK!'}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {deleteModal.step === 1 ? (
+                <>Are you sure you want to delete the {deleteModal.type} <span className="font-semibold text-gray-900">"{deleteModal.type === 'program' ? deleteModal.courseName : deleteModal.deptName}"</span>?</>
+              ) : (
+                <>Deleting this {deleteModal.type} will remove it from the list. Existing PYQs will not be deleted, but they may be hidden from filters. Are you absolutely sure?</>
+              )}
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setDeleteModal(null)}>Cancel</Button>
+              {deleteModal.step === 1 ? (
+                <Button variant="danger" onClick={() => setDeleteModal({ ...deleteModal, step: 2 })}>Yes, continue</Button>
+              ) : (
+                <Button variant="danger" onClick={executeDelete}>I am absolutely sure, Delete</Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Programs & Departments</h1>

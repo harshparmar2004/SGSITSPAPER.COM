@@ -17,6 +17,8 @@ export default function AdminDashboard() {
   const STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; id: string; step: 1 | 2 } | null>(null);
+
   // Mock data for charts if DB is empty
   const [uploadData, setUploadData] = useState<any[]>([]);
   const [subjectData, setSubjectData] = useState<any[]>([]);
@@ -85,23 +87,58 @@ export default function AdminDashboard() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this PYQ? This action cannot be undone.')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteModal({ isOpen: true, id, step: 1 });
+  };
+
+  const executeDelete = async () => {
+    if (!deleteModal) return;
+    const { id } = deleteModal;
     
     setDeletingId(id);
     try {
       await deleteDoc(doc(db, "pyqs", id));
       setRecentPyqs(prev => prev.filter(p => p.id !== id));
       setTotalPyqs(prev => prev - 1);
+      setDeleteModal(null);
     } catch (error) {
       console.error("Error deleting document", error);
       alert('Failed to delete document.');
+      setDeleteModal(null);
     }
     setDeletingId(null);
   };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {deleteModal.step === 1 ? 'Confirm Deletion' : 'DOUBLE CHECK!'}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {deleteModal.step === 1 ? (
+                <>Are you sure you want to delete this PYQ?</>
+              ) : (
+                <>Deleting this PYQ is permanent and cannot be undone. Are you absolutely sure?</>
+              )}
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setDeleteModal(null)}>Cancel</Button>
+              {deleteModal.step === 1 ? (
+                <Button variant="danger" onClick={() => setDeleteModal({ ...deleteModal, step: 2 })}>Yes, continue</Button>
+              ) : (
+                 <Button variant="danger" onClick={executeDelete}>
+                  {deletingId === deleteModal.id ? <Loader2 className="w-4 h-4 mr-2 animate-spin inline" /> : null}
+                  I am absolutely sure, Delete
+                 </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Overview</h1>
@@ -270,7 +307,7 @@ export default function AdminDashboard() {
                              <Edit className="w-4 h-4" />
                           </button>
                           <button 
-                             onClick={() => handleDelete(pyq.id)}
+                             onClick={() => handleDeleteClick(pyq.id)}
                              disabled={deletingId === pyq.id}
                              className="p-1.5 text-gray-400 hover:text-red-600 rounded hover:bg-red-50 transition-colors disabled:opacity-50" 
                              title="Delete Permanently"

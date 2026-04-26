@@ -140,7 +140,7 @@ export default function StudentView() {
             if (pyq.documentType === 'Notes') {
               filename = `${pyq.subjectCode}_${safeSubject}_Notes_${pyq.id.substring(0, 5)}.pdf`;
             } else {
-              filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.month || 'X'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
+              filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
             }
             zip.file(filename, blob);
           }

@@ -22,9 +22,7 @@ export default function AdminUpload() {
     subjectCode: '',
     subjectName: '',
     examType: EXAM_TYPES[0],
-    month: MONTHS[0],
     examYear: new Date().getFullYear().toString(),
-    session: '',
     section: ''
   });
 
@@ -61,8 +59,8 @@ export default function AdminUpload() {
         setError('Only PDF files are allowed.');
         return;
       }
-      if (selectedFile.size > 2 * 1024 * 1024) {
-        setError('File size must be less than 2MB.');
+      if (selectedFile.size > 700 * 1024) {
+        setError('File size must be less than 700KB to fit in Firestore.');
         return;
       }
       setError('');
@@ -125,28 +123,55 @@ export default function AdminUpload() {
         } else {
           fileName = `${formData.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         }
-        const storagePath = `pyqs/${formData.department}/${formData.semester}/${fileName}`;
-        const storageRef = ref(storage, storagePath);
-        
-        const uploadTask = await uploadBytesResumable(storageRef, file);
-        fileUrl = await getDownloadURL(uploadTask.ref);
+
+        // Read file as Data URL to bypass the need for Firebase Storage setup
+        const readFileAsDataUrl = (file: File): Promise<string> => {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        };
+
+        try {
+          fileUrl = await readFileAsDataUrl(file);
+        } catch (err: any) {
+          throw new Error('Failed to read file: ' + err.message);
+        }
+
         fileName = file.name;
         fileSize = file.size;
       } else {
         fileUrl = externalLink;
-        fileName = `${formData.subjectCode}_External_Link_${formData.examYear}`;
+        fileName = `${formData.subjectCode}_External_Link_${formData.examYear || 'Notes'}`;
         fileSize = 0; // External links don't have predictable sizes initially
       }
 
-      // 3. Save to Firestore
-      await addDoc(collection(db, "pyqs"), {
-        ...formData,
+      // Prepare payload to omit PYQ fields if it's Notes
+      const payload: any = {
+        documentType: formData.documentType,
+        department: formData.department,
+        course: formData.course,
+        year: formData.year,
+        semester: formData.semester,
+        subjectCode: formData.subjectCode,
+        subjectName: formData.subjectName,
+        section: formData.section || '',
         fileUrl,
         fileName,
         fileSize,
         uploadedAt: serverTimestamp(),
         uploadedBy: user?.uid || 'unknown'
-      });
+      };
+
+      if (formData.documentType === 'PYQ') {
+         payload.examType = formData.examType;
+         payload.examYear = formData.examYear;
+      }
+
+      // 3. Save to Firestore
+      await addDoc(collection(db, "pyqs"), payload);
 
       setSuccess(true);
       setFile(null);
@@ -156,7 +181,6 @@ export default function AdminUpload() {
         ...prev,
         subjectCode: '',
         subjectName: '',
-        session: '',
         section: ''
       }));
       if (uploadMethod === 'storage') {
@@ -183,7 +207,7 @@ export default function AdminUpload() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Upload Study Material</h1>
-        <p className="mt-2 text-lg text-gray-600">Fill in the metadata and upload a PDF. Max size 2MB.</p>
+        <p className="mt-2 text-lg text-gray-600">Fill in the metadata and upload a PDF. Max size 700KB.</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
@@ -257,20 +281,9 @@ export default function AdminUpload() {
                 </div>
                 <div className="space-y-2 flex gap-4">
                    <div className="flex-1 space-y-2">
-                     <label className="text-sm font-medium text-gray-900">Month *</label>
-                     <Select name="month" value={formData.month} onChange={handleChange} required={formData.documentType === 'PYQ'}>
-                       {MONTHS.map(m => <option key={m} value={m}>{m}</option>)}
-                     </Select>
-                   </div>
-                   <div className="flex-1 space-y-2">
                      <label className="text-sm font-medium text-gray-900">Exam Year *</label>
                      <Input name="examYear" value={formData.examYear} onChange={handleChange} required={formData.documentType === 'PYQ'} />
                    </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Session *</label>
-                  <Input placeholder="e.g. 2023-2024" name="session" value={formData.session} onChange={handleChange} required={formData.documentType === 'PYQ'} />
                 </div>
               </>
             )}
@@ -327,7 +340,7 @@ export default function AdminUpload() {
                     </label>
                     <p className="pl-1 mt-1">or drag and drop</p>
                   </div>
-                  <p className="text-xs leading-5 text-gray-500 mt-2">PDF up to 2MB (Requires Firebase Storage setup)</p>
+                  <p className="text-xs leading-5 text-gray-500 mt-2">PDF up to 700KB</p>
                   {file && <p className="text-sm font-medium text-indigo-600 mt-4">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
                 </div>
               </div>
