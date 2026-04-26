@@ -21,7 +21,8 @@ export interface PYQ {
 
 export const DOCUMENT_TYPES = [
   "PYQ",
-  "Notes"
+  "Notes",
+  "Syllabus"
 ];
 
 export const DEFAULT_DEPARTMENTS = [

@@ -120,6 +120,8 @@ export default function AdminUpload() {
       if (uploadMethod === 'storage' && file) {
         if (formData.documentType === 'PYQ') {
           fileName = `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        } else if (formData.documentType === 'Syllabus') {
+          fileName = `${formData.subjectCode}_Syllabus_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         } else {
           fileName = `${formData.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         }
@@ -228,7 +230,9 @@ export default function AdminUpload() {
                     onChange={handleChange}
                     className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700">{type === 'PYQ' ? 'Previous Year Question (PYQ)' : 'Handwritten Notes'}</span>
+                  <span className="text-sm text-gray-700">
+                    {type === 'PYQ' ? 'Previous Year Question (PYQ)' : type === 'Notes' ? 'Handwritten Notes' : 'Course Syllabus'}
+                  </span>
                 </label>
               ))}
             </div>

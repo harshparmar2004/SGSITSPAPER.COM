@@ -24,7 +24,7 @@ export default function StudentView() {
   const [subjectName, setSubjectName] = useState('');
   const [examType, setExamType] = useState('');
   const [section, setSection] = useState('');
-  const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes'>('PYQ');
+  const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes' | 'Syllabus'>('PYQ');
 
   const { programs, loading: configLoading } = useAcademicConfig();
 
@@ -69,10 +69,9 @@ export default function StudentView() {
     if (subjectCode && !p.subjectCode.toLowerCase().includes(subjectCode.toLowerCase())) return false;
     if (subjectName && !p.subjectName.toLowerCase().includes(subjectName.toLowerCase())) return false;
     
-    // Filter by document type ('PYQ' or 'Notes'). If documentType is missing in older docs, treat it as 'PYQ'
-    const isNotes = p.documentType === 'Notes';
-    if (activeTab === 'PYQ' && isNotes) return false;
-    if (activeTab === 'Notes' && !isNotes) return false;
+    // Filter by document type
+    const docType = p.documentType || 'PYQ';
+    if (activeTab !== docType) return false;
     
     // Some fields like examType might be undefined for Notes
     if (examType && p.examType !== examType) return false;
@@ -139,6 +138,8 @@ export default function StudentView() {
             let filename = '';
             if (pyq.documentType === 'Notes') {
               filename = `${pyq.subjectCode}_${safeSubject}_Notes_${pyq.id.substring(0, 5)}.pdf`;
+            } else if (pyq.documentType === 'Syllabus') {
+              filename = `${pyq.subjectCode}_${safeSubject}_Syllabus_${pyq.id.substring(0, 5)}.pdf`;
             } else {
               filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
             }
@@ -193,7 +194,7 @@ export default function StudentView() {
         </div>
       </div>
 
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full max-w-sm mb-6">
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full max-w-lg mb-6">
         <button
           onClick={() => setActiveTab('PYQ')}
           className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
@@ -205,6 +206,12 @@ export default function StudentView() {
           className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Notes' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Handwritten Notes
+        </button>
+        <button
+          onClick={() => setActiveTab('Syllabus')}
+          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Syllabus' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Course Syllabus
         </button>
       </div>
 
@@ -328,6 +335,10 @@ export default function StudentView() {
                         {pyq.documentType === 'Notes' ? (
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                              Notes
+                           </span>
+                        ) : pyq.documentType === 'Syllabus' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                             Syllabus
                            </span>
                         ) : pyq.examType ? (
                            pyq.examType

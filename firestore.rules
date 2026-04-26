@@ -33,6 +33,7 @@ service cloud.firestore {
       let documentType = data.get('documentType', 'PYQ');
       let isPYQ = documentType == "PYQ";
       let isNotes = documentType == "Notes";
+      let isSyllabus = documentType == "Syllabus";
       
       let baseValid = data.keys().hasAll([
         "department", "course", "year", "semester", "subjectCode",
@@ -57,7 +58,7 @@ service cloud.firestore {
         data.examYear is string && data.examYear.size() > 0 && data.examYear.size() <= 50
       );
 
-      return baseValid && pyqValid && (isPYQ || isNotes);
+      return baseValid && pyqValid && (isPYQ || isNotes || isSyllabus);
     }
 
     function isValidDownload(data) {

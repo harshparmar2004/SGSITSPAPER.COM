@@ -104,6 +104,8 @@ export default function AdminAllPYQs() {
       if (replaceMethod === 'storage' && file) {
         if (replacingPyq.documentType === 'Notes') {
           fileName = `${replacingPyq.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        } else if (replacingPyq.documentType === 'Syllabus') {
+          fileName = `${replacingPyq.subjectCode}_Syllabus_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         } else {
           fileName = `${replacingPyq.subjectCode}_${replacingPyq.examType || 'Exam'}_${replacingPyq.examYear || '0000'}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         }
@@ -248,11 +250,15 @@ export default function AdminAllPYQs() {
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                              Notes
                            </span>
+                        ) : pyq.documentType === 'Syllabus' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                             Syllabus
+                           </span>
                         ) : pyq.examType ? (
                            pyq.examType
                         ) : 'PYQ'}
                       </div>
-                      <div className="text-gray-500 text-xs mt-0.5">{pyq.documentType === 'Notes' ? '' : `${pyq.examYear || ''}`}</div>
+                      <div className="text-gray-500 text-xs mt-0.5">{(pyq.documentType === 'Notes' || pyq.documentType === 'Syllabus') ? '' : `${pyq.examYear || ''}`}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
