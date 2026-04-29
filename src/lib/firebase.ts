@@ -14,11 +14,12 @@ export const loginWithGoogle = async () => {
   try {
     await signInWithPopup(auth, googleProvider);
   } catch (error: any) {
-    console.error("Error signing in with Google", error);
     if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
-      alert("The login popup was closed or cancelled. Please try again. If you are having trouble, try opening the app in a new tab using the top-right icon.");
+      // Silently ignore. Users know they closed it or clicked multiple times.
+      console.log("Login popup closed or cancelled by user.");
     } else {
-      alert("Failed to login with Google: " + error.message);
+      console.error("Error signing in with Google", error);
+      alert("Failed to login with Google: " + error.message + ". If you're having trouble, try opening the app in a new tab.");
     }
   }
 };
