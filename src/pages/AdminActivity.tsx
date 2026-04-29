@@ -183,18 +183,21 @@ export default function AdminActivity() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {staffHistory.map((pyq) => {
+                  const staffMatch = admins.find(a => a.email.toLowerCase() === pyq.uploadedBy?.toLowerCase());
+                  const displayName = staffMatch?.name || pyq.uploadedBy || 'Unknown User';
+                  
                   return (
                     <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                            <div className={'w-8 h-8 rounded flex items-center justify-center font-bold text-xs uppercase bg-purple-100 text-purple-700'}>
-                              {pyq.uploadedBy?.[0] || '?'}
+                              {displayName[0] || '?'}
                            </div>
                            <div>
-                              <div className="font-medium text-gray-900 truncate max-w-[200px]" title={pyq.uploadedBy || 'Unknown'}>
-                                 {pyq.uploadedBy || 'Unknown User'}
+                              <div className="font-medium text-gray-900 truncate max-w-[200px]" title={displayName}>
+                                 {displayName}
                               </div>
-                              <div className="text-xs text-purple-500 font-medium mt-0.5">Staff Member</div>
+                              <div className="text-xs text-purple-500 font-medium mt-0.5">{pyq.uploadedBy}</div>
                            </div>
                         </div>
                       </td>

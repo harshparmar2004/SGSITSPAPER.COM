@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 interface AdminData {
   id: string; // UID
   email: string;
+  name?: string;
   role: 'superadmin' | 'department';
   departments: string[];
 }
@@ -22,6 +23,7 @@ export default function AdminStaff() {
   const [loading, setLoading] = useState(true);
 
   const [newEmail, setNewEmail] = useState('');
+  const [newName, setNewName] = useState('');
   const [newRole, setNewRole] = useState<'superadmin' | 'department'>('department');
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
@@ -70,11 +72,13 @@ export default function AdminStaff() {
       // 2. Add to admins collection
       await setDoc(doc(db, "admins", uid), {
         email: newEmail.trim().toLowerCase(),
+        name: newName.trim(),
         role: newRole,
         departments: newRole === 'department' ? selectedDepartments : []
       });
 
       setNewEmail('');
+      setNewName('');
       setSelectedDepartments([]);
       fetchAdmins();
     } catch (err: any) {
@@ -134,7 +138,7 @@ export default function AdminStaff() {
         {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
 
         <form onSubmit={handleAddStaff} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-900">User Email Address *</label>
               <Input 
@@ -143,6 +147,15 @@ export default function AdminStaff() {
                 value={newEmail}
                 onChange={e => setNewEmail(e.target.value)}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-900">Staff Name (Optional)</label>
+              <Input 
+                type="text" 
+                placeholder="John Doe" 
+                value={newName}
+                onChange={e => setNewName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -157,19 +170,27 @@ export default function AdminStaff() {
           {newRole === 'department' && (
             <div className="space-y-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
               <label className="text-sm font-medium text-gray-900">Assign Departments *</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-h-48 overflow-y-auto p-2 bg-white border border-gray-100 rounded">
-                {allDepartments.map(dept => (
-                  <label key={dept} className="flex items-center gap-2 text-sm cursor-pointer select-none">
-                    <input 
-                      type="checkbox" 
-                      checked={selectedDepartments.includes(dept)}
-                      onChange={() => toggleDept(dept)}
-                      className="w-4 h-4 text-indigo-600 rounded border-gray-300"
-                    />
-                    <span className="truncate" title={dept}>{dept}</span>
-                  </label>
+              <div className="max-h-64 overflow-y-auto space-y-4 pr-2">
+                {programs.map(prog => (
+                  <div key={prog.id} className="bg-white p-3 border border-gray-100 rounded-md">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{prog.name}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                      {prog.departments.map(dept => (
+                        <label key={`${prog.id}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedDepartments.includes(dept)}
+                            onChange={() => toggleDept(dept)}
+                            className="w-4 h-4 text-indigo-600 rounded border-gray-300 mt-0.5"
+                          />
+                          <span className="leading-tight text-gray-700">{dept}</span>
+                        </label>
+                      ))}
+                      {prog.departments.length === 0 && <span className="text-gray-400 text-xs italic">No departments</span>}
+                    </div>
+                  </div>
                 ))}
-                {allDepartments.length === 0 && <span className="text-gray-400 text-sm py-2">No departments available. Create programs/departments first.</span>}
+                {programs.length === 0 && <span className="text-gray-400 text-sm py-2 block">No programs available. Create programs/departments first.</span>}
               </div>
               {selectedDepartments.length === 0 && <p className="text-xs text-amber-600">Please select at least one department.</p>}
             </div>
@@ -201,7 +222,7 @@ export default function AdminStaff() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4">Email</th>
+                  <th className="px-6 py-4">Name & Email</th>
                   <th className="px-6 py-4">Role</th>
                   <th className="px-6 py-4">Assigned Departments</th>
                   <th className="px-6 py-4 text-right">Actions</th>
@@ -210,7 +231,10 @@ export default function AdminStaff() {
               <tbody className="divide-y divide-gray-100">
                 {admins.map(admin => (
                   <tr key={admin.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900">{admin.email}</td>
+                    <td className="px-6 py-4">
+                      {admin.name && <div className="font-medium text-gray-900">{admin.name}</div>}
+                      <div className={`text-gray-600 ${admin.name ? 'text-xs mt-0.5' : 'font-medium text-gray-900'}`}>{admin.email}</div>
+                    </td>
                     <td className="px-6 py-4">
                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${admin.role === 'superadmin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
                          {admin.role === 'superadmin' ? 'Super Admin' : 'Department Admin'}
