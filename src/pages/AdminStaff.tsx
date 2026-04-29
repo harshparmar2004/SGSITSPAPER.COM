@@ -172,11 +172,11 @@ export default function AdminStaff() {
               <label className="text-sm font-medium text-gray-900">Assign Departments *</label>
               <div className="max-h-64 overflow-y-auto space-y-4 pr-2">
                 {programs.map(prog => (
-                  <div key={prog.id} className="bg-white p-3 border border-gray-100 rounded-md">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">{prog.name}</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <div key={prog.course} className="bg-white p-3 border border-gray-100 rounded-md">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 border-b border-gray-100 pb-2">{prog.course} Programs</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-3">
                       {prog.departments.map(dept => (
-                        <label key={`${prog.id}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                        <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
                           <input 
                             type="checkbox" 
                             checked={selectedDepartments.includes(dept)}
