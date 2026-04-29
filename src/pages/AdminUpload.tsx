@@ -28,6 +28,13 @@ export default function AdminUpload() {
 
   const [isCustomSubject, setIsCustomSubject] = useState(false);
 
+  // Filter subjects based on selected course and department
+  const availableSubjects = subjects.filter(s => {
+    if (!s.departments || s.departments.length === 0) return true; // Legacy global subjects
+    if (!formData.course || !formData.department) return true; // If no department selected yet, show all or none? Usually better to show all that are available.
+    return s.departments.includes(`${formData.course}::${formData.department}`);
+  });
+
   const handleSubjectSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const code = e.target.value;
     if (code === '') {
@@ -305,22 +312,22 @@ export default function AdminUpload() {
 
             <div className="space-y-2 md:col-span-2">
               <label className="text-sm font-medium text-gray-900">Select Subject *</label>
-              {subjects && subjects.length > 0 ? (
-                <Select value={isCustomSubject ? 'custom' : (subjects.some(s => s.code === formData.subjectCode) ? formData.subjectCode : '')} onChange={handleSubjectSelect} required={!isCustomSubject && formData.subjectCode === ''}>
+              {availableSubjects && availableSubjects.length > 0 ? (
+                <Select value={isCustomSubject ? 'custom' : (availableSubjects.some(s => s.code === formData.subjectCode) ? formData.subjectCode : '')} onChange={handleSubjectSelect} required={!isCustomSubject && formData.subjectCode === ''}>
                   <option value="">-- Choose from predefined subjects --</option>
-                  {subjects.map(s => (
+                  {availableSubjects.map(s => (
                     <option key={s.code} value={s.code}>{s.code} - {s.name}</option>
                   ))}
                   <option value="custom">Other (Enter Manually)</option>
                 </Select>
               ) : (
                 <div className="text-sm text-gray-500 mb-2 italic">
-                  No predefined subjects available. Add them in the 'Manage Subjects' section.
+                  No predefined subjects available for this department. Add them in the 'Manage Subjects' section, or create manually.
                 </div>
               )}
             </div>
             
-            {(isCustomSubject || subjects.length === 0 || formData.subjectCode !== '') && (
+            {(isCustomSubject || availableSubjects.length === 0 || formData.subjectCode !== '') && (
               <div className="space-y-2 md:col-span-2">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1 space-y-2">
@@ -330,7 +337,7 @@ export default function AdminUpload() {
                       name="subjectCode" 
                       value={formData.subjectCode} 
                       onChange={handleChange} 
-                      disabled={!isCustomSubject && subjects.length > 0 && formData.subjectCode !== ''}
+                      disabled={!isCustomSubject && availableSubjects.length > 0 && formData.subjectCode !== ''}
                       required 
                     />
                   </div>
@@ -341,7 +348,7 @@ export default function AdminUpload() {
                       name="subjectName" 
                       value={formData.subjectName} 
                       onChange={handleChange} 
-                      disabled={!isCustomSubject && subjects.length > 0 && formData.subjectCode !== ''}
+                      disabled={!isCustomSubject && availableSubjects.length > 0 && formData.subjectCode !== ''}
                       required 
                     />
                   </div>

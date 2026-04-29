@@ -6,6 +6,7 @@ import { DEFAULT_COURSES, DEFAULT_DEPARTMENTS } from '../types';
 export interface Subject {
   code: string;
   name: string;
+  departments?: string[];
 }
 
 export interface AcademicProgram {

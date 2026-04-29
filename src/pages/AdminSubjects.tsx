@@ -11,16 +11,32 @@ export default function AdminSubjects() {
 
   const [newSubjectCode, setNewSubjectCode] = useState('');
   const [newSubjectName, setNewSubjectName] = useState('');
+  const [newSubjectDepartments, setNewSubjectDepartments] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+
+  const availablePrograms = React.useMemo(() => {
+    return adminRole === 'superadmin' 
+      ? programs 
+      : programs.map(p => ({
+          ...p,
+          departments: p.departments.filter(d => assignedDepartments.includes(`${p.course}::${d}`) || assignedDepartments.includes(d))
+        })).filter(p => p.departments.length > 0);
+  }, [adminRole, programs, assignedDepartments]);
+
+  React.useEffect(() => {
+    // Auto-select if there is exactly 1 department available
+    const totalDepts = availablePrograms.reduce((acc, p) => acc + p.departments.length, 0);
+    if (totalDepts === 1) {
+      const prog = availablePrograms[0];
+      setNewSubjectDepartments([`${prog.course}::${prog.departments[0]}`]);
+    }
+  }, [availablePrograms]);
 
   if (loginLoading || configLoading) {
     return <div className="flex h-[50vh] items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>;
   }
 
-  // Allow all admins to manage subjects for now, or just superadmin if we want to restrict.
-  // The user said "they can add their subject... directly linked to upload"
-  // So maybe department admins can add subjects as well.
   if (!isAdmin) {
     return <Navigate to="/" />;
   }
@@ -29,6 +45,11 @@ export default function AdminSubjects() {
     e.preventDefault();
     if (!newSubjectCode.trim() || !newSubjectName.trim()) {
       setError("Subject code and name are required.");
+      return;
+    }
+    
+    if (newSubjectDepartments.length === 0) {
+      setError("Please select at least one department.");
       return;
     }
 
@@ -41,18 +62,39 @@ export default function AdminSubjects() {
     setError('');
     setSaving(true);
     try {
-      const updatedSubjects = [...subjects, { code, name: newSubjectName.trim() }];
+      const updatedSubjects = [...subjects, { code, name: newSubjectName.trim(), departments: newSubjectDepartments }];
       // Sort alphabetically by code
       updatedSubjects.sort((a, b) => a.code.localeCompare(b.code));
       
       await updateSubjects(updatedSubjects);
       setNewSubjectCode('');
       setNewSubjectName('');
+      
+      const totalDepts = availablePrograms.reduce((acc, p) => acc + p.departments.length, 0);
+      if (totalDepts !== 1) {
+        setNewSubjectDepartments([]);
+      }
     } catch (err: any) {
       setError("Failed to add subject: " + err.message);
     }
     setSaving(false);
   };
+
+  const toggleDept = (deptValue: string) => {
+    setNewSubjectDepartments(prev => 
+      prev.includes(deptValue) ? prev.filter(d => d !== deptValue) : [...prev, deptValue]
+    );
+  };
+
+  const displayedSubjects = subjects.filter(s => {
+    if (adminRole === 'superadmin') return true;
+    if (!s.departments || s.departments.length === 0) return true; // Legacy global subjects visible to all
+    return s.departments.some(d => {
+      const parts = d.split('::');
+      const deptName = parts.length > 1 ? parts[1] : d;
+      return assignedDepartments.includes(d) || assignedDepartments.includes(deptName);
+    });
+  });
 
   const handleRemoveSubject = async (code: string) => {
     if (!window.confirm(`Are you sure you want to remove ${code}?`)) return;
@@ -83,50 +125,99 @@ export default function AdminSubjects() {
         </div>
         <div className="p-6">
           {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
-          <form onSubmit={handleAddSubject} className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="flex-1 space-y-2 w-full">
-              <label className="text-sm font-medium text-gray-900">Subject Code *</label>
-              <Input 
-                placeholder="e.g. CS101" 
-                value={newSubjectCode}
-                onChange={(e) => setNewSubjectCode(e.target.value)}
-              />
+          <form onSubmit={handleAddSubject} className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
+              <div className="flex-1 space-y-2 w-full">
+                <label className="text-sm font-medium text-gray-900">Subject Code *</label>
+                <Input 
+                  placeholder="e.g. CS101" 
+                  value={newSubjectCode}
+                  onChange={(e) => setNewSubjectCode(e.target.value)}
+                />
+              </div>
+              <div className="flex-[2] space-y-2 w-full">
+                <label className="text-sm font-medium text-gray-900">Subject Name *</label>
+                <Input 
+                  placeholder="e.g. Data Structures & Algorithms" 
+                  value={newSubjectName}
+                  onChange={(e) => setNewSubjectName(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="flex-[2] space-y-2 w-full">
-              <label className="text-sm font-medium text-gray-900">Subject Name *</label>
-              <Input 
-                placeholder="e.g. Data Structures & Algorithms" 
-                value={newSubjectName}
-                onChange={(e) => setNewSubjectName(e.target.value)}
-              />
+            
+            <div className="space-y-3 pt-2">
+              <label className="text-sm font-medium text-gray-900">Assign to Departments *</label>
+              <div className="max-h-48 overflow-y-auto space-y-3 p-3 bg-white border border-gray-200 rounded-md">
+                {availablePrograms.map(prog => (
+                  <div key={prog.course}>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{prog.course}</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                      {prog.departments.map(dept => {
+                        const deptValue = `${prog.course}::${dept}`;
+                        return (
+                          <label key={deptValue} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                            <input 
+                              type="checkbox" 
+                              checked={newSubjectDepartments.includes(deptValue)}
+                              onChange={() => toggleDept(deptValue)}
+                              className="w-4 h-4 text-indigo-600 rounded border-gray-300 mt-0.5"
+                            />
+                            <span className="leading-tight text-gray-700">{dept}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <Button type="submit" disabled={saving || !newSubjectCode.trim() || !newSubjectName.trim()} className="w-full md:w-auto">
-              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-              Add Subject
-            </Button>
+
+            <div className="flex justify-end pt-2">
+              <Button type="submit" disabled={saving || !newSubjectCode.trim() || !newSubjectName.trim() || newSubjectDepartments.length === 0} className="w-full md:w-auto">
+                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+                Add Subject
+              </Button>
+            </div>
           </form>
         </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-100 bg-gray-50/50">
-          <h3 className="font-semibold text-gray-900">Existing Subjects ({subjects.length})</h3>
+          <h3 className="font-semibold text-gray-900">Existing Subjects ({displayedSubjects.length})</h3>
         </div>
-        {subjects.length > 0 ? (
+        {displayedSubjects.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-4">Subject Code</th>
                   <th className="px-6 py-4">Subject Name</th>
+                  <th className="px-6 py-4">Departments</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {subjects.map((sub) => (
+                {displayedSubjects.map((sub) => (
                   <tr key={sub.code} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4 font-mono font-medium text-indigo-600">{sub.code}</td>
                     <td className="px-6 py-4 text-gray-900">{sub.name}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1 max-w-sm">
+                        {(!sub.departments || sub.departments.length === 0) ? (
+                           <span className="text-xs text-gray-400 italic">All Departments (Legacy)</span>
+                        ) : (
+                           sub.departments.map(d => {
+                             const displayLabel = d.includes('::') ? d.split('::').join(' - ') : d;
+                             return (
+                               <span key={d} className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs truncate max-w-[200px]" title={displayLabel}>
+                                 {displayLabel}
+                               </span>
+                             );
+                           })
+                        )}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 text-right">
                       <button 
                         onClick={() => handleRemoveSubject(sub.code)}
