@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
-import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack, Activity } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 
@@ -31,6 +31,7 @@ export default function AdminLayout() {
     { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },
     { name: 'Manage Staff', path: '/admin/staff', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' }, // NEW
     { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Activity Log', path: '/admin/activity', icon: Activity, exact: false, showForAuth: true },
   ].filter(item => item.showForAuth);
 
   return (

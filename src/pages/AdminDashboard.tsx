@@ -14,6 +14,7 @@ export default function AdminDashboard() {
   const [recentPyqs, setRecentPyqs] = useState<PYQ[]>([]);
   const [totalPyqs, setTotalPyqs] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalStaff, setTotalStaff] = useState(0);
   const [storageUsed, setStorageUsed] = useState(0);
   const [loading, setLoading] = useState(true);
   const STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
@@ -59,6 +60,13 @@ export default function AdminDashboard() {
         const usersColl = collection(db, "users");
         const usersCountSnapshot = await getCountFromServer(usersColl);
         finalTotalUsers = usersCountSnapshot.data().count;
+
+        try {
+          const adminsSnap = await getCountFromServer(collection(db, "admins"));
+          setTotalStaff(adminsSnap.data().count);
+        } catch (e) {
+          console.log("Could not count admins", e);
+        }
       } else {
         // For department admins, we'll fetch downloads to show engagement instead of total users
         try {
@@ -199,7 +207,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Top Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-3 ${adminRole === 'superadmin' ? 'lg:grid-cols-4' : ''} gap-6`}>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between transition-shadow hover:shadow-md">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total PYQs</span>
@@ -228,6 +236,23 @@ export default function AdminDashboard() {
             </div>
           </div>
         </Link>
+
+        {adminRole === 'superadmin' && (
+          <Link to="/admin/staff" className="block outline-none group">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-purple-500 ring-offset-2 h-full">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Active Staff</span>
+                <div className="bg-purple-50 border border-purple-100 p-2 rounded-lg shadow-sm">
+                  <Activity className="w-4 h-4 text-purple-600" />
+                </div>
+              </div>
+              <div className="mt-3 flex items-baseline justify-between w-full">
+                <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalStaff}</span>
+                <span className="text-xs text-purple-600 font-medium group-hover:underline">View All →</span>
+              </div>
+            </div>
+          </Link>
+        )}
         
         {/* System Health / Storage */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between transition-shadow hover:shadow-md">
@@ -329,6 +354,7 @@ export default function AdminDashboard() {
                   <th className="px-6 py-4">Document Details</th>
                   <th className="px-6 py-4">Department & Semester</th>
                   <th className="px-6 py-4">Status & Type</th>
+                  <th className="px-6 py-4">Uploaded By</th>
                   <th className="px-6 py-4 text-right">Quick Actions</th>
                 </tr>
               </thead>
@@ -350,6 +376,17 @@ export default function AdminDashboard() {
                         </span>
                         <span className="text-gray-500 text-xs font-mono">{pyq.examType} {pyq.examYear}</span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                         <div className="w-6 h-6 rounded bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center uppercase">
+                            {pyq.uploadedBy?.[0] || '?'}
+                         </div>
+                         <div className="text-sm font-medium text-gray-700 truncate max-w-[150px]" title={pyq.uploadedBy || 'Unknown'}>
+                            {pyq.uploadedBy || 'Unknown'}
+                         </div>
+                      </div>
+                      {pyq.uploadedAt && <div className="text-xs text-gray-400 mt-1">{format(new Date(pyq.uploadedAt.seconds * 1000), 'MMM dd, yyyy HH:mm')}</div>}
                     </td>
                     <td className="px-6 py-4 text-right">
                        <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">

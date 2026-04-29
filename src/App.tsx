@@ -15,6 +15,7 @@ import AdminMonthlyUploads from './pages/AdminMonthlyUploads';
 import AdminDepartments from './pages/AdminDepartments';
 import AdminLayout from './components/AdminLayout';
 import AdminStaff from './pages/AdminStaff';
+import AdminActivity from './pages/AdminActivity';
 
 function Navbar() {
   const { user, isAdmin } = useAuth();
@@ -99,6 +100,7 @@ export default function App() {
             <Route path="manage-pyqs" element={<AdminAllPYQs />} />
             <Route path="students" element={<AdminStudents />} />
             <Route path="staff" element={<AdminStaff />} />
+            <Route path="activity" element={<AdminActivity />} />
             <Route path="monthly-uploads" element={<AdminMonthlyUploads />} />
             <Route path="departments" element={<AdminDepartments />} />
             <Route path="analytics" element={<AdminAnalytics />} />
