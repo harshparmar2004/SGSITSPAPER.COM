@@ -3,6 +3,11 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { DEFAULT_COURSES, DEFAULT_DEPARTMENTS } from '../types';
 
+export interface Subject {
+  code: string;
+  name: string;
+}
+
 export interface AcademicProgram {
   course: string;
   departments: string[];
@@ -10,6 +15,7 @@ export interface AcademicProgram {
 
 export function useAcademicConfig() {
   const [programs, setPrograms] = useState<AcademicProgram[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchConfig = async () => {
@@ -18,7 +24,9 @@ export function useAcademicConfig() {
       const docRef = doc(db, "settings", "academic_config");
       const snap = await getDoc(docRef);
       if (snap.exists()) {
-        setPrograms(snap.data().programs || []);
+        const data = snap.data();
+        setPrograms(data.programs || []);
+        setSubjects(data.subjects || []);
       } else {
         // Initialize with default
         const initial: AcademicProgram[] = DEFAULT_COURSES.map(course => ({
@@ -27,6 +35,7 @@ export function useAcademicConfig() {
         }));
         // We only return defaults on read. We don't write them until the admin explicitly updates.
         setPrograms(initial);
+        setSubjects([]);
       }
     } catch (e) {
       console.error("Failed to load academic config", e);
@@ -36,6 +45,7 @@ export function useAcademicConfig() {
         departments: [...DEFAULT_DEPARTMENTS]
       }));
       setPrograms(initial);
+      setSubjects([]);
     }
     setLoading(false);
   };
@@ -46,7 +56,10 @@ export function useAcademicConfig() {
 
   const updatePrograms = async (newPrograms: AcademicProgram[]) => {
     try {
-      await setDoc(doc(db, "settings", "academic_config"), { programs: newPrograms });
+      const docRef = doc(db, "settings", "academic_config");
+      const snap = await getDoc(docRef);
+      const existingData = snap.exists() ? snap.data() : {};
+      await setDoc(docRef, { ...existingData, programs: newPrograms });
       setPrograms(newPrograms);
     } catch (e) {
       console.error("Failed to save config", e);
@@ -54,5 +67,18 @@ export function useAcademicConfig() {
     }
   };
 
-  return { programs, loading, updatePrograms, refresh: fetchConfig };
+  const updateSubjects = async (newSubjects: Subject[]) => {
+    try {
+      const docRef = doc(db, "settings", "academic_config");
+      const snap = await getDoc(docRef);
+      const existingData = snap.exists() ? snap.data() : {};
+      await setDoc(docRef, { ...existingData, subjects: newSubjects });
+      setSubjects(newSubjects);
+    } catch (e) {
+      console.error("Failed to save subjects", e);
+      throw e;
+    }
+  };
+
+  return { programs, subjects, loading, updatePrograms, updateSubjects, refresh: fetchConfig };
 }

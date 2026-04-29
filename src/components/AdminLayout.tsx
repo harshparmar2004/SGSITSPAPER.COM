@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
-import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack, Activity } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack, Activity, BookOpen } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 
@@ -26,6 +26,7 @@ export default function AdminLayout() {
     
     // Super admin only routes
     { name: 'Programs & Departments', path: '/admin/departments', icon: Layers, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Manage Subjects', path: '/admin/subjects', icon: BookOpen, exact: false, showForAuth: true },
     { name: 'Monthly Uploads', path: '/admin/monthly-uploads', icon: CalendarDays, exact: false, showForAuth: adminRole === 'superadmin' },
     { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false, showForAuth: true },
     { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },

@@ -11,7 +11,7 @@ import { useAcademicConfig } from '../hooks/useAcademicConfig';
 
 export default function AdminUpload() {
   const { user, isAdmin, adminRole, assignedDepartments, loginLoading } = useAuth();
-  const { programs } = useAcademicConfig();
+  const { programs, subjects } = useAcademicConfig();
   
   const [formData, setFormData] = useState({
     documentType: DOCUMENT_TYPES[0],
@@ -25,6 +25,30 @@ export default function AdminUpload() {
     examYear: new Date().getFullYear().toString(),
     section: ''
   });
+
+  const [isCustomSubject, setIsCustomSubject] = useState(false);
+
+  const handleSubjectSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = e.target.value;
+    if (code === '') {
+      setIsCustomSubject(false);
+      setFormData(prev => ({ ...prev, subjectCode: '', subjectName: '' }));
+      return;
+    }
+    if (code === 'custom') {
+      setIsCustomSubject(true);
+      setFormData(prev => ({ ...prev, subjectCode: '', subjectName: '' }));
+      return;
+    }
+    
+    setIsCustomSubject(false);
+    const selectedSub = subjects.find(s => s.code === code);
+    if (selectedSub) {
+      setFormData(prev => ({ ...prev, subjectCode: selectedSub.code, subjectName: selectedSub.name }));
+    } else {
+      setFormData(prev => ({ ...prev, subjectCode: code, subjectName: '' })); // Fallback
+    }
+  };
 
   // Dynamic config based on selections
   const availableCourses = programs
@@ -184,6 +208,7 @@ export default function AdminUpload() {
       setFile(null);
       setExternalLink('');
       // Reset some fields
+      setIsCustomSubject(false);
       setFormData(prev => ({
         ...prev,
         subjectCode: '',
@@ -278,14 +303,51 @@ export default function AdminUpload() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Subject Code *</label>
-              <Input placeholder="e.g. CS101" name="subjectCode" value={formData.subjectCode} onChange={handleChange} required />
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-sm font-medium text-gray-900">Select Subject *</label>
+              {subjects && subjects.length > 0 ? (
+                <Select value={isCustomSubject ? 'custom' : (subjects.some(s => s.code === formData.subjectCode) ? formData.subjectCode : '')} onChange={handleSubjectSelect} required={!isCustomSubject && formData.subjectCode === ''}>
+                  <option value="">-- Choose from predefined subjects --</option>
+                  {subjects.map(s => (
+                    <option key={s.code} value={s.code}>{s.code} - {s.name}</option>
+                  ))}
+                  <option value="custom">Other (Enter Manually)</option>
+                </Select>
+              ) : (
+                <div className="text-sm text-gray-500 mb-2 italic">
+                  No predefined subjects available. Add them in the 'Manage Subjects' section.
+                </div>
+              )}
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Subject Name *</label>
-              <Input placeholder="e.g. Data Structures" name="subjectName" value={formData.subjectName} onChange={handleChange} required />
-            </div>
+            
+            {(isCustomSubject || subjects.length === 0 || formData.subjectCode !== '') && (
+              <div className="space-y-2 md:col-span-2">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 space-y-2">
+                    <label className="text-sm font-medium text-gray-900">Subject Code *</label>
+                    <Input 
+                      placeholder="e.g. CS101" 
+                      name="subjectCode" 
+                      value={formData.subjectCode} 
+                      onChange={handleChange} 
+                      disabled={!isCustomSubject && subjects.length > 0 && formData.subjectCode !== ''}
+                      required 
+                    />
+                  </div>
+                  <div className="flex-[2] space-y-2">
+                    <label className="text-sm font-medium text-gray-900">Subject Name *</label>
+                    <Input 
+                      placeholder="e.g. Data Structures" 
+                      name="subjectName" 
+                      value={formData.subjectName} 
+                      onChange={handleChange} 
+                      disabled={!isCustomSubject && subjects.length > 0 && formData.subjectCode !== ''}
+                      required 
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {formData.documentType === 'PYQ' && (
               <>

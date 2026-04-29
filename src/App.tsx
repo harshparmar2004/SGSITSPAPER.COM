@@ -17,6 +17,8 @@ import AdminLayout from './components/AdminLayout';
 import AdminStaff from './pages/AdminStaff';
 import AdminActivity from './pages/AdminActivity';
 
+import AdminSubjects from './pages/AdminSubjects';
+
 function Navbar() {
   const { user, isAdmin } = useAuth();
   const location = useLocation();
@@ -103,6 +105,7 @@ export default function App() {
             <Route path="activity" element={<AdminActivity />} />
             <Route path="monthly-uploads" element={<AdminMonthlyUploads />} />
             <Route path="departments" element={<AdminDepartments />} />
+            <Route path="subjects" element={<AdminSubjects />} />
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="reports" element={<AdminReports />} />
           </Route>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs, doc, setDoc, deleteDoc, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Button, Input, Select } from '../components/ui';
-import { Loader2, UserPlus, Trash2, Shield, Search, FileText, Activity } from 'lucide-react';
+import { Loader2, UserPlus, Trash2, Shield, Search, FileText, Activity, Edit2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 import { PYQ } from '../types';
@@ -28,6 +28,48 @@ export default function AdminStaff() {
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
+
+  const [editModal, setEditModal] = useState<AdminData | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editRole, setEditRole] = useState<'superadmin' | 'department'>('department');
+  const [editDepartments, setEditDepartments] = useState<string[]>([]);
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  const toggleEditDept = (dept: string) => {
+    setEditDepartments(prev => 
+      prev.includes(dept) ? prev.filter(d => d !== dept) : [...prev, dept]
+    );
+  };
+
+  const handleOpenEdit = (admin: AdminData) => {
+    setEditModal(admin);
+    setEditName(admin.name || '');
+    setEditRole(admin.role);
+    setEditDepartments(admin.departments || []);
+    setError('');
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editModal) return;
+    setSavingEdit(true);
+    setError('');
+    
+    try {
+      await setDoc(doc(db, "admins", editModal.id), {
+        email: editModal.email, // preserve existing email
+        name: editName.trim(),
+        role: editRole,
+        departments: editRole === 'department' ? editDepartments : []
+      });
+      
+      setEditModal(null);
+      fetchAdmins();
+    } catch (err: any) {
+      console.error(err);
+      setError("Failed to update staff. " + err.message);
+    }
+    setSavingEdit(false);
+  };
 
   const allDepartments = Array.from(new Set(programs.flatMap(p => p.departments)));
 
@@ -255,15 +297,24 @@ export default function AdminStaff() {
                        )}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {(admin.email !== "harshparma007@gmail.com") && (
+                      <div className="flex justify-end gap-2">
                         <button 
-                          onClick={() => setDeleteModal(admin.id)}
-                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                          title="Remove Staff"
+                          onClick={() => handleOpenEdit(admin)}
+                          className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                          title="Edit Staff"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Edit2 className="w-4 h-4" />
                         </button>
-                      )}
+                        {(admin.email !== "harshparma007@gmail.com") && (
+                          <button 
+                            onClick={() => setDeleteModal(admin.id)}
+                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title="Remove Staff"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -272,6 +323,86 @@ export default function AdminStaff() {
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      {editModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Staff Member</h3>
+            
+            {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
+
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">User Email</label>
+                  <Input 
+                    type="email" 
+                    value={editModal.email}
+                    disabled
+                  />
+                  <p className="text-xs text-gray-500">Email cannot be changed.</p>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Staff Name</label>
+                  <Input 
+                    type="text" 
+                    value={editName}
+                    onChange={e => setEditName(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-900">Role *</label>
+                  <Select value={editRole} onChange={e => setEditRole(e.target.value as any)}>
+                    <option value="department">Department Admin</option>
+                    <option value="superadmin">Super Admin</option>
+                  </Select>
+                </div>
+              </div>
+
+              {editRole === 'department' && (
+                <div className="space-y-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                  <label className="text-sm font-medium text-gray-900">Assign Departments *</label>
+                  <div className="max-h-56 overflow-y-auto space-y-4 pr-2">
+                    {programs.map(prog => (
+                      <div key={prog.course} className="bg-white p-3 border border-gray-100 rounded-md">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 border-b border-gray-100 pb-2">{prog.course} Programs</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-3">
+                          {prog.departments.map(dept => (
+                            <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                              <input 
+                                type="checkbox" 
+                                checked={editDepartments.includes(`${prog.course}::${dept}`)}
+                                onChange={() => toggleEditDept(`${prog.course}::${dept}`)}
+                                className="w-4 h-4 text-indigo-600 rounded border-gray-300 mt-0.5"
+                              />
+                              <span className="leading-tight text-gray-700">{dept}</span>
+                            </label>
+                          ))}
+                          {prog.departments.length === 0 && <span className="text-gray-400 text-xs italic">No departments</span>}
+                        </div>
+                      </div>
+                    ))}
+                    {programs.length === 0 && <span className="text-gray-400 text-sm py-2 block">No programs available.</span>}
+                  </div>
+                  {editDepartments.length === 0 && <p className="text-xs text-amber-600">Please select at least one department.</p>}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <Button variant="outline" onClick={() => setEditModal(null)} disabled={savingEdit}>Cancel</Button>
+                <Button 
+                  onClick={handleSaveEdit} 
+                  disabled={savingEdit || (editRole === 'department' && editDepartments.length === 0)}
+                >
+                  {savingEdit && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
