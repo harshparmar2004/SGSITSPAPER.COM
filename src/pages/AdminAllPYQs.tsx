@@ -8,7 +8,7 @@ import { Loader2, Search, Trash2, Edit, FileText, UploadCloud, X } from 'lucide-
 import { useAuth } from '../hooks/useAuth';
 
 export default function AdminAllPYQs() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, adminRole, assignedDepartments } = useAuth();
   const [pyqs, setPyqs] = useState<PYQ[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -26,14 +26,21 @@ export default function AdminAllPYQs() {
 
   useEffect(() => {
     fetchPyqs();
-  }, []);
+  }, [adminRole, assignedDepartments]); // Re-fetch if role or assignments change
 
   const fetchPyqs = async () => {
+    if (!adminRole) return;
     setLoading(true);
     try {
       const q = query(collection(db, "pyqs"), orderBy("uploadedAt", "desc"));
       const snapshot = await getDocs(q);
-      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PYQ));
+      let data = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as PYQ));
+
+      // Filter by department if not superadmin
+      if (adminRole === 'department') {
+        data = data.filter(p => assignedDepartments.includes(p.department));
+      }
+
       setPyqs(data);
     } catch (e) {
       console.error("Error fetching PYQs", e);

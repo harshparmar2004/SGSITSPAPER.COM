@@ -4,10 +4,12 @@ import { db } from '../lib/firebase';
 import { Loader2, Download, TrendingUp, Users } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import { format, subDays } from 'date-fns';
+import { useAuth } from '../hooks/useAuth';
 
 const COLORS = ['#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
 
 export default function AdminAnalytics() {
+  const { adminRole, assignedDepartments } = useAuth();
   const [loading, setLoading] = useState(true);
   const [downloadTrends, setDownloadTrends] = useState<any[]>([]);
   const [deptData, setDeptData] = useState<any[]>([]);
@@ -17,15 +19,20 @@ export default function AdminAnalytics() {
 
   useEffect(() => {
     fetchAnalytics();
-  }, []);
+  }, [adminRole, assignedDepartments]);
 
   const fetchAnalytics = async () => {
+    if (!adminRole) return;
     setLoading(true);
     try {
       const downQuery = query(collection(db, "downloads"), orderBy("downloadedAt", "desc"), limit(500));
       const snap = await getDocs(downQuery);
       
-      const docs = snap.docs.map(d => d.data());
+      let docs = snap.docs.map(d => d.data());
+      if (adminRole === 'department') {
+        docs = docs.filter(d => assignedDepartments.includes(d.department));
+      }
+
       setTotalDownloads(docs.length);
 
       // Calculate trends

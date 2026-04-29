@@ -10,7 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 
 export default function AdminUpload() {
-  const { user, isAdmin, loginLoading } = useAuth();
+  const { user, isAdmin, adminRole, assignedDepartments, loginLoading } = useAuth();
   const { programs } = useAcademicConfig();
   
   const [formData, setFormData] = useState({
@@ -27,9 +27,14 @@ export default function AdminUpload() {
   });
 
   // Dynamic config based on selections
-  const availableCourses = programs.map(p => p.course);
+  const availableCourses = programs
+    .filter(p => adminRole === 'superadmin' || p.departments.some(d => assignedDepartments.includes(d)))
+    .map(p => p.course);
+
   const selectedProgramObj = programs.find(p => p.course === formData.course);
-  const availableDepartments = selectedProgramObj ? selectedProgramObj.departments : [];
+  const availableDepartments = selectedProgramObj 
+    ? selectedProgramObj.departments.filter(d => adminRole === 'superadmin' || assignedDepartments.includes(d))
+    : [];
 
   const handleCourseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCourse = e.target.value;

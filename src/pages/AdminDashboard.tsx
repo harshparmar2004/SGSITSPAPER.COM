@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteDoc, doc, getAggregateFromServer, sum } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteDoc, doc, getAggregateFromServer, sum, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { PYQ } from '../types';
 import { Button } from '../components/ui';
@@ -7,8 +7,10 @@ import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit }
 import { Link } from 'react-router';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { format, subDays } from 'date-fns';
+import { useAuth } from '../hooks/useAuth';
 
 export default function AdminDashboard() {
+  const { adminRole, assignedDepartments } = useAuth();
   const [recentPyqs, setRecentPyqs] = useState<PYQ[]>([]);
   const [totalPyqs, setTotalPyqs] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -25,35 +27,75 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [adminRole, assignedDepartments]);
 
   const fetchData = async () => {
+    if (!adminRole) return;
     setLoading(true);
     try {
       const pyqColl = collection(db, "pyqs");
-      const pyqSnapshot = await getCountFromServer(pyqColl);
-      setTotalPyqs(pyqSnapshot.data().count);
+      
+      let finalTotal = 0;
+      let finalStorage = 0;
 
-      try {
-        const aggSnapshot = await getAggregateFromServer(pyqColl, {
-          totalBytes: sum('fileSize')
-        });
-        setStorageUsed(aggSnapshot.data().totalBytes || 0);
-      } catch (e) {
-        console.log("Could not aggregate storage", e);
+      if (adminRole === 'superadmin') {
+         const pyqSnapshot = await getCountFromServer(pyqColl);
+         finalTotal = pyqSnapshot.data().count;
+
+         try {
+           const aggSnapshot = await getAggregateFromServer(pyqColl, {
+             totalBytes: sum('fileSize')
+           });
+           finalStorage = aggSnapshot.data().totalBytes || 0;
+         } catch (e) {
+           console.log("Could not aggregate storage", e);
+         }
       }
 
-      const usersColl = collection(db, "users");
-      const usersCountSnapshot = await getCountFromServer(usersColl);
-      setTotalUsers(usersCountSnapshot.data().count);
+      let finalTotalUsers = 0;
+      let finalTotalDownloads = 0;
 
-      const pyqQuery = query(pyqColl, orderBy("uploadedAt", "desc"), limit(50));
-      const recentPyqsSnapshot = await getDocs(pyqQuery);
+      if (adminRole === 'superadmin') {
+        const usersColl = collection(db, "users");
+        const usersCountSnapshot = await getCountFromServer(usersColl);
+        finalTotalUsers = usersCountSnapshot.data().count;
+      } else {
+        // For department admins, we'll fetch downloads to show engagement instead of total users
+        try {
+           const downSnap = await getDocs(query(collection(db, "downloads"), limit(1000)));
+           let downDocs = downSnap.docs.map(d => d.data());
+           downDocs = downDocs.filter(d => assignedDepartments.includes(d.department));
+           
+           // Count unique students who downloaded
+           const uniqueUsers = new Set(downDocs.map(d => d.userId).filter(Boolean));
+           finalTotalUsers = uniqueUsers.size; 
+           finalTotalDownloads = downDocs.length;
+        } catch (e) {
+           console.log("Error fetching downloads", e);
+        }
+      }
+
+      setTotalUsers(finalTotalUsers);
+
+      // Fetch docs to calculate data. For department admin, we just pull everything and filter in memory if needed
+      // since 'in' query has 30 elements limits, but it's fine for small scales.
+      const pyqQuery = query(pyqColl, orderBy("uploadedAt", "desc")); // Get all basically for graph..
+      // To prevent large reads, we'll just get up to 1000 latest
+      const recentPyqsSnapshot = await getDocs(query(pyqColl, orderBy("uploadedAt", "desc"), limit(1000)));
       
-      const pyqData: PYQ[] = [];
+      let pyqData: PYQ[] = [];
       recentPyqsSnapshot.forEach((doc) => {
         pyqData.push({ id: doc.id, ...doc.data() } as PYQ);
       });
+
+      if (adminRole === 'department') {
+         pyqData = pyqData.filter(p => assignedDepartments.includes(p.department));
+         finalTotal = pyqData.length;
+         finalStorage = pyqData.reduce((acc, curr) => acc + (curr.fileSize || 0), 0);
+      }
+
+      setTotalPyqs(finalTotal);
+      setStorageUsed(finalStorage);
       
       setRecentPyqs(pyqData.slice(0, 10)); // Show only 10 in table
       
@@ -163,10 +205,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <Link to="/admin/students" className="block outline-none group">
+        <Link to={adminRole === 'superadmin' ? "/admin/students" : "/admin/analytics"} className="block outline-none group">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Student Logins</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                {adminRole === 'superadmin' ? 'Student Logins' : 'Active Students'}
+              </span>
               <div className="bg-green-50 border border-green-100 p-2 rounded-lg shadow-sm">
                 <Users className="w-4 h-4 text-green-600" />
               </div>

@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 
 export default function AdminLayout() {
-  const { isAdmin, loginLoading } = useAuth();
+  const { isAdmin, adminRole, loginLoading } = useAuth();
 
   if (loginLoading) {
     return (
@@ -18,16 +18,20 @@ export default function AdminLayout() {
     return <Navigate to="/" />;
   }
 
+  // Filter nav items conditionally
   const navItems = [
-    { name: 'Overview', path: '/admin', icon: LayoutDashboard, exact: true },
-    { name: 'Manage PYQs', path: '/admin/manage-pyqs', icon: FileStack, exact: false },
-    { name: 'Programs & Departments', path: '/admin/departments', icon: Layers, exact: false },
-    { name: 'Monthly Uploads', path: '/admin/monthly-uploads', icon: CalendarDays, exact: false },
-    { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false },
-    { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false },
-    { name: 'Upload PYQ', path: '/admin/upload', icon: PlusCircle, exact: false },
-    { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false },
-  ];
+    { name: 'Overview', path: '/admin', icon: LayoutDashboard, exact: true, showForAuth: true },
+    { name: 'Manage PYQs', path: '/admin/manage-pyqs', icon: FileStack, exact: false, showForAuth: true },
+    { name: 'Upload PYQ', path: '/admin/upload', icon: PlusCircle, exact: false, showForAuth: true },
+    
+    // Super admin only routes
+    { name: 'Programs & Departments', path: '/admin/departments', icon: Layers, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Monthly Uploads', path: '/admin/monthly-uploads', icon: CalendarDays, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false, showForAuth: true },
+    { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Manage Staff', path: '/admin/staff', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' }, // NEW
+    { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: adminRole === 'superadmin' },
+  ].filter(item => item.showForAuth);
 
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gray-50/50">

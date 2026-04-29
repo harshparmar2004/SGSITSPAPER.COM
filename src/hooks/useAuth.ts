@@ -6,6 +6,8 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [adminRole, setAdminRole] = useState<'superadmin' | 'department' | null>(null);
+  const [assignedDepartments, setAssignedDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,16 +30,31 @@ export function useAuth() {
         // We use the bootstrapped admin from rules or look up in typical database
         if (currentUser.email === "harshparma007@gmail.com") {
           setIsAdmin(true);
+          setAdminRole('superadmin');
+          setAssignedDepartments([]);
         } else {
           try {
             const adminDoc = await getDoc(doc(db, "admins", currentUser.uid));
-            setIsAdmin(adminDoc.exists());
+            if (adminDoc.exists()) {
+              setIsAdmin(true);
+              const data = adminDoc.data();
+              setAdminRole(data.role || 'superadmin');
+              setAssignedDepartments(data.departments || []);
+            } else {
+              setIsAdmin(false);
+              setAdminRole(null);
+              setAssignedDepartments([]);
+            }
           } catch(e) {
             setIsAdmin(false);
+            setAdminRole(null);
+            setAssignedDepartments([]);
           }
         }
       } else {
         setIsAdmin(false);
+        setAdminRole(null);
+        setAssignedDepartments([]);
       }
       setLoading(false);
     });
@@ -45,5 +62,5 @@ export function useAuth() {
     return () => unsubscribe();
   }, []);
 
-  return { user, isAdmin, loginLoading: loading };
+  return { user, isAdmin, adminRole, assignedDepartments, loginLoading: loading };
 }
