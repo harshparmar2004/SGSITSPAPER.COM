@@ -179,8 +179,8 @@ export default function AdminStaff() {
                         <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
                           <input 
                             type="checkbox" 
-                            checked={selectedDepartments.includes(dept)}
-                            onChange={() => toggleDept(dept)}
+                            checked={selectedDepartments.includes(`${prog.course}::${dept}`)}
+                            onChange={() => toggleDept(`${prog.course}::${dept}`)}
                             className="w-4 h-4 text-indigo-600 rounded border-gray-300 mt-0.5"
                           />
                           <span className="leading-tight text-gray-700">{dept}</span>
@@ -245,9 +245,12 @@ export default function AdminStaff() {
                          <span className="text-gray-400 italic">All Access</span>
                        ) : (
                          <div className="flex gap-1 flex-wrap max-w-md">
-                           {admin.departments?.map(d => (
-                             <span key={d} className="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-xs truncate max-w-[120px]" title={d}>{d}</span>
-                           ))}
+                           {admin.departments?.map(d => {
+                             const displayLabel = d.includes('::') ? d.split('::').join(' - ') : d;
+                             return (
+                               <span key={d} className="bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-xs truncate max-w-[120px]" title={displayLabel}>{displayLabel}</span>
+                             );
+                           })}
                          </div>
                        )}
                     </td>

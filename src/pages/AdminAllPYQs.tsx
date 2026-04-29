@@ -38,7 +38,7 @@ export default function AdminAllPYQs() {
 
       // Filter by department if not superadmin
       if (adminRole === 'department') {
-        data = data.filter(p => assignedDepartments.includes(p.department));
+        data = data.filter(p => assignedDepartments.includes(p.department) || assignedDepartments.includes(`${p.course}::${p.department}`));
       }
 
       setPyqs(data);
@@ -210,7 +210,7 @@ export default function AdminAllPYQs() {
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage PYQs</h1>
             {adminRole === 'department' && assignedDepartments.length > 0 && (
               <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-                {assignedDepartments.join(', ')} Department
+                {assignedDepartments.map(d => d.includes('::') ? d.split('::').join(' - ') : d).join(', ')} Department
               </span>
             )}
           </div>

@@ -72,7 +72,7 @@ export default function AdminDashboard() {
         try {
            const downSnap = await getDocs(query(collection(db, "downloads"), limit(1000)));
            let downDocs = downSnap.docs.map(d => d.data());
-           downDocs = downDocs.filter(d => assignedDepartments.includes(d.department));
+           downDocs = downDocs.filter(d => assignedDepartments.includes(d.department) || assignedDepartments.includes(`${d.course}::${d.department}`));
            
            // Count unique students who downloaded
            const uniqueUsers = new Set(downDocs.map(d => d.userId).filter(Boolean));
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
       });
 
       if (adminRole === 'department') {
-         pyqData = pyqData.filter(p => assignedDepartments.includes(p.department));
+         pyqData = pyqData.filter(p => assignedDepartments.includes(p.department) || assignedDepartments.includes(`${p.course}::${p.department}`));
          finalTotal = pyqData.length;
          finalStorage = pyqData.reduce((acc, curr) => acc + (curr.fileSize || 0), 0);
       }
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Overview</h1>
             {adminRole === 'department' && assignedDepartments.length > 0 && (
               <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-                {assignedDepartments.join(', ')} Department
+                {assignedDepartments.map(d => d.includes('::') ? d.split('::').join(' - ') : d).join(', ')} Department
               </span>
             )}
           </div>

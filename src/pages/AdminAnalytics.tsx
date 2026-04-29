@@ -30,7 +30,7 @@ export default function AdminAnalytics() {
       
       let docs = snap.docs.map(d => d.data());
       if (adminRole === 'department') {
-        docs = docs.filter(d => assignedDepartments.includes(d.department));
+        docs = docs.filter(d => assignedDepartments.includes(d.department) || assignedDepartments.includes(`${d.course}::${d.department}`));
       }
 
       setTotalDownloads(docs.length);
@@ -92,7 +92,7 @@ export default function AdminAnalytics() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Download Analytics</h1>
           {adminRole === 'department' && assignedDepartments.length > 0 && (
             <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-              {assignedDepartments.join(', ')} Department
+              {assignedDepartments.map(d => d.includes('::') ? d.split('::').join(' - ') : d).join(', ')} Department
             </span>
           )}
         </div>
