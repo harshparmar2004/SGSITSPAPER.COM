@@ -88,7 +88,14 @@ export default function AdminAnalytics() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Download Analytics</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Download Analytics</h1>
+          {adminRole === 'department' && assignedDepartments.length > 0 && (
+            <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+              {assignedDepartments.join(', ')} Department
+            </span>
+          )}
+        </div>
         <p className="mt-2 text-sm text-gray-500">Track student engagement, view the most popular papers, and see download distribution.</p>
       </div>
 

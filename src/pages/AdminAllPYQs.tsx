@@ -206,7 +206,14 @@ export default function AdminAllPYQs() {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage PYQs</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage PYQs</h1>
+            {adminRole === 'department' && assignedDepartments.length > 0 && (
+              <span className="inline-flex items-center rounded-md bg-indigo-50 px-2.5 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                {assignedDepartments.join(', ')} Department
+              </span>
+            )}
+          </div>
           <p className="mt-2 text-sm text-gray-500">View, search, replace, and delete all uploaded papers.</p>
         </div>
         <div className="relative max-w-xs w-full">
