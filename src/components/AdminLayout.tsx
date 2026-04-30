@@ -18,10 +18,10 @@ export default function AdminLayout() {
     return <Navigate to="/" />;
   }
 
-  // Filter nav items conditionally
-  const navItems = [
+    const navItems = [
     { name: 'Overview', path: '/admin', icon: LayoutDashboard, exact: true, showForAuth: true },
     { name: 'Manage PYQs', path: '/admin/manage-pyqs', icon: FileStack, exact: false, showForAuth: true },
+    { name: 'Subject-wise View', path: '/admin/subject-pyqs', icon: BookOpen, exact: false, showForAuth: true },
     { name: 'Upload PYQ', path: '/admin/upload', icon: PlusCircle, exact: false, showForAuth: true },
     
     // Super admin only routes

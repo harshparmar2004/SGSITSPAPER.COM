@@ -11,6 +11,7 @@ import AdminStudents from './pages/AdminStudents'; // Import newly created compo
 import AdminReports from './pages/AdminReports';
 import AdminAnalytics from './pages/AdminAnalytics';
 import AdminAllPYQs from './pages/AdminAllPYQs';
+import AdminSubjectPYQs from './pages/AdminSubjectPYQs';
 import AdminMonthlyUploads from './pages/AdminMonthlyUploads';
 import AdminDepartments from './pages/AdminDepartments';
 import AdminLayout from './components/AdminLayout';
@@ -100,6 +101,7 @@ export default function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="upload" element={<AdminUpload />} />
             <Route path="manage-pyqs" element={<AdminAllPYQs />} />
+            <Route path="subject-pyqs" element={<AdminSubjectPYQs />} />
             <Route path="students" element={<AdminStudents />} />
             <Route path="staff" element={<AdminStaff />} />
             <Route path="activity" element={<AdminActivity />} />
