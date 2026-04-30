@@ -285,22 +285,6 @@ export default function AdminUpload() {
         <p className="mt-2 text-lg text-gray-600">Fill in the metadata and upload a PDF. Max size 700KB.</p>
       </div>
 
-      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6 shadow-sm">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-indigo-800">Time-saving tip</h3>
-            <p className="mt-1 text-sm text-indigo-700">
-              Selecting a predefined subject will automatically fill in the Course, Department, Year, and Semester fields for you.
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
         {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-md border border-red-200 text-sm">{error}</div>}
         {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-md border border-green-200 text-sm">Upload successful! You can upload another.</div>}
@@ -333,7 +317,9 @@ export default function AdminUpload() {
                 <Select value={isCustomSubject ? 'custom' : (availableSubjects.some(s => s.code === formData.subjectCode) ? formData.subjectCode : '')} onChange={handleSubjectSelect} required={!isCustomSubject && formData.subjectCode === ''}>
                   <option value="">-- Choose from predefined subjects --</option>
                   {availableSubjects.map(s => (
-                    <option key={s.code} value={s.code}>{s.code} - {s.name}</option>
+                    <option key={s.code} value={s.code}>
+                      {s.code} - {s.name} {s.year || s.semester ? `(${s.year ? s.year : ''}${s.year && s.semester ? ', ' : ''}${s.semester ? s.semester : ''})` : ''}
+                    </option>
                   ))}
                   <option value="custom">Other (Enter Manually)</option>
                 </Select>
@@ -484,6 +470,22 @@ export default function AdminUpload() {
             </Button>
           </div>
         </form>
+      </div>
+      
+      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mt-6 shadow-sm">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-indigo-800">Time-saving tip</h3>
+            <p className="mt-1 text-sm text-indigo-700">
+              Selecting a predefined subject will automatically fill in the Course, Department, Year, and Semester fields for you.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
