@@ -3,7 +3,8 @@ import { useAcademicConfig, Subject } from '../hooks/useAcademicConfig';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 import { Button, Input, Select } from '../components/ui';
-import { BookOpen, Plus, Trash2, Loader2, Save } from 'lucide-react';
+import { BookOpen, Plus, Trash2, Loader2, Save, Edit, X } from 'lucide-react';
+import { YEARS, SEMESTERS } from '../types';
 
 export default function AdminSubjects() {
   const { isAdmin, adminRole, assignedDepartments, loginLoading } = useAuth();
@@ -11,7 +12,11 @@ export default function AdminSubjects() {
 
   const [newSubjectCode, setNewSubjectCode] = useState('');
   const [newSubjectName, setNewSubjectName] = useState('');
+  const [newSubjectYear, setNewSubjectYear] = useState('');
+  const [newSubjectSemester, setNewSubjectSemester] = useState('');
   const [newSubjectDepartments, setNewSubjectDepartments] = useState<string[]>([]);
+  const [editingSubjectCode, setEditingSubjectCode] = useState<string | null>(null);
+  
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -25,13 +30,14 @@ export default function AdminSubjects() {
   }, [adminRole, programs, assignedDepartments]);
 
   React.useEffect(() => {
+    if (editingSubjectCode) return;
     // Auto-select if there is exactly 1 department available
     const totalDepts = availablePrograms.reduce((acc, p) => acc + p.departments.length, 0);
     if (totalDepts === 1) {
       const prog = availablePrograms[0];
       setNewSubjectDepartments([`${prog.course}::${prog.departments[0]}`]);
     }
-  }, [availablePrograms]);
+  }, [availablePrograms, editingSubjectCode]);
 
   if (loginLoading || configLoading) {
     return <div className="flex h-[50vh] items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>;
@@ -41,7 +47,35 @@ export default function AdminSubjects() {
     return <Navigate to="/" />;
   }
 
-  const handleAddSubject = async (e: React.FormEvent) => {
+  const resetForm = () => {
+    setNewSubjectCode('');
+    setNewSubjectName('');
+    setNewSubjectYear('');
+    setNewSubjectSemester('');
+    setEditingSubjectCode(null);
+    setError('');
+    
+    const totalDepts = availablePrograms.reduce((acc, p) => acc + p.departments.length, 0);
+    if (totalDepts !== 1) {
+      setNewSubjectDepartments([]);
+    } else {
+      const prog = availablePrograms[0];
+      setNewSubjectDepartments([`${prog.course}::${prog.departments[0]}`]);
+    }
+  };
+
+  const handleEditSubject = (sub: Subject) => {
+    setEditingSubjectCode(sub.code);
+    setNewSubjectCode(sub.code);
+    setNewSubjectName(sub.name);
+    setNewSubjectYear(sub.year || '');
+    setNewSubjectSemester(sub.semester || '');
+    setNewSubjectDepartments(sub.departments || []);
+    setError('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubmitSubject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newSubjectCode.trim() || !newSubjectName.trim()) {
       setError("Subject code and name are required.");
@@ -54,7 +88,8 @@ export default function AdminSubjects() {
     }
 
     const code = newSubjectCode.trim().toUpperCase();
-    if (subjects.some(s => s.code.toUpperCase() === code)) {
+    
+    if (editingSubjectCode !== code && subjects.some(s => s.code.toUpperCase() === code)) {
       setError("A subject with this code already exists.");
       return;
     }
@@ -62,20 +97,29 @@ export default function AdminSubjects() {
     setError('');
     setSaving(true);
     try {
-      const updatedSubjects = [...subjects, { code, name: newSubjectName.trim(), departments: newSubjectDepartments }];
+      let updatedSubjects = [...subjects];
+      
+      const subjectData: Subject = { 
+        code, 
+        name: newSubjectName.trim(), 
+        year: newSubjectYear.trim(),
+        semester: newSubjectSemester.trim(),
+        departments: newSubjectDepartments 
+      };
+
+      if (editingSubjectCode) {
+        updatedSubjects = updatedSubjects.map(s => s.code === editingSubjectCode ? subjectData : s);
+      } else {
+        updatedSubjects.push(subjectData);
+      }
+      
       // Sort alphabetically by code
       updatedSubjects.sort((a, b) => a.code.localeCompare(b.code));
       
       await updateSubjects(updatedSubjects);
-      setNewSubjectCode('');
-      setNewSubjectName('');
-      
-      const totalDepts = availablePrograms.reduce((acc, p) => acc + p.departments.length, 0);
-      if (totalDepts !== 1) {
-        setNewSubjectDepartments([]);
-      }
+      resetForm();
     } catch (err: any) {
-      setError("Failed to add subject: " + err.message);
+      setError(`Failed to ${editingSubjectCode ? 'update' : 'add'} subject: ` + err.message);
     }
     setSaving(false);
   };
@@ -103,6 +147,9 @@ export default function AdminSubjects() {
     try {
       const updatedSubjects = subjects.filter(s => s.code !== code);
       await updateSubjects(updatedSubjects);
+      if (editingSubjectCode === code) {
+        resetForm();
+      }
     } catch (err: any) {
       setError("Failed to remove subject: " + err.message);
     }
@@ -114,20 +161,27 @@ export default function AdminSubjects() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage Subjects</h1>
         <p className="mt-2 text-sm text-gray-500">
-          Create subjects with their codes to easily select them during material upload.
+          Create and manage subjects, assign them to departments, year, and semester.
         </p>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-indigo-600" />
-          <h3 className="font-semibold text-gray-900">Add New Subject</h3>
+        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {editingSubjectCode ? <Edit className="w-5 h-5 text-indigo-600" /> : <BookOpen className="w-5 h-5 text-indigo-600" />}
+            <h3 className="font-semibold text-gray-900">{editingSubjectCode ? 'Edit Subject' : 'Add New Subject'}</h3>
+          </div>
+          {editingSubjectCode && (
+            <Button variant="ghost" size="sm" onClick={resetForm} className="text-gray-500 hover:text-gray-900">
+              <X className="w-4 h-4 mr-1" /> Cancel Edit
+            </Button>
+          )}
         </div>
         <div className="p-6">
           {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
-          <form onSubmit={handleAddSubject} className="flex flex-col gap-4">
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-end">
-              <div className="flex-1 space-y-2 w-full">
+          <form onSubmit={handleSubmitSubject} className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-900">Subject Code *</label>
                 <Input 
                   placeholder="e.g. CS101" 
@@ -135,13 +189,33 @@ export default function AdminSubjects() {
                   onChange={(e) => setNewSubjectCode(e.target.value)}
                 />
               </div>
-              <div className="flex-[2] space-y-2 w-full">
+              <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-900">Subject Name *</label>
                 <Input 
                   placeholder="e.g. Data Structures & Algorithms" 
                   value={newSubjectName}
                   onChange={(e) => setNewSubjectName(e.target.value)}
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-900">Year (Optional)</label>
+                <Select value={newSubjectYear} onChange={(e) => setNewSubjectYear(e.target.value)}>
+                  <option value="">Select Year...</option>
+                  {YEARS.map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                  <option value="Other">Other</option>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-900">Semester (Optional)</label>
+                <Select value={newSubjectSemester} onChange={(e) => setNewSubjectSemester(e.target.value)}>
+                  <option value="">Select Semester...</option>
+                  {SEMESTERS.map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                  <option value="Other">Other</option>
+                </Select>
               </div>
             </div>
             
@@ -174,8 +248,8 @@ export default function AdminSubjects() {
 
             <div className="flex justify-end pt-2">
               <Button type="submit" disabled={saving || !newSubjectCode.trim() || !newSubjectName.trim() || newSubjectDepartments.length === 0} className="w-full md:w-auto">
-                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-                Add Subject
+                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : (editingSubjectCode ? <Save className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />)}
+                {editingSubjectCode ? 'Save Changes' : 'Add Subject'}
               </Button>
             </div>
           </form>
@@ -193,15 +267,17 @@ export default function AdminSubjects() {
                 <tr>
                   <th className="px-6 py-4">Subject Code</th>
                   <th className="px-6 py-4">Subject Name</th>
+                  <th className="px-6 py-4">Year / Sem</th>
                   <th className="px-6 py-4">Departments</th>
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {displayedSubjects.map((sub) => (
-                  <tr key={sub.code} className="hover:bg-gray-50/50 transition-colors">
+                  <tr key={sub.code} className={`hover:bg-gray-50/50 transition-colors ${editingSubjectCode === sub.code ? 'bg-indigo-50/30' : ''}`}>
                     <td className="px-6 py-4 font-mono font-medium text-indigo-600">{sub.code}</td>
                     <td className="px-6 py-4 text-gray-900">{sub.name}</td>
+                    <td className="px-6 py-4 text-gray-500">{sub.year || '-'} / {sub.semester || '-'}</td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1 max-w-sm">
                         {(!sub.departments || sub.departments.length === 0) ? (
@@ -218,7 +294,15 @@ export default function AdminSubjects() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right space-x-2">
+                      <button 
+                        onClick={() => handleEditSubject(sub)}
+                        disabled={saving}
+                        className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors disabled:opacity-50"
+                        title="Edit Subject"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
                       <button 
                         onClick={() => handleRemoveSubject(sub.code)}
                         disabled={saving}

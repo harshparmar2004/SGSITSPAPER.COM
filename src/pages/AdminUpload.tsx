@@ -28,11 +28,15 @@ export default function AdminUpload() {
 
   const [isCustomSubject, setIsCustomSubject] = useState(false);
 
-  // Filter subjects based on selected course and department
+  // Filter subjects based on assigned departments for this teacher
   const availableSubjects = subjects.filter(s => {
+    if (adminRole === 'superadmin') return true;
     if (!s.departments || s.departments.length === 0) return true; // Legacy global subjects
-    if (!formData.course || !formData.department) return true; // If no department selected yet, show all or none? Usually better to show all that are available.
-    return s.departments.includes(`${formData.course}::${formData.department}`);
+    return s.departments.some(d => {
+      const parts = d.split('::');
+      const deptName = parts.length > 1 ? parts[1] : d;
+      return assignedDepartments.includes(d) || assignedDepartments.includes(deptName);
+    });
   });
 
   const handleSubjectSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -51,7 +55,32 @@ export default function AdminUpload() {
     setIsCustomSubject(false);
     const selectedSub = subjects.find(s => s.code === code);
     if (selectedSub) {
-      setFormData(prev => ({ ...prev, subjectCode: selectedSub.code, subjectName: selectedSub.name }));
+      setFormData(prev => {
+        let newCourse = prev.course;
+        let newDepartment = prev.department;
+        
+        if (selectedSub.departments && selectedSub.departments.length > 0) {
+          // Try to pick one assigned to current user, else just pick first
+          let d = selectedSub.departments.find(dep => adminRole === 'superadmin' || assignedDepartments.includes(dep) || assignedDepartments.includes(dep.split('::')[1])) || selectedSub.departments[0];
+          const parts = d.split('::');
+          if (parts.length > 1) {
+             newCourse = parts[0];
+             newDepartment = parts[1];
+          } else {
+             newDepartment = d;
+          }
+        }
+
+        return { 
+          ...prev, 
+          subjectCode: selectedSub.code, 
+          subjectName: selectedSub.name,
+          course: newCourse,
+          department: newDepartment,
+          ...(selectedSub.year ? { year: selectedSub.year } : {}),
+          ...(selectedSub.semester ? { semester: selectedSub.semester } : {})
+        };
+      });
     } else {
       setFormData(prev => ({ ...prev, subjectCode: code, subjectName: '' })); // Fallback
     }
@@ -256,6 +285,22 @@ export default function AdminUpload() {
         <p className="mt-2 text-lg text-gray-600">Fill in the metadata and upload a PDF. Max size 700KB.</p>
       </div>
 
+      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6 shadow-sm">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-indigo-800">Time-saving tip</h3>
+            <p className="mt-1 text-sm text-indigo-700">
+              Selecting a predefined subject will automatically fill in the Course, Department, Year, and Semester fields for you.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
         {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-md border border-red-200 text-sm">{error}</div>}
         {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-md border border-green-200 text-sm">Upload successful! You can upload another.</div>}
@@ -282,34 +327,6 @@ export default function AdminUpload() {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Course *</label>
-              <Select name="course" value={formData.course} onChange={handleCourseChange} required>
-                <option value="">Select Course/Program</option>
-                {availableCourses.map(c => <option key={c} value={c}>{c}</option>)}
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Department *</label>
-              <Select name="department" value={formData.department} onChange={handleChange} required disabled={!formData.course}>
-                <option value="">{formData.course ? 'Select Department' : 'Select Course First'}</option>
-                {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
-              </Select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Year *</label>
-              <Select name="year" value={formData.year} onChange={handleChange} required>
-                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Semester *</label>
-              <Select name="semester" value={formData.semester} onChange={handleChange} required>
-                {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
-              </Select>
-            </div>
-
             <div className="space-y-2 md:col-span-2">
               <label className="text-sm font-medium text-gray-900">Select Subject *</label>
               {availableSubjects && availableSubjects.length > 0 ? (
@@ -326,7 +343,7 @@ export default function AdminUpload() {
                 </div>
               )}
             </div>
-            
+
             {(isCustomSubject || availableSubjects.length === 0 || formData.subjectCode !== '') && (
               <div className="space-y-2 md:col-span-2">
                 <div className="flex flex-col md:flex-row gap-4">
@@ -355,6 +372,34 @@ export default function AdminUpload() {
                 </div>
               </div>
             )}
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-900">Course *</label>
+              <Select name="course" value={formData.course} onChange={handleCourseChange} required>
+                <option value="">Select Course/Program</option>
+                {availableCourses.map(c => <option key={c} value={c}>{c}</option>)}
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-900">Department *</label>
+              <Select name="department" value={formData.department} onChange={handleChange} required disabled={!formData.course}>
+                <option value="">{formData.course ? 'Select Department' : 'Select Course First'}</option>
+                {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-900">Year *</label>
+              <Select name="year" value={formData.year} onChange={handleChange} required>
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-900">Semester *</label>
+              <Select name="semester" value={formData.semester} onChange={handleChange} required>
+                {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+              </Select>
+            </div>
 
             {formData.documentType === 'PYQ' && (
               <>
