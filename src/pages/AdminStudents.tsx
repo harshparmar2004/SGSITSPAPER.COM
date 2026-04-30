@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, getDocs, limit } from 'firebase/firestore';
+import { collection, query, orderBy, getDocs, limit, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Loader2, Users, Search, Mail } from 'lucide-react';
 import { Input } from '../components/ui';
+import { useAuth } from '../hooks/useAuth';
 
 interface AppUser {
   id: string;
@@ -13,27 +14,50 @@ interface AppUser {
 }
 
 export default function AdminStudents() {
+  const { adminRole, assignedDepartments } = useAuth();
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [adminRole, assignedDepartments]);
 
   const fetchUsers = async () => {
+    if (!adminRole) return;
     setLoading(true);
     try {
-      // Fetch the top 100 most recently active users
-      const usersColl = collection(db, "users");
-      const userQuery = query(usersColl, orderBy("lastLoginAt", "desc"), limit(100));
-      const snapshot = await getDocs(userQuery);
-      
-      const userData: AppUser[] = [];
-      snapshot.forEach((doc) => {
-        userData.push({ id: doc.id, ...doc.data() } as AppUser);
-      });
-      setUsers(userData);
+      if (adminRole === 'superadmin') {
+        // Fetch the top 100 most recently active users
+        const usersColl = collection(db, "users");
+        const userQuery = query(usersColl, orderBy("lastLoginAt", "desc"), limit(100));
+        const snapshot = await getDocs(userQuery);
+        
+        const userData: AppUser[] = [];
+        snapshot.forEach((doc) => {
+          userData.push({ id: doc.id, ...doc.data() } as AppUser);
+        });
+        setUsers(userData);
+      } else if (adminRole === 'department') {
+        // Find users who have downloaded documents from this department
+        // Note: For large scale, you might do this differently, but this works for preview
+        const downSnap = await getDocs(query(collection(db, "downloads"), limit(2000)));
+        let downDocs = downSnap.docs.map(d => d.data());
+        downDocs = downDocs.filter(d => assignedDepartments.includes(d.department) || assignedDepartments.includes(`${d.course}::${d.department}`));
+        
+        const uniqueUserIds = Array.from(new Set(downDocs.map(d => d.userId).filter(Boolean)));
+        
+        const usersColl = collection(db, "users");
+        const snapshot = await getDocs(usersColl);
+        
+        const userData: AppUser[] = [];
+        snapshot.forEach((doc) => {
+          if (uniqueUserIds.includes(doc.id)) {
+            userData.push({ id: doc.id, ...doc.data() } as AppUser);
+          }
+        });
+        setUsers(userData);
+      }
     } catch (error) {
       console.error("Error fetching users:", error);
     }

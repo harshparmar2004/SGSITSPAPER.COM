@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { Loader2, CalendarDays, FileText, User, Layers, BarChart2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { format, parseISO } from 'date-fns';
+import { useAuth } from '../hooks/useAuth';
 
 interface UploadRecord {
   id: string;
@@ -17,15 +18,17 @@ interface UploadRecord {
 }
 
 export default function AdminMonthlyUploads() {
+  const { adminRole, assignedDepartments } = useAuth();
   const [loading, setLoading] = useState(true);
   const [uploads, setUploads] = useState<UploadRecord[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [adminRole, assignedDepartments]);
 
   const fetchData = async () => {
+    if (!adminRole) return;
     setLoading(true);
     try {
       // 1. Fetch Users to map UID -> Email
@@ -43,6 +46,15 @@ export default function AdminMonthlyUploads() {
       const records: UploadRecord[] = [];
       pyqSnap.forEach(doc => {
         const data = doc.data();
+        
+        // Filter by assigned departments if department admin
+        if (adminRole === 'department') {
+           const fullDept = `${data.course}::${data.department}`;
+           if (!assignedDepartments.includes(fullDept) && !assignedDepartments.includes(data.department)) {
+             return;
+           }
+        }
+
         if (data.uploadedAt) {
           const dateObj = new Date(data.uploadedAt.seconds * 1000);
           records.push({

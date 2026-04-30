@@ -27,11 +27,11 @@ export default function AdminLayout() {
     // Super admin only routes
     { name: 'Programs & Departments', path: '/admin/departments', icon: Layers, exact: false, showForAuth: adminRole === 'superadmin' },
     { name: 'Manage Subjects', path: '/admin/subjects', icon: BookOpen, exact: false, showForAuth: true },
-    { name: 'Monthly Uploads', path: '/admin/monthly-uploads', icon: CalendarDays, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Monthly Uploads', path: '/admin/monthly-uploads', icon: CalendarDays, exact: false, showForAuth: true }, // 2
     { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false, showForAuth: true },
-    { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },
-    { name: 'Manage Staff', path: '/admin/staff', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' }, // NEW
-    { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' }, // 3
+    { name: 'Manage Staff', path: '/admin/staff', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: true }, // 5
     { name: 'Activity Log', path: '/admin/activity', icon: Activity, exact: false, showForAuth: true },
   ].filter(item => item.showForAuth);
 

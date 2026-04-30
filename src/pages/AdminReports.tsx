@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 export default function AdminReports() {
+  const { adminRole, assignedDepartments } = useAuth();
   // In a real app, these would come from Firestore
   const [reports] = useState([
     {
       id: 'rep-1',
       subjectCode: 'CS-402',
+      department: 'Computer Science',
       issue: 'Broken PDF Link',
       reportedAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
       status: 'pending'
@@ -14,6 +17,7 @@ export default function AdminReports() {
     {
       id: 'rep-2',
       subjectCode: 'EC-301',
+      department: 'Electronics',
       issue: 'Wrong Semester marked (says 3rd, is actually 5th)',
       reportedAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
       status: 'pending'
@@ -21,17 +25,23 @@ export default function AdminReports() {
     {
       id: 'rep-3',
       subjectCode: 'IT-201',
+      department: 'Information Technology',
       issue: 'Missing page 4',
       reportedAt: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 days ago
       status: 'resolved'
     }
   ]);
 
+  const filteredReports = reports.filter(r => {
+    if (adminRole === 'superadmin') return true;
+    return assignedDepartments.some(d => d.includes(r.department));
+  });
+
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Flagged Content</h1>
-        <p className="mt-2 text-sm text-gray-500">Review and resolve issues reported by students.</p>
+        <p className="mt-2 text-sm text-gray-500">Review and resolve issues reported by students for your assigned departments.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -42,7 +52,7 @@ export default function AdminReports() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-extrabold text-amber-900 tracking-tight">
-              {reports.filter(r => r.status === 'pending').length}
+              {filteredReports.filter(r => r.status === 'pending').length}
             </span>
           </div>
         </div>
@@ -54,7 +64,9 @@ export default function AdminReports() {
         </div>
         
         <div className="divide-y divide-gray-100">
-          {reports.map((report) => (
+          {filteredReports.length === 0 ? (
+             <div className="p-12 text-center text-gray-500">No reports found for your departments.</div>
+          ) : filteredReports.map((report) => (
             <div key={report.id} className="p-6 hover:bg-gray-50/50 transition-colors">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">

@@ -14,13 +14,19 @@ interface AdminData {
 }
 
 export default function AdminActivity() {
-  const { adminRole, user } = useAuth();
+  const { adminRole, user, assignedDepartments } = useAuth();
   const [activeTab, setActiveTab] = useState<'your' | 'staff' | 'student'>('your');
   const [myHistory, setMyHistory] = useState<PYQ[]>([]);
   const [staffHistory, setStaffHistory] = useState<PYQ[]>([]);
   const [studentHistory, setStudentHistory] = useState<PYQ[]>([]);
   const [admins, setAdmins] = useState<AdminData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (adminRole && adminRole !== 'superadmin') {
+      setActiveTab('staff');
+    }
+  }, [adminRole]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +45,16 @@ export default function AdminActivity() {
         
         const staffEmails = new Set(adminList.map(a => a.email.toLowerCase()));
 
-        const staffPyqs = allPyqs.filter(p => p.uploadedBy && staffEmails.has(p.uploadedBy.toLowerCase()));
+        let staffPyqs = allPyqs.filter(p => p.uploadedBy && staffEmails.has(p.uploadedBy.toLowerCase()));
+        
+        // Filter staff Pyqs based on assigned departments if not superadmin
+        if (adminRole !== 'superadmin') {
+          staffPyqs = staffPyqs.filter(p => {
+             const fullDept = `${p.course}::${p.department}`;
+             return assignedDepartments.includes(fullDept) || assignedDepartments.includes(p.department);
+          });
+        }
+
         const studentPyqs = allPyqs.filter(p => p.uploadedBy && !staffEmails.has(p.uploadedBy.toLowerCase()));
 
         setStaffHistory(staffPyqs);
@@ -59,8 +74,10 @@ export default function AdminActivity() {
       setLoading(false);
     };
 
-    fetchData();
-  }, [user]);
+    if (adminRole) {
+      fetchData();
+    }
+  }, [user, adminRole, assignedDepartments]);
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
@@ -69,29 +86,31 @@ export default function AdminActivity() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">Activity Log</h1>
           <p className="mt-2 text-sm text-gray-500">View recent portal activity including uploads by staff members and students.</p>
         </div>
-        <div className="flex bg-gray-100 p-1 rounded-lg">
-          <button
-            onClick={() => setActiveTab('your')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'your' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            Your Upload History
-          </button>
-          <button
-             onClick={() => setActiveTab('staff')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'staff' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            Staff History
-          </button>
-          <button
-            onClick={() => setActiveTab('student')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-          >
-            Student Log History
-          </button>
-        </div>
+        {adminRole === 'superadmin' && (
+          <div className="flex bg-gray-100 p-1 rounded-lg">
+            <button
+              onClick={() => setActiveTab('your')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'your' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+            >
+              Your Upload History
+            </button>
+            <button
+               onClick={() => setActiveTab('staff')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'staff' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+            >
+              Staff History
+            </button>
+            <button
+              onClick={() => setActiveTab('student')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+            >
+              Student Log History
+            </button>
+          </div>
+        )}
       </div>
 
-      {activeTab === 'your' && (
+      {activeTab === 'your' && adminRole === 'superadmin' && (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
         <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
@@ -224,7 +243,7 @@ export default function AdminActivity() {
       </div>
       )}
 
-      {activeTab === 'student' && (
+      {activeTab === 'student' && adminRole === 'superadmin' && (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
