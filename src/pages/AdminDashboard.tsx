@@ -3,16 +3,20 @@ import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteD
 import { db } from '../lib/firebase';
 import { PYQ } from '../types';
 import { Button } from '../components/ui';
-import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit } from 'lucide-react';
+import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit, BookOpen, Layers } from 'lucide-react';
 import { Link } from 'react-router';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { format, subDays } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
+import { useAcademicConfig } from '../hooks/useAcademicConfig';
 
 export default function AdminDashboard() {
   const { adminRole, assignedDepartments } = useAuth();
+  const { subjects, loading: configLoading } = useAcademicConfig();
   const [recentPyqs, setRecentPyqs] = useState<PYQ[]>([]);
   const [totalPyqs, setTotalPyqs] = useState(0);
+  const [totalSubjects, setTotalSubjects] = useState(0);
+  const [totalPdfs, setTotalPdfs] = useState(0);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalStaff, setTotalStaff] = useState(0);
   const [storageUsed, setStorageUsed] = useState(0);
@@ -27,8 +31,10 @@ export default function AdminDashboard() {
   const [subjectData, setSubjectData] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchData();
-  }, [adminRole, assignedDepartments]);
+    if (!configLoading) {
+      fetchData();
+    }
+  }, [adminRole, assignedDepartments, configLoading, subjects]);
 
   const fetchData = async () => {
     if (!adminRole) return;
@@ -98,12 +104,22 @@ export default function AdminDashboard() {
 
       if (adminRole === 'department') {
          pyqData = pyqData.filter(p => assignedDepartments.includes(p.department) || assignedDepartments.includes(`${p.course}::${p.department}`));
-         finalTotal = pyqData.length;
-         finalStorage = pyqData.reduce((acc, curr) => acc + (curr.fileSize || 0), 0);
+         setTotalPdfs(pyqData.length);
+         setTotalPyqs(pyqData.filter(p => !p.documentType || p.documentType === 'PYQ').length);
+         
+         const displayedSubjects = subjects.filter(s => {
+           if (!s.departments || s.departments.length === 0) return true;
+           return s.departments.some(d => {
+             const parts = d.split('::');
+             const deptName = parts.length > 1 ? parts[1] : d;
+             return assignedDepartments.includes(d) || assignedDepartments.includes(deptName);
+           });
+         });
+         setTotalSubjects(displayedSubjects.length);
+      } else {
+         setTotalPyqs(finalTotal);
+         setStorageUsed(finalStorage);
       }
-
-      setTotalPyqs(finalTotal);
-      setStorageUsed(finalStorage);
       
       setRecentPyqs(pyqData.slice(0, 10)); // Show only 10 in table
       
@@ -208,34 +224,39 @@ export default function AdminDashboard() {
 
       {/* Top Stats Row */}
       <div className={`grid grid-cols-1 md:grid-cols-3 ${adminRole === 'superadmin' ? 'lg:grid-cols-4' : ''} gap-6`}>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total PYQs</span>
-            <div className="bg-indigo-50 border border-indigo-100 p-2 rounded-lg shadow-sm">
-              <FileText className="w-4 h-4 text-indigo-600" />
-            </div>
-          </div>
-          <div className="mt-3 flex items-baseline">
-            <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalPyqs}</span>
-          </div>
-        </div>
-
-        <Link to={adminRole === 'superadmin' ? "/admin/students" : "/admin/analytics"} className="block outline-none group">
+        <Link to="/admin/pyqs" className="block outline-none group">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                {adminRole === 'superadmin' ? 'Student Logins' : 'Active Students'}
-              </span>
-              <div className="bg-green-50 border border-green-100 p-2 rounded-lg shadow-sm">
-                <Users className="w-4 h-4 text-green-600" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total PYQs</span>
+              <div className="bg-indigo-50 border border-indigo-100 p-2 rounded-lg shadow-sm">
+                <FileText className="w-4 h-4 text-indigo-600" />
               </div>
             </div>
             <div className="mt-3 flex items-baseline justify-between w-full">
-              <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalUsers}</span>
+              <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalPyqs}</span>
               <span className="text-xs text-indigo-600 font-medium group-hover:underline">View All →</span>
             </div>
           </div>
         </Link>
+
+        {adminRole === 'superadmin' && (
+          <Link to="/admin/students" className="block outline-none group">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  Student Logins
+                </span>
+                <div className="bg-green-50 border border-green-100 p-2 rounded-lg shadow-sm">
+                  <Users className="w-4 h-4 text-green-600" />
+                </div>
+              </div>
+              <div className="mt-3 flex items-baseline justify-between w-full">
+                <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalUsers}</span>
+                <span className="text-xs text-indigo-600 font-medium group-hover:underline">View All →</span>
+              </div>
+            </div>
+          </Link>
+        )}
 
         {adminRole === 'superadmin' && (
           <Link to="/admin/staff" className="block outline-none group">
@@ -254,24 +275,59 @@ export default function AdminDashboard() {
           </Link>
         )}
         
-        {/* System Health / Storage */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between transition-shadow hover:shadow-md">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Drive Storage</span>
-            <div className="bg-blue-50 border border-blue-100 p-2 rounded-lg shadow-sm">
-               <HardDrive className="w-4 h-4 text-blue-600" />
+        {adminRole === 'superadmin' && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between transition-shadow hover:shadow-md">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Drive Storage</span>
+              <div className="bg-blue-50 border border-blue-100 p-2 rounded-lg shadow-sm">
+                 <HardDrive className="w-4 h-4 text-blue-600" />
+              </div>
+            </div>
+            <div className="mt-1">
+               <div className="flex justify-between text-xs text-gray-600 mb-1.5 font-medium">
+                  <span>{storageUsed > 1024 * 1024 * 1024 ? (storageUsed / (1024 * 1024 * 1024)).toFixed(2) + ' GB' : (storageUsed / (1024 * 1024)).toFixed(2) + ' MB'} Used</span>
+                  <span>5.0 GB Total</span>
+               </div>
+               <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.min((storageUsed / STORAGE_LIMIT) * 100, 100)}%` }}></div>
+               </div>
             </div>
           </div>
-          <div className="mt-1">
-             <div className="flex justify-between text-xs text-gray-600 mb-1.5 font-medium">
-                <span>{storageUsed > 1024 * 1024 * 1024 ? (storageUsed / (1024 * 1024 * 1024)).toFixed(2) + ' GB' : (storageUsed / (1024 * 1024)).toFixed(2) + ' MB'} Used</span>
-                <span>5.0 GB Total</span>
-             </div>
-             <div className="w-full bg-gray-100 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.min((storageUsed / STORAGE_LIMIT) * 100, 100)}%` }}></div>
-             </div>
-          </div>
-        </div>
+        )}
+
+        {adminRole === 'department' && (
+          <>
+            <Link to="/admin/subjects" className="block outline-none group">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-emerald-500 ring-offset-2 h-full">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Subjects</span>
+                  <div className="bg-emerald-50 border border-emerald-100 p-2 rounded-lg shadow-sm">
+                    <BookOpen className="w-4 h-4 text-emerald-600" />
+                  </div>
+                </div>
+                <div className="mt-3 flex items-baseline justify-between w-full">
+                  <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalSubjects}</span>
+                  <span className="text-xs text-emerald-600 font-medium group-hover:underline">View All →</span>
+                </div>
+              </div>
+            </Link>
+
+            <Link to="/admin/pyqs" className="block outline-none group">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-amber-500 ring-offset-2 h-full">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total PDFs Uploaded</span>
+                  <div className="bg-amber-50 border border-amber-100 p-2 rounded-lg shadow-sm">
+                    <Layers className="w-4 h-4 text-amber-600" />
+                  </div>
+                </div>
+                <div className="mt-3 flex items-baseline justify-between w-full">
+                  <span className="text-2xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalPdfs}</span>
+                  <span className="text-xs text-amber-600 font-medium group-hover:underline">View All →</span>
+                </div>
+              </div>
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Charts Row */}
