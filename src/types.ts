@@ -58,9 +58,7 @@ export const SEMESTERS = [
 ];
 
 export const EXAM_TYPES = [
-  "Mid Sem",
-  "End Sem",
-  "MHT"
+  "End Sem"
 ];
 
 export const MONTHS = [
