@@ -6,7 +6,7 @@ import { Button } from '../components/ui';
 import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit, BookOpen, Layers } from 'lucide-react';
 import { Link } from 'react-router';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
-import { format, subMonths } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 
@@ -123,10 +123,10 @@ export default function AdminDashboard() {
       
       setRecentPyqs(pyqData.slice(0, 10)); // Show only 10 in table
       
-      // Generate last 12 months for area chart
-      const last12Months = Array.from({length: 12}, (_, i) => {
-        const d = subMonths(new Date(), 11 - i);
-        return { date: format(d, 'MMM yyyy'), monthKey: format(d, 'M-yyyy'), uploads: 0 };
+      // Generate last 30 days for area chart
+      const last30Days = Array.from({length: 30}, (_, i) => {
+        const d = subDays(new Date(), 29 - i);
+        return { date: format(d, 'MMM dd'), uploads: 0 };
       });
       
       // Group subjects for bar chart
@@ -138,13 +138,13 @@ export default function AdminDashboard() {
         
         if (pyq.uploadedAt) {
            const d = new Date(pyq.uploadedAt.seconds * 1000);
-           const monthKey = format(d, 'M-yyyy');
-           const monthObj = last12Months.find(m => m.monthKey === monthKey);
-           if (monthObj) monthObj.uploads += 1;
+           const dateStr = format(d, 'MMM dd');
+           const day = last30Days.find(dObj => dObj.date === dateStr);
+           if (day) day.uploads += 1;
         }
       });
 
-      setUploadData(last12Months);
+      setUploadData(last30Days);
       setSubjectData(Object.entries(subCounts).map(([name, count]) => ({ name, count })));
 
     } catch (error) {
@@ -331,14 +331,14 @@ export default function AdminDashboard() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="flex flex-col gap-6">
          {/* Upload Activity Chart */}
-         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
             <div className="flex items-center gap-2 mb-6">
                 <Activity className="w-4 h-4 text-gray-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">Upload Activity (Last 12 Months)</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">Upload Activity (Last 30 Days)</h2>
             </div>
-            <div className="h-64 w-full">
+            <div className="h-72 w-full">
                {loading ? (
                   <div className="flex h-full items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
                ) : (
@@ -362,12 +362,12 @@ export default function AdminDashboard() {
          </div>
 
          {/* Subject Distribution */}
-         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
             <div className="flex items-center gap-2 mb-6">
                 <FileText className="w-4 h-4 text-gray-400" />
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">Papers by Department</h2>
             </div>
-            <div className="h-64 w-full">
+            <div className="h-72 w-full">
                 {loading ? (
                   <div className="flex h-full items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
                ) : (
