@@ -6,7 +6,7 @@ import { Button } from '../components/ui';
 import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit, BookOpen, Layers } from 'lucide-react';
 import { Link } from 'react-router';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
-import { format, subDays } from 'date-fns';
+import { format, subMonths } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 
@@ -123,10 +123,10 @@ export default function AdminDashboard() {
       
       setRecentPyqs(pyqData.slice(0, 10)); // Show only 10 in table
       
-      // Generate last 7 days for area chart
-      const last7Days = Array.from({length: 7}, (_, i) => {
-        const d = subDays(new Date(), 6 - i);
-        return { date: format(d, 'MMM dd'), uploads: 0 };
+      // Generate last 12 months for area chart
+      const last12Months = Array.from({length: 12}, (_, i) => {
+        const d = subMonths(new Date(), 11 - i);
+        return { date: format(d, 'MMM yyyy'), monthKey: format(d, 'M-yyyy'), uploads: 0 };
       });
       
       // Group subjects for bar chart
@@ -138,13 +138,13 @@ export default function AdminDashboard() {
         
         if (pyq.uploadedAt) {
            const d = new Date(pyq.uploadedAt.seconds * 1000);
-           const dateStr = format(d, 'MMM dd');
-           const day = last7Days.find(day => day.date === dateStr);
-           if (day) day.uploads += 1;
+           const monthKey = format(d, 'M-yyyy');
+           const monthObj = last12Months.find(m => m.monthKey === monthKey);
+           if (monthObj) monthObj.uploads += 1;
         }
       });
 
-      setUploadData(last7Days);
+      setUploadData(last12Months);
       setSubjectData(Object.entries(subCounts).map(([name, count]) => ({ name, count })));
 
     } catch (error) {
@@ -336,7 +336,7 @@ export default function AdminDashboard() {
          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div className="flex items-center gap-2 mb-6">
                 <Activity className="w-4 h-4 text-gray-400" />
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">Upload Activity (Last 7 Days)</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">Upload Activity (Last 12 Months)</h2>
             </div>
             <div className="h-64 w-full">
                {loading ? (
