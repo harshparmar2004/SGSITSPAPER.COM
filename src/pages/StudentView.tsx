@@ -3,7 +3,7 @@ import { collection, query, getDocs, limit, orderBy, addDoc, serverTimestamp } f
 import { db } from '../lib/firebase';
 import { PYQ, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
 import { Button, Input, Select } from '../components/ui';
-import { ExternalLink, Loader2, FileDown, DownloadCloud, Search } from 'lucide-react';
+import { ExternalLink, Loader2, FileDown, DownloadCloud, Search, Download } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 import { Navigate } from 'react-router';
@@ -97,7 +97,39 @@ export default function StudentView() {
         console.error("Error recording download analytics", err);
       }
     }
-    window.open(pyq.fileUrl, '_blank');
+    
+    try {
+      const zip = new JSZip();
+      const response = await fetch(pyq.fileUrl);
+      if (response.ok) {
+        const blob = await response.blob();
+        const safeSubject = pyq.subjectName.replace(/[^a-zA-Z0-9]/g, '_');
+        let filename = '';
+        if (pyq.documentType === 'Notes') {
+          filename = `${pyq.subjectCode}_${safeSubject}_Notes_${pyq.id.substring(0, 5)}.pdf`;
+        } else if (pyq.documentType === 'Syllabus') {
+          filename = `${pyq.subjectCode}_${safeSubject}_Syllabus_${pyq.id.substring(0, 5)}.pdf`;
+        } else {
+          filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
+        }
+        zip.file(filename, blob);
+        
+        const content = await zip.generateAsync({ type: "blob" });
+        const url = window.URL.createObjectURL(content);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${filename.replace('.pdf', '')}_Download.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+         window.open(pyq.fileUrl, '_blank');
+      }
+    } catch (e) {
+      console.error("Error creating zip", e);
+      window.open(pyq.fileUrl, '_blank');
+    }
   };
 
   const recordBulkDownloadAnalytics = async (items: PYQ[]) => {
@@ -347,8 +379,8 @@ export default function StudentView() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        <span>View PDF</span>
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download ZIP</span>
                       </Button>
                     </td>
                   </tr>
