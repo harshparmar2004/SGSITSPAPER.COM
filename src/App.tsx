@@ -51,7 +51,7 @@ function Navbar() {
                  ) : adminRole === 'department' && assignedDepartments.length > 0 && (
                    <div className="flex gap-2 justify-center flex-wrap max-h-full overflow-hidden items-center py-1">
                      {assignedDepartments.map(dept => (
-                       <span key={dept} className="bg-indigo-50 text-indigo-800 text-sm font-bold px-3 py-1 rounded-md border border-indigo-200 shadow-sm truncate max-w-xs">
+                       <span key={dept} className="bg-indigo-50 text-indigo-800 text-sm font-bold px-3 py-1 rounded-md border border-indigo-200 shadow-sm text-center max-w-full">
                          {dept.includes('::') ? dept.split('::').join(' - ') : dept} Department
                        </span>
                      ))}
