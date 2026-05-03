@@ -24,7 +24,7 @@ export default function StudentView() {
   const [subjectName, setSubjectName] = useState('');
   const [examType, setExamType] = useState('');
   const [section, setSection] = useState('');
-  const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes' | 'Syllabus'>('PYQ');
+  const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes' | 'Syllabus' | 'Lab Manual'>('PYQ');
 
   const { programs, loading: configLoading } = useAcademicConfig();
 
@@ -109,6 +109,8 @@ export default function StudentView() {
           filename = `${pyq.subjectCode}_${safeSubject}_Notes_${pyq.id.substring(0, 5)}.pdf`;
         } else if (pyq.documentType === 'Syllabus') {
           filename = `${pyq.subjectCode}_${safeSubject}_Syllabus_${pyq.id.substring(0, 5)}.pdf`;
+        } else if (pyq.documentType === 'Lab Manual') {
+          filename = `${pyq.subjectCode}_${safeSubject}_Lab_Manual_${pyq.id.substring(0, 5)}.pdf`;
         } else {
           filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
         }
@@ -172,6 +174,8 @@ export default function StudentView() {
               filename = `${pyq.subjectCode}_${safeSubject}_Notes_${pyq.id.substring(0, 5)}.pdf`;
             } else if (pyq.documentType === 'Syllabus') {
               filename = `${pyq.subjectCode}_${safeSubject}_Syllabus_${pyq.id.substring(0, 5)}.pdf`;
+            } else if (pyq.documentType === 'Lab Manual') {
+              filename = `${pyq.subjectCode}_${safeSubject}_Lab_Manual_${pyq.id.substring(0, 5)}.pdf`;
             } else {
               filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
             }
@@ -226,7 +230,7 @@ export default function StudentView() {
         </div>
       </div>
 
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full max-w-lg mb-6">
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full max-w-2xl mb-6">
         <button
           onClick={() => setActiveTab('PYQ')}
           className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
@@ -244,6 +248,12 @@ export default function StudentView() {
           className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Syllabus' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Course Syllabus
+        </button>
+        <button
+          onClick={() => setActiveTab('Lab Manual')}
+          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Lab Manual' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Lab Manuals
         </button>
       </div>
 
@@ -307,7 +317,7 @@ export default function StudentView() {
               </Select>
             </div>
           )}
-          <div className={activeTab === 'Notes' ? 'md:col-span-2' : ''}>
+          <div className={activeTab !== 'PYQ' ? 'md:col-span-2' : ''}>
             <label className="block text-sm font-medium text-gray-700 mb-1">Section (Optional)</label>
             <Input placeholder="e.g. A" value={section} onChange={(e) => setSection(e.target.value)} className="w-full" />
           </div>
@@ -371,6 +381,10 @@ export default function StudentView() {
                         ) : pyq.documentType === 'Syllabus' ? (
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
                              Syllabus
+                           </span>
+                        ) : pyq.documentType === 'Lab Manual' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
+                             Lab Manual
                            </span>
                         ) : pyq.examType ? (
                            pyq.examType

@@ -183,6 +183,7 @@ export default function AdminSubjectPYQs() {
                                                        <p className="font-medium text-sm text-gray-900 line-clamp-2 leading-snug">
                                                          {pyq.documentType === 'Notes' ? 'Class Notes' : 
                                                           pyq.documentType === 'Syllabus' ? 'Syllabus PDF' : 
+                                                          pyq.documentType === 'Lab Manual' ? 'Lab Manual' :
                                                           `${pyq.examYear} ${pyq.examType}`}
                                                        </p>
                                                        <p className="text-xs text-gray-500 mt-1">{(pyq.fileSize / 1024).toFixed(1)} KB • {typeof pyq.uploadedAt === 'string' ? new Date(pyq.uploadedAt).toLocaleDateString() : new Date(pyq.uploadedAt?.seconds * 1000).toLocaleDateString()}</p>

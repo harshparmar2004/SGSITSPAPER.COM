@@ -187,6 +187,8 @@ export default function AdminUpload() {
           fileName = `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         } else if (formData.documentType === 'Syllabus') {
           fileName = `${formData.subjectCode}_Syllabus_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        } else if (formData.documentType === 'Lab Manual') {
+          fileName = `${formData.subjectCode}_Lab_Manual_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         } else {
           fileName = `${formData.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         }
@@ -304,7 +306,7 @@ export default function AdminUpload() {
                     className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
                   />
                   <span className="text-sm text-gray-700">
-                    {type === 'PYQ' ? 'Previous Year Question (PYQ)' : type === 'Notes' ? 'Handwritten Notes' : 'Course Syllabus'}
+                    {type === 'PYQ' ? 'Previous Year Question (PYQ)' : type === 'Notes' ? 'Handwritten Notes' : type === 'Syllabus' ? 'Course Syllabus' : 'Lab Manual'}
                   </span>
                 </label>
               ))}
@@ -404,7 +406,7 @@ export default function AdminUpload() {
               </>
             )}
             
-            <div className={`space-y-2 ${formData.documentType === 'PYQ' ? '' : 'md:col-span-2'}`}>
+            <div className={`space-y-2 ${formData.documentType !== 'PYQ' ? 'md:col-span-2' : ''}`}>
               <label className="text-sm font-medium text-gray-900">Section (Optional)</label>
               <Input placeholder="e.g. A" name="section" value={formData.section} onChange={handleChange} />
             </div>
