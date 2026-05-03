@@ -38,28 +38,28 @@ export default function AdminLayout() {
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gray-50/50">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col shadow-sm z-10">
-        <div className="p-6">
-          <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col shadow-sm z-10 shrink-0">
+        <div className="p-4 pb-2">
+          <h2 className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">
             Admin Panel
           </h2>
         </div>
-        <nav className="flex-1 px-4 space-y-1.5">
+        <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {navItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.path}
               end={item.exact}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-md transition-all duration-200 ${
+                `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                   isActive
                     ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`
               }
             >
-              <item.icon className={`w-5 h-5 ${item.name === 'Overview' ? '' : ''}`} />
-              {item.name}
+              <item.icon className="w-4 h-4 shrink-0" />
+              <span className="truncate">{item.name}</span>
             </NavLink>
           ))}
         </nav>
