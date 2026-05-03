@@ -269,11 +269,15 @@ export default function AdminAllPYQs() {
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
                              Lab Manual
                            </span>
+                        ) : pyq.documentType === 'Books & Resources' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-fuchsia-100 text-fuchsia-800">
+                             Books & Resources
+                           </span>
                         ) : pyq.examType ? (
                            pyq.examType
                         ) : 'PYQ'}
                       </div>
-                      <div className="text-gray-500 text-xs mt-0.5">{(pyq.documentType === 'Notes' || pyq.documentType === 'Syllabus' || pyq.documentType === 'Lab Manual') ? '' : `${pyq.examYear || ''}`}</div>
+                      <div className="text-gray-500 text-xs mt-0.5">{(pyq.documentType === 'Notes' || pyq.documentType === 'Syllabus' || pyq.documentType === 'Lab Manual' || pyq.documentType === 'Books & Resources') ? '' : `${pyq.examYear || ''}`}</div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

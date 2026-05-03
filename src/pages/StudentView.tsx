@@ -111,6 +111,8 @@ export default function StudentView() {
           filename = `${pyq.subjectCode}_${safeSubject}_Syllabus_${pyq.id.substring(0, 5)}.pdf`;
         } else if (pyq.documentType === 'Lab Manual') {
           filename = `${pyq.subjectCode}_${safeSubject}_Lab_Manual_${pyq.id.substring(0, 5)}.pdf`;
+        } else if (pyq.documentType === 'Books & Resources') {
+          filename = `${pyq.subjectCode}_${safeSubject}_Books_Resources_${pyq.id.substring(0, 5)}.pdf`;
         } else {
           filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
         }
@@ -176,6 +178,8 @@ export default function StudentView() {
               filename = `${pyq.subjectCode}_${safeSubject}_Syllabus_${pyq.id.substring(0, 5)}.pdf`;
             } else if (pyq.documentType === 'Lab Manual') {
               filename = `${pyq.subjectCode}_${safeSubject}_Lab_Manual_${pyq.id.substring(0, 5)}.pdf`;
+            } else if (pyq.documentType === 'Books & Resources') {
+              filename = `${pyq.subjectCode}_${safeSubject}_Books_Resources_${pyq.id.substring(0, 5)}.pdf`;
             } else {
               filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || 'Exam'}_${pyq.examYear || '0000'}_${pyq.id.substring(0, 5)}.pdf`;
             }
@@ -230,7 +234,7 @@ export default function StudentView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:flex sm:flex-row bg-gray-100 p-1 rounded-lg w-full max-w-3xl mb-6 gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-4xl mb-6 gap-1">
         <button
           onClick={() => setActiveTab('PYQ')}
           className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
@@ -254,6 +258,12 @@ export default function StudentView() {
           className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Lab Manual' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Lab Manuals
+        </button>
+        <button
+          onClick={() => setActiveTab('Books & Resources')}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all border-none ${activeTab === 'Books & Resources' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Books & Resources
         </button>
       </div>
 
@@ -385,6 +395,10 @@ export default function StudentView() {
                         ) : pyq.documentType === 'Lab Manual' ? (
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
                              Lab Manual
+                           </span>
+                        ) : pyq.documentType === 'Books & Resources' ? (
+                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-fuchsia-100 text-fuchsia-800">
+                             Books & Resources
                            </span>
                         ) : pyq.examType ? (
                            pyq.examType

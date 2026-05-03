@@ -189,6 +189,8 @@ export default function AdminUpload() {
           fileName = `${formData.subjectCode}_Syllabus_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         } else if (formData.documentType === 'Lab Manual') {
           fileName = `${formData.subjectCode}_Lab_Manual_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+        } else if (formData.documentType === 'Books & Resources') {
+          fileName = `${formData.subjectCode}_Books_Resources_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         } else {
           fileName = `${formData.subjectCode}_Notes_${Date.now()}.pdf`.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         }
@@ -301,7 +303,7 @@ export default function AdminUpload() {
                     className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
                   />
                   <span className="text-sm text-gray-700">
-                    {type === 'PYQ' ? 'Previous Year Question (PYQ)' : type === 'Notes' ? 'Handwritten Notes' : type === 'Syllabus' ? 'Course Syllabus' : 'Lab Manual'}
+                    {type === 'PYQ' ? 'Previous Year Question (PYQ)' : type === 'Notes' ? 'Handwritten Notes' : type === 'Syllabus' ? 'Course Syllabus' : type === 'Lab Manual' ? 'Lab Manual' : type}
                   </span>
                 </label>
               ))}

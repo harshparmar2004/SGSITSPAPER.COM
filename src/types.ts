@@ -23,7 +23,8 @@ export const DOCUMENT_TYPES = [
   "PYQ",
   "Notes",
   "Syllabus",
-  "Lab Manual"
+  "Lab Manual",
+  "Books & Resources"
 ];
 
 export const DEFAULT_DEPARTMENTS = [
