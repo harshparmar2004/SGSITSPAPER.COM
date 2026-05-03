@@ -21,7 +21,7 @@ import AdminActivity from './pages/AdminActivity';
 import AdminSubjects from './pages/AdminSubjects';
 
 function Navbar() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, adminRole, assignedDepartments } = useAuth();
   const location = useLocation();
 
   // Determine logo link
@@ -31,21 +31,44 @@ function Navbar() {
   };
   
   return (
-    <nav className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+    <nav className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm relative">
       <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between items-center">
-          <div className="flex">
+        <div className="flex h-16 justify-between items-center relative">
+          <div className="flex w-1/4">
             <Link to={getHomeLink()} className="flex items-center space-x-2 text-indigo-600 font-bold text-xl hover:opacity-90 transition-opacity">
               <FileText className="w-6 h-6" />
-              <span>SGSITS PYQs</span>
+              <span className="block sm:hidden lg:block">SGSITS PYQs</span>
             </Link>
           </div>
-          <div className="flex items-center space-x-4">
+
+          <div className="flex-1 flex justify-center h-full items-center absolute inset-0 pointer-events-none">
+            {isAdmin && user && (
+              <div className="hidden md:flex flex-col items-center pointer-events-auto">
+                 <div className="flex items-center space-x-2">
+                   <div className="bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-md text-xs font-semibold border border-indigo-100">
+                     {adminRole === 'superadmin' ? 'Super Admin' : 'Department Admin'}
+                   </div>
+                   <span className="text-gray-500 text-sm font-medium">{user.email}</span>
+                 </div>
+                 {adminRole === 'department' && assignedDepartments.length > 0 && (
+                   <div className="flex gap-1.5 mt-1">
+                     {assignedDepartments.map(dept => (
+                       <span key={dept} className="bg-indigo-50 text-indigo-700 text-[11px] font-medium px-2 py-0.5 rounded border border-indigo-100">
+                         {dept.includes('::') ? dept.split('::').join(' - ') : dept} Department
+                       </span>
+                     ))}
+                   </div>
+                 )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-4 w-1/4 justify-end">
             {user ? (
               <>
                 <div className="flex items-center space-x-2 text-sm text-gray-600 hidden sm:flex">
                   {user.photoURL && <img src={user.photoURL} alt="Avatar" className="w-6 h-6 rounded-full" />}
-                  <span>{user.email}</span>
+                  {(!isAdmin || !user) && <span>{user.email}</span>}
                 </div>
                 {isAdmin && location.pathname !== '/admin' && !location.pathname.startsWith('/admin/') && (
                   <Link to="/admin">
