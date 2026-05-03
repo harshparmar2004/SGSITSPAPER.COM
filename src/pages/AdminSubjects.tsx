@@ -19,6 +19,7 @@ export default function AdminSubjects() {
   
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('All');
 
   const availablePrograms = React.useMemo(() => {
     return adminRole === 'superadmin' 
@@ -28,6 +29,16 @@ export default function AdminSubjects() {
           departments: p.departments.filter(d => assignedDepartments.includes(`${p.course}::${d}`) || assignedDepartments.includes(d))
         })).filter(p => p.departments.length > 0);
   }, [adminRole, programs, assignedDepartments]);
+
+  const filterOptions = React.useMemo(() => {
+    const opts = ['All'];
+    availablePrograms.forEach(p => {
+      p.departments.forEach(d => {
+        opts.push(`${p.course}::${d}`);
+      });
+    });
+    return opts;
+  }, [availablePrograms]);
 
   React.useEffect(() => {
     if (editingSubjectCode) return;
@@ -131,13 +142,29 @@ export default function AdminSubjects() {
   };
 
   const displayedSubjects = subjects.filter(s => {
-    if (adminRole === 'superadmin') return true;
-    if (!s.departments || s.departments.length === 0) return true; // Legacy global subjects visible to all
-    return s.departments.some(d => {
-      const parts = d.split('::');
-      const deptName = parts.length > 1 ? parts[1] : d;
-      return assignedDepartments.includes(d) || assignedDepartments.includes(deptName);
-    });
+    let isVisible = false;
+    if (adminRole === 'superadmin') {
+      isVisible = true;
+    } else if (!s.departments || s.departments.length === 0) {
+      isVisible = true; // Legacy global subjects visible to all
+    } else {
+      isVisible = s.departments.some(d => {
+        const parts = d.split('::');
+        const deptName = parts.length > 1 ? parts[1] : d;
+        return assignedDepartments.includes(d) || assignedDepartments.includes(deptName);
+      });
+    }
+
+    if (!isVisible) return false;
+
+    if (departmentFilter !== 'All') {
+      if (!s.departments || s.departments.length === 0) {
+        return false;
+      }
+      return s.departments.includes(departmentFilter);
+    }
+
+    return true;
   });
 
   const handleRemoveSubject = async (code: string) => {
@@ -257,8 +284,22 @@ export default function AdminSubjects() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="font-semibold text-gray-900">Existing Subjects ({displayedSubjects.length})</h3>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 whitespace-nowrap">Filter by Department:</span>
+            <Select 
+              value={departmentFilter} 
+              onChange={(e) => setDepartmentFilter(e.target.value)}
+              className="w-full sm:w-64"
+            >
+              <option value="All">All Departments</option>
+              {filterOptions.filter(o => o !== 'All').map(o => {
+                const label = o.includes('::') ? o.split('::').join(' - ') : o;
+                return <option key={o} value={o}>{label}</option>
+              })}
+            </Select>
+          </div>
         </div>
         {displayedSubjects.length > 0 ? (
           <div className="overflow-x-auto">
@@ -319,7 +360,9 @@ export default function AdminSubjects() {
           </div>
         ) : (
           <div className="p-8 text-center text-gray-500">
-            No subjects added yet. Add your first subject above.
+            {departmentFilter !== 'All' 
+               ? 'No subjects match the selected department filter.' 
+               : 'No subjects added yet. Add your first subject above.'}
           </div>
         )}
       </div>
