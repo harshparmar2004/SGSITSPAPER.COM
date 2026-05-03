@@ -43,17 +43,15 @@ function Navbar() {
 
           <div className="flex-1 flex justify-center h-full items-center absolute inset-0 pointer-events-none">
             {isAdmin && user && (
-              <div className="hidden md:flex flex-col items-center pointer-events-auto">
-                 <div className="flex items-center space-x-2">
-                   <div className="bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-md text-xs font-semibold border border-indigo-100">
-                     {adminRole === 'superadmin' ? 'Super Admin' : 'Department Admin'}
+              <div className="hidden md:flex items-center justify-center pointer-events-auto px-4 w-full h-full">
+                 {adminRole === 'superadmin' ? (
+                   <div className="bg-indigo-50 text-indigo-800 px-3 py-1 rounded-md text-sm font-bold border border-indigo-200 shadow-sm">
+                     Super Admin
                    </div>
-                   <span className="text-gray-500 text-sm font-medium">{user.email}</span>
-                 </div>
-                 {adminRole === 'department' && assignedDepartments.length > 0 && (
-                   <div className="flex gap-1.5 mt-1">
+                 ) : adminRole === 'department' && assignedDepartments.length > 0 && (
+                   <div className="flex gap-2 justify-center flex-wrap max-h-full overflow-hidden items-center py-1">
                      {assignedDepartments.map(dept => (
-                       <span key={dept} className="bg-indigo-50 text-indigo-700 text-[11px] font-medium px-2 py-0.5 rounded border border-indigo-100">
+                       <span key={dept} className="bg-indigo-50 text-indigo-800 text-sm font-bold px-3 py-1 rounded-md border border-indigo-200 shadow-sm truncate max-w-xs">
                          {dept.includes('::') ? dept.split('::').join(' - ') : dept} Department
                        </span>
                      ))}
@@ -63,12 +61,12 @@ function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center space-x-4 w-1/4 justify-end">
+          <div className="flex items-center space-x-4 w-1/4 justify-end relative z-10">
             {user ? (
               <>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 hidden sm:flex">
-                  {user.photoURL && <img src={user.photoURL} alt="Avatar" className="w-6 h-6 rounded-full" />}
-                  {(!isAdmin || !user) && <span>{user.email}</span>}
+                <div className="flex items-center space-x-2 text-sm text-gray-600 hidden sm:flex truncate flex-shrink">
+                  {user.photoURL && <img src={user.photoURL} alt="Avatar" className="w-6 h-6 rounded-full flex-shrink-0" />}
+                  <span className="truncate">{user.email}</span>
                 </div>
                 {isAdmin && location.pathname !== '/admin' && !location.pathname.startsWith('/admin/') && (
                   <Link to="/admin">
