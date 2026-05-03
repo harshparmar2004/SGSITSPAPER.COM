@@ -104,6 +104,7 @@ function Navbar() {
 export default function App() {
   const location = useLocation();
   const isLanding = location.pathname === '/';
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <div className={`min-h-screen flex flex-col font-sans ${isLanding ? 'bg-[#020617] text-slate-50' : 'bg-gray-50 text-gray-900'}`}>
@@ -134,7 +135,7 @@ export default function App() {
           </Route>
         </Routes>
       </div>
-      {!isLanding && (
+      {!isLanding && !isAdminRoute && (
         <footer className="border-t bg-white py-6 mt-auto">
           <div className="max-w-7xl mx-auto px-4 flex justify-between items-center text-sm text-gray-500">
             <p>© {new Date().getFullYear()} SGSITS PYQ Resource Hub. Designed for students.</p>
