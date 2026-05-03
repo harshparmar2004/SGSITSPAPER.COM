@@ -34,10 +34,10 @@ function Navbar() {
     <nav className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm relative">
       <div className="mx-auto max-w-full px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between items-center relative">
-          <div className="flex w-1/4">
-            <Link to={getHomeLink()} className="flex items-center space-x-2 text-indigo-600 font-bold text-xl hover:opacity-90 transition-opacity">
-              <FileText className="w-6 h-6" />
-              <span className="block sm:hidden lg:block">SGSITS PYQs</span>
+          <div className="flex shrink-0 z-10">
+            <Link to={getHomeLink()} className="flex items-center space-x-1.5 md:space-x-2 text-indigo-600 font-bold text-lg md:text-xl hover:opacity-90 transition-opacity">
+              <FileText className="w-5 h-5 md:w-6 md:h-6 shrink-0" />
+              <span className="block shrink-0">SGSITS PYQs</span>
             </Link>
           </div>
 
@@ -61,11 +61,11 @@ function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center space-x-4 w-1/4 justify-end relative z-10">
+          <div className="flex items-center space-x-2 md:space-x-4 shrink-0 justify-end relative z-10">
             {user ? (
               <>
-                <div className="flex items-center space-x-2 text-sm text-gray-600 hidden sm:flex truncate flex-shrink">
-                  {user.photoURL && <img src={user.photoURL} alt="Avatar" className="w-6 h-6 rounded-full flex-shrink-0" />}
+                <div className="flex items-center space-x-2 text-xs md:text-sm text-gray-600 hidden sm:flex truncate flex-shrink">
+                  {user.photoURL && <img src={user.photoURL} alt="Avatar" className="w-5 h-5 md:w-6 md:h-6 rounded-full flex-shrink-0" />}
                   <span className="truncate">{user.email}</span>
                 </div>
                 {isAdmin && location.pathname !== '/admin' && !location.pathname.startsWith('/admin/') && (

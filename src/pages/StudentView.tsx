@@ -223,35 +223,35 @@ export default function StudentView() {
 
   return (
     <div className="space-y-6">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome, {studentName}! 👋</h1>
-          <p className="mt-2 text-lg text-gray-600">Find and download previous year question papers and handwritten notes instantly.</p>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 leading-tight">Welcome, {studentName}! 👋</h1>
+          <p className="mt-2 text-base md:text-lg text-gray-600">Find and download previous year question papers and handwritten notes instantly.</p>
         </div>
       </div>
 
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg w-full max-w-2xl mb-6">
+      <div className="grid grid-cols-2 sm:flex sm:flex-row bg-gray-100 p-1 rounded-lg w-full max-w-3xl mb-6 gap-1">
         <button
           onClick={() => setActiveTab('PYQ')}
-          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Previous Year Questions
         </button>
         <button
           onClick={() => setActiveTab('Notes')}
-          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Notes' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Notes' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Handwritten Notes
         </button>
         <button
           onClick={() => setActiveTab('Syllabus')}
-          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Syllabus' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Syllabus' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Course Syllabus
         </button>
         <button
           onClick={() => setActiveTab('Lab Manual')}
-          className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'Lab Manual' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Lab Manual' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Lab Manuals
         </button>
