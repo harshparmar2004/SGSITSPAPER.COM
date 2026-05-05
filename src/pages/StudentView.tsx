@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs, limit, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { PYQ, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
@@ -100,7 +100,7 @@ export default function StudentView() {
           course: pyq.course || 'B.Tech',
           subjectCode: pyq.subjectCode,
           subjectName: pyq.subjectName,
-          examType: pyq.examType,
+          examType: pyq.examType || pyq.documentType || 'Unknown',
           downloadedAt: serverTimestamp()
         });
       } catch (err) {
@@ -158,7 +158,7 @@ export default function StudentView() {
           course: pyq.course || 'B.Tech',
           subjectCode: pyq.subjectCode,
           subjectName: pyq.subjectName,
-          examType: pyq.examType,
+          examType: pyq.examType || pyq.documentType || 'Unknown',
           downloadedAt: serverTimestamp()
         })
       );

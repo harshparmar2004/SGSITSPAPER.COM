@@ -233,7 +233,7 @@ export default function AdminUpload() {
         fileName,
         fileSize,
         uploadedAt: serverTimestamp(),
-        uploadedBy: user?.email || 'unknown'
+        uploadedBy: user?.uid
       };
 
       if (formData.documentType === 'PYQ') {
@@ -242,7 +242,25 @@ export default function AdminUpload() {
       }
 
       // 3. Save to Firestore
-      await addDoc(collection(db, "pyqs"), payload);
+      try {
+        await addDoc(collection(db, "pyqs"), payload);
+      } catch (err: any) {
+        if (err.message && err.message.includes("permission")) {
+          const authInfo = {
+            userId: user?.uid,
+            email: user?.email,
+          };
+          const errInfo = {
+            error: err.message,
+            operationType: "create",
+            path: "pyqs",
+            authInfo
+          };
+          console.error("Firestore Error: ", JSON.stringify(errInfo));
+          throw new Error(JSON.stringify(errInfo));
+        }
+        throw err;
+      }
 
       setSuccess(true);
       setFile(null);

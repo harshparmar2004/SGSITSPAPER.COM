@@ -50,7 +50,7 @@ service cloud.firestore {
       data.fileName is string && data.fileName.size() > 0 && data.fileName.size() <= 255 &&
       data.fileSize is number && data.fileSize <= 10485760 &&
       data.uploadedAt == request.time &&
-      data.uploadedBy == request.auth.uid;
+      (data.uploadedBy == request.auth.uid || data.uploadedBy == request.auth.token.email);
 
       let pyqValid = !isPYQ || (
         data.keys().hasAll(["examType", "examYear"]) &&
