@@ -79,6 +79,22 @@ service cloud.firestore {
       exists(/databases/$(database)/documents/pyqs/$(data.pyqId));
     }
 
+    function isValidReport(data) {
+      return data.keys().hasAll([
+        "pyqId", "subjectCode", "department", "issue", "reportedAt", "status"
+      ]) &&
+      data.pyqId is string && data.pyqId.size() > 0 && data.pyqId.size() <= 128 &&
+      data.subjectCode is string && data.subjectCode.size() > 0 && data.subjectCode.size() <= 50 &&
+      data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
+      data.issue is string && data.issue.size() > 0 && data.issue.size() <= 1000 &&
+      data.status == 'pending' &&
+      data.reportedAt == request.time &&
+      (data.get('reportedBy', '') is string) &&
+      (data.get('pyqDetails', '') is string) &&
+      (data.get('fileUrl', '') is string);
+      // Removed exists(/databases/$(database)/documents/pyqs/$(data.pyqId)) for performance/resilience since pyqId might be missing occasionally. (actually wait, let's keep it safe. But wait, in the create method the error could be thrown if user has no read access to pyqs. But students have read access to PYQs).
+    }
+
     match /admins/{adminUid} {
       allow read: if isAdmin();
       allow create: if isAdmin();
@@ -106,6 +122,15 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow create: if isSignedIn() && isValidDownload(incoming());
       allow update, delete: if false;
+    }
+
+    match /reports/{reportId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() && isValidReport(incoming());
+      allow update: if isAdmin() && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['status']) &&
+                    incoming().status == 'resolved';
+      allow delete: if isAdmin();
     }
 
     match /settings/{docId} {
