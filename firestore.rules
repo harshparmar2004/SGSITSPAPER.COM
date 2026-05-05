@@ -81,12 +81,16 @@ service cloud.firestore {
 
     function isValidReport(data) {
       return data.keys().hasAll([
-        "pyqId", "subjectCode", "department", "issue", "reportedAt", "status"
+        "pyqId", "subjectCode", "department", "issue", "issueCategory", "reporterName", "reporterBranch", "reporterId", "reportedAt", "status"
       ]) &&
       data.pyqId is string && data.pyqId.size() > 0 && data.pyqId.size() <= 128 &&
       data.subjectCode is string && data.subjectCode.size() > 0 && data.subjectCode.size() <= 50 &&
       data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
       data.issue is string && data.issue.size() > 0 && data.issue.size() <= 1000 &&
+      data.issueCategory is string && data.issueCategory.size() > 0 && data.issueCategory.size() <= 100 &&
+      data.reporterName is string && data.reporterName.size() > 0 && data.reporterName.size() <= 100 &&
+      data.reporterBranch is string && data.reporterBranch.size() > 0 && data.reporterBranch.size() <= 100 &&
+      data.reporterId is string && data.reporterId.size() > 0 && data.reporterId.size() <= 50 &&
       data.status == 'pending' &&
       data.reportedAt == request.time &&
       (data.get('reportedBy', '') is string) &&

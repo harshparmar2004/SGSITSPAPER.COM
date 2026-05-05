@@ -84,6 +84,13 @@ export default function AdminReports() {
                      {report.status === 'pending' ? <Clock className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
                   </div>
                   <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      {report.issueCategory && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                          {report.issueCategory}
+                        </span>
+                      )}
+                    </div>
                     <h3 className="text-sm font-bold text-gray-900">{report.issue}</h3>
                     {report.pyqDetails && (
                       <div className="mt-1 flex items-center space-x-2 text-xs text-gray-700">
@@ -98,6 +105,13 @@ export default function AdminReports() {
                         )}
                       </div>
                     )}
+                    {(report.reporterName || report.reporterId || report.reporterBranch) && (
+                      <div className="mt-1 flex items-center flex-wrap gap-2 text-xs text-gray-600">
+                        <span>Student: <span className="font-medium text-gray-900">{report.reporterName || 'Unknown'}</span></span>
+                        {report.reporterId && <span>({report.reporterId})</span>}
+                        {report.reporterBranch && <span>• <span>{report.reporterBranch}</span></span>}
+                      </div>
+                    )}
                     <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
                        <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{report.subjectCode}</span>
                        <span>•</span>
@@ -105,7 +119,7 @@ export default function AdminReports() {
                        {report.reportedBy && (
                          <>
                            <span>•</span>
-                           <span>By: {report.reportedBy}</span>
+                           <span>Account: {report.reportedBy}</span>
                          </>
                        )}
                     </div>

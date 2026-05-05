@@ -4,9 +4,13 @@ export interface Report {
   subjectCode: string;
   department: string;
   issue: string; // The text of the report
+  issueCategory: string; // E.g., Broken Link, Wrong Info, Inappropriate Content, Other
   reportedAt: any; // Firestore Timestamp
   status: 'pending' | 'resolved';
   reportedBy?: string;
+  reporterName: string;
+  reporterBranch: string;
+  reporterId: string; // College ID
   pyqDetails?: string; // Optional field to store context about the PYQ
   fileUrl?: string; // Optional file URL for admin to view
 }

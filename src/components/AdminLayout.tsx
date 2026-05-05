@@ -1,10 +1,33 @@
+import { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router';
 import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack, Activity, BookOpen } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { Report } from '../types';
 
 export default function AdminLayout() {
-  const { isAdmin, adminRole, loginLoading } = useAuth();
+  const { isAdmin, adminRole, assignedDepartments, loginLoading } = useAuth();
+  const [pendingReportsCount, setPendingReportsCount] = useState(0);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const q = query(collection(db, "reports"), where("status", "==", "pending"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const reports = snapshot.docs.map(doc => doc.data() as Report);
+      const filteredReports = reports.filter(r => {
+        if (adminRole === 'superadmin') return true;
+        return assignedDepartments.includes(r.department);
+      });
+      setPendingReportsCount(filteredReports.length);
+    }, (error) => {
+      console.error("Error fetching reports count:", error);
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin, adminRole, assignedDepartments]);
 
   if (loginLoading) {
     return (
@@ -31,7 +54,7 @@ export default function AdminLayout() {
     { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false, showForAuth: true },
     { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' }, // 3
     { name: 'Manage Staff', path: '/admin/staff', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },
-    { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: true }, // 5
+    { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: true, badgeCount: pendingReportsCount }, // 5
     { name: 'Activity Log', path: '/admin/activity', icon: Activity, exact: false, showForAuth: true },
   ].filter(item => item.showForAuth);
 
@@ -51,15 +74,22 @@ export default function AdminLayout() {
               to={item.path}
               end={item.exact}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                `flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                   isActive
                     ? 'bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-100'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`
               }
             >
-              <item.icon className="w-4 h-4 shrink-0" />
-              <span className="truncate">{item.name}</span>
+              <div className="flex items-center gap-3 truncate">
+                <item.icon className="w-4 h-4 shrink-0" />
+                <span className="truncate">{item.name}</span>
+              </div>
+              {item.badgeCount ? (
+                <span className="inline-flex items-center justify-center w-5 h-5 ml-2 text-[10px] font-bold text-white bg-red-500 rounded-full shrink-0 animate-in fade-in zoom-in">
+                  {item.badgeCount > 99 ? '99+' : item.badgeCount}
+                </span>
+              ) : null}
             </NavLink>
           ))}
         </nav>

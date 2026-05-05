@@ -28,6 +28,10 @@ export default function StudentView() {
   // Report Modal State
   const [reportingPyq, setReportingPyq] = useState<PYQ | null>(null);
   const [reportIssue, setReportIssue] = useState('');
+  const [reportCategory, setReportCategory] = useState('Broken Link');
+  const [reporterName, setReporterName] = useState('');
+  const [reporterBranch, setReporterBranch] = useState('');
+  const [reporterId, setReporterId] = useState('');
   const [submittingReport, setSubmittingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes' | 'Syllabus' | 'Lab Manual'>('PYQ');
@@ -219,7 +223,7 @@ export default function StudentView() {
 
   const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reportingPyq || !reportIssue.trim() || !user) return;
+    if (!reportingPyq || !reportIssue.trim() || !user || !reporterName.trim() || !reporterBranch.trim() || !reporterId.trim()) return;
     
     setSubmittingReport(true);
     try {
@@ -228,6 +232,10 @@ export default function StudentView() {
         subjectCode: reportingPyq.subjectCode,
         department: reportingPyq.department,
         issue: reportIssue.trim(),
+        issueCategory: reportCategory,
+        reporterName: reporterName.trim(),
+        reporterBranch: reporterBranch.trim(),
+        reporterId: reporterId.trim(),
         reportedAt: serverTimestamp(),
         status: 'pending',
         reportedBy: user.email || user.uid,
@@ -239,6 +247,10 @@ export default function StudentView() {
         setReportingPyq(null);
         setReportSuccess(false);
         setReportIssue('');
+        setReportCategory('Broken Link');
+        setReporterName('');
+        setReporterBranch('');
+        setReporterId('');
       }, 2000);
     } catch (err) {
       console.error("Error submitting report", err);
@@ -495,11 +507,66 @@ export default function StudentView() {
                       Resource: <span className="font-semibold text-gray-900">{reportingPyq.subjectName} ({reportingPyq.subjectCode})</span>
                     </label>
                   </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
+                      <input 
+                        type="text"
+                        required
+                        value={reporterName}
+                        onChange={(e) => setReporterName(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">College ID / Reg No *</label>
+                      <input 
+                        type="text"
+                        required
+                        value={reporterId}
+                        onChange={(e) => setReporterId(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        placeholder="0801CS201..."
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Branch/Dept *</label>
+                      <input 
+                        type="text"
+                        required
+                        value={reporterBranch}
+                        onChange={(e) => setReporterBranch(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        placeholder="Computer Science"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Issue Category *</label>
+                      <select
+                        required
+                        value={reportCategory}
+                        onChange={(e) => setReportCategory(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                      >
+                        <option value="Broken Link">Broken Link / PDF</option>
+                        <option value="Wrong Info">Wrong Information</option>
+                        <option value="Missing Pages">Missing Pages</option>
+                        <option value="Inappropriate Content">Inappropriate Content</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Describe the issue *</label>
                     <textarea 
                       required
-                      rows={4}
+                      rows={3}
                       value={reportIssue}
                       onChange={(e) => setReportIssue(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
@@ -518,7 +585,7 @@ export default function StudentView() {
                     <Button 
                       type="submit" 
                       className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                      disabled={submittingReport || !reportIssue.trim()}
+                      disabled={submittingReport || !reportIssue.trim() || !reporterName.trim() || !reporterBranch.trim() || !reporterId.trim()}
                     >
                       {submittingReport ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                       {submittingReport ? 'Submitting...' : 'Submit Report'}
