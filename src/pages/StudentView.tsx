@@ -409,6 +409,7 @@ export default function StudentView() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Title / Code</th>
                   <th className="px-6 py-4">Program / Sem</th>
                   <th className="px-6 py-4">Department</th>
@@ -417,8 +418,9 @@ export default function StudentView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredPyqs.map((pyq) => (
+                {filteredPyqs.map((pyq, index) => (
                   <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-6 py-4 max-w-xs truncate">
                       <div className="font-semibold text-gray-900 truncate" title={pyq.subjectName}>{pyq.subjectName}</div>
                       <div className="text-gray-500 text-xs font-mono mt-0.5">{pyq.subjectCode}</div>
