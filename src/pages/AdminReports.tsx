@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Trash2, ShieldAlert } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { collection, query, getDocs, orderBy, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, doc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Report } from '../types';
 
@@ -9,6 +9,7 @@ export default function AdminReports() {
   const { adminRole, assignedDepartments } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -36,6 +37,43 @@ export default function AdminReports() {
         console.error("Error marking as resolved", err);
         alert("Failed to mark report as resolved.");
      }
+  };
+
+  const handleDeleteReport = async (reportId: string) => {
+      if (!window.confirm("Are you sure you want to delete this report? This cannot be undone.")) return;
+      try {
+          await deleteDoc(doc(db, "reports", reportId));
+          setReports(prev => prev.filter(r => r.id !== reportId));
+      } catch (err) {
+          console.error("Error deleting report", err);
+          alert("Failed to delete report.");
+      }
+  };
+
+  const handleDeleteAllResolved = async (filteredReports: Report[]) => {
+      const resolvedReports = filteredReports.filter(r => r.status === 'resolved');
+      if (resolvedReports.length === 0) {
+          alert("No resolved reports to delete.");
+          return;
+      }
+      if (!window.confirm(`Are you sure you want to delete all ${resolvedReports.length} resolved report(s)? This cannot be undone.`)) return;
+      
+      setIsDeleting(true);
+      try {
+          const batch = writeBatch(db);
+          resolvedReports.forEach(report => {
+              if (report.id) {
+                  batch.delete(doc(db, "reports", report.id));
+              }
+          });
+          await batch.commit();
+          setReports(prev => prev.filter(r => !resolvedReports.find(rr => rr.id === r.id)));
+      } catch (err) {
+          console.error("Error batch deleting reports", err);
+          alert("Failed to delete all resolved reports.");
+      } finally {
+          setIsDeleting(false);
+      }
   };
 
   const filteredReports = reports.filter(r => {
@@ -112,6 +150,16 @@ export default function AdminReports() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">All Reports Log</h2>
+          {filteredReports.filter(r => r.status === 'resolved').length > 0 && adminRole === 'superadmin' && (
+             <button 
+                 onClick={() => handleDeleteAllResolved(filteredReports)}
+                 disabled={isDeleting}
+                 className="flex items-center gap-2 text-xs font-semibold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 border border-red-100 px-3 py-1.5 rounded transition-colors disabled:opacity-50"
+             >
+                 <Trash2 className="w-3.5 h-3.5" />
+                 {isDeleting ? 'Deleting...' : 'Delete All Resolved'}
+             </button>
+          )}
         </div>
         
         <div className="overflow-x-auto">
@@ -174,11 +222,22 @@ export default function AdminReports() {
                     </div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-right">
-                    {report.status === 'pending' && (
-                      <button onClick={() => handleMarkResolved(report.id!)} className="text-xs font-semibold text-indigo-700 hover:text-white bg-indigo-50 hover:bg-indigo-600 border border-indigo-100 px-3 py-1.5 rounded transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Resolve
-                      </button>
-                    )}
+                    <div className="flex items-center justify-end gap-2">
+                       {report.status === 'pending' && (
+                         <button onClick={() => handleMarkResolved(report.id!)} className="text-xs font-semibold text-indigo-700 hover:text-white bg-indigo-50 hover:bg-indigo-600 border border-indigo-100 px-3 py-1.5 rounded transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                           Resolve
+                         </button>
+                       )}
+                       {adminRole === 'superadmin' && (
+                         <button 
+                           onClick={() => handleDeleteReport(report.id!)}
+                           className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                           title="Delete Report"
+                         >
+                            <Trash2 className="w-4 h-4" />
+                         </button>
+                       )}
+                    </div>
                   </td>
                 </tr>
               ))}
