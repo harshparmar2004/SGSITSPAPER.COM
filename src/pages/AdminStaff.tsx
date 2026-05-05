@@ -264,6 +264,7 @@ export default function AdminStaff() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Name & Email</th>
                   <th className="px-6 py-4">Role</th>
                   <th className="px-6 py-4">Assigned Departments</th>
@@ -271,8 +272,9 @@ export default function AdminStaff() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {admins.map(admin => (
+                {admins.map((admin, index) => (
                   <tr key={admin.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-6 py-4">
                       {admin.name && <div className="font-medium text-gray-900">{admin.name}</div>}
                       <div className={`text-gray-600 ${admin.name ? 'text-xs mt-0.5' : 'font-medium text-gray-900'}`}>{admin.email}</div>

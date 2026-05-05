@@ -215,6 +215,7 @@ export default function AdminMonthlyUploads() {
                  <table className="w-full text-left text-sm whitespace-nowrap">
                    <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                      <tr>
+                       <th className="px-6 py-4 w-16 text-center">S.No.</th>
                        <th className="px-6 py-4">Document Details</th>
                        <th className="px-6 py-4">Department</th>
                        <th className="px-6 py-4">Uploaded By</th>
@@ -222,8 +223,9 @@ export default function AdminMonthlyUploads() {
                      </tr>
                    </thead>
                    <tbody className="divide-y divide-gray-100">
-                     {filteredUploads.map((record) => (
+                     {filteredUploads.map((record, index) => (
                        <tr key={record.id} className="hover:bg-gray-50/50 transition-colors">
+                         <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                          <td className="px-6 py-4">
                            <div className="flex items-center gap-3">
                              <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">

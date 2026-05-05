@@ -130,6 +130,7 @@ export default function AdminActivity() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Action Done By</th>
                   <th className="px-6 py-4">Target Document</th>
                   <th className="px-6 py-4">Department Addressed</th>
@@ -137,9 +138,10 @@ export default function AdminActivity() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {myHistory.map((pyq) => {
+                {myHistory.map((pyq, index) => {
                   return (
                     <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                            <div className={`w-8 h-8 rounded flex items-center justify-center font-bold text-xs uppercase ${adminRole ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>
@@ -195,6 +197,7 @@ export default function AdminActivity() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Action Done By</th>
                   <th className="px-6 py-4">Target Document</th>
                   <th className="px-6 py-4">Department Addressed</th>
@@ -202,7 +205,7 @@ export default function AdminActivity() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {staffHistory.map((pyq) => {
+                {staffHistory.map((pyq, index) => {
                   const staffMatch = admins.find(a => a.email?.toLowerCase() === pyq.uploadedBy?.toLowerCase() || a.id === pyq.uploadedBy);
                   let displayName = staffMatch?.name || 'Unknown User';
                   
@@ -220,6 +223,7 @@ export default function AdminActivity() {
                   
                   return (
                     <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                            <div className={'w-8 h-8 rounded flex items-center justify-center font-bold text-xs uppercase bg-purple-100 text-purple-700'}>
@@ -275,6 +279,7 @@ export default function AdminActivity() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Action Done By</th>
                   <th className="px-6 py-4">Target Document</th>
                   <th className="px-6 py-4">Department Addressed</th>
@@ -282,9 +287,10 @@ export default function AdminActivity() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {studentHistory.map((pyq) => {
+                {studentHistory.map((pyq, index) => {
                   return (
                     <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                            <div className={'w-8 h-8 rounded flex items-center justify-center font-bold text-xs uppercase bg-gray-100 text-gray-600'}>

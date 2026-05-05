@@ -166,6 +166,7 @@ export default function AdminReports() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th scope="col" className="px-4 py-3 w-16 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">S.No.</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Issue Description</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Target Resource</th>
@@ -176,10 +177,11 @@ export default function AdminReports() {
             <tbody className="bg-white divide-y divide-gray-100">
               {filteredReports.length === 0 ? (
                  <tr>
-                   <td colSpan={5} className="px-6 py-12 text-center text-gray-500">No reports found for your departments.</td>
+                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500">No reports found for your departments.</td>
                  </tr>
-              ) : filteredReports.map((report) => (
+              ) : filteredReports.map((report, index) => (
                 <tr key={report.id} className={`hover:bg-gray-50/50 transition-colors ${report.status === 'resolved' ? 'opacity-60 bg-gray-50' : ''}`}>
+                  <td className="px-4 py-4 text-center text-gray-500 font-medium whitespace-nowrap">{index + 1}</td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                        <div className={`p-1.5 rounded-full shrink-0 ${report.status === 'pending' ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-600'}`}>

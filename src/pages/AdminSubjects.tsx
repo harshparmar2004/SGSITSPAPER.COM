@@ -306,6 +306,7 @@ export default function AdminSubjects() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Subject Code</th>
                   <th className="px-6 py-4">Subject Name</th>
                   <th className="px-6 py-4">Year / Sem</th>
@@ -314,8 +315,9 @@ export default function AdminSubjects() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {displayedSubjects.map((sub) => (
+                {displayedSubjects.map((sub, index) => (
                   <tr key={sub.code} className={`hover:bg-gray-50/50 transition-colors ${editingSubjectCode === sub.code ? 'bg-indigo-50/30' : ''}`}>
+                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-6 py-4 font-mono font-medium text-indigo-600">{sub.code}</td>
                     <td className="px-6 py-4 text-gray-900">{sub.name}</td>
                     <td className="px-6 py-4 text-gray-500">{sub.year || '-'} / {sub.semester || '-'}</td>

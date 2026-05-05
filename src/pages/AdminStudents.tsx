@@ -112,14 +112,16 @@ export default function AdminStudents() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Student Profile</th>
                   <th className="px-6 py-4">Contact</th>
                   <th className="px-6 py-4">Last Active</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredUsers.map((u) => (
+                {filteredUsers.map((u, index) => (
                   <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-3">
                         {u.photoURL ? (

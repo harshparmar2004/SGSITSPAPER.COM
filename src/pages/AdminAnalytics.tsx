@@ -190,6 +190,7 @@ export default function AdminAnalytics() {
                <table className="w-full text-left text-sm whitespace-nowrap">
                  <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                    <tr>
+                     <th className="px-6 py-3 w-16 text-center">S.No.</th>
                      <th className="px-6 py-3">Paper Details</th>
                      <th className="px-6 py-3">Department</th>
                      <th className="px-6 py-3">Type</th>
@@ -199,6 +200,7 @@ export default function AdminAnalytics() {
                  <tbody className="divide-y divide-gray-100">
                    {topPapers.map((p, i) => (
                      <tr key={i} className="hover:bg-gray-50/50 transition-colors">
+                       <td className="px-6 py-3 text-center text-gray-500 font-medium">{i + 1}</td>
                        <td className="px-6 py-3">
                          <div className="font-semibold text-gray-900">{p.name}</div>
                          <div className="text-gray-500 text-xs font-mono mt-0.5">{p.code}</div>
@@ -213,7 +215,7 @@ export default function AdminAnalytics() {
                      </tr>
                    ))}
                    {topPapers.length === 0 && (
-                      <tr><td colSpan={4} className="text-center py-8 text-gray-500">No downloads recorded yet.</td></tr>
+                      <tr><td colSpan={5} className="text-center py-8 text-gray-500">No downloads recorded yet.</td></tr>
                    )}
                  </tbody>
                </table>

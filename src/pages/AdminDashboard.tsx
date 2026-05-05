@@ -402,6 +402,7 @@ export default function AdminDashboard() {
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
+                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
                   <th className="px-6 py-4">Document Details</th>
                   <th className="px-6 py-4">Department & Semester</th>
                   <th className="px-6 py-4">Status & Type</th>
@@ -410,8 +411,9 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {recentPyqs.map((pyq) => (
+                {recentPyqs.map((pyq, index) => (
                   <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors group">
+                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-gray-900">{pyq.subjectCode}</div>
                       <div className="text-gray-500 text-xs mt-1 truncate max-w-[200px]" title={pyq.subjectName}>{pyq.subjectName}</div>
