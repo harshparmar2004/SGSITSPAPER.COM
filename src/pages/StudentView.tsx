@@ -3,7 +3,7 @@ import { collection, query, getDocs, limit, orderBy, addDoc, serverTimestamp } f
 import { db } from '../lib/firebase';
 import { PYQ, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from '../types';
 import { Button, Input, Select } from '../components/ui';
-import { ExternalLink, Loader2, FileDown, DownloadCloud, Search, Download } from 'lucide-react';
+import { ExternalLink, Loader2, FileDown, DownloadCloud, Search, Download, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 import { Navigate } from 'react-router';
@@ -24,6 +24,12 @@ export default function StudentView() {
   const [subjectName, setSubjectName] = useState('');
   const [examType, setExamType] = useState('');
   const [section, setSection] = useState('');
+  
+  // Report Modal State
+  const [reportingPyq, setReportingPyq] = useState<PYQ | null>(null);
+  const [reportIssue, setReportIssue] = useState('');
+  const [submittingReport, setSubmittingReport] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<'PYQ' | 'Notes' | 'Syllabus' | 'Lab Manual'>('PYQ');
 
   const { programs, loading: configLoading } = useAcademicConfig();
@@ -209,6 +215,36 @@ export default function StudentView() {
     }
     
     setDownloadingZip(false);
+  };
+
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportingPyq || !reportIssue.trim() || !user) return;
+    
+    setSubmittingReport(true);
+    try {
+      await addDoc(collection(db, "reports"), {
+        pyqId: reportingPyq.id || '',
+        subjectCode: reportingPyq.subjectCode,
+        department: reportingPyq.department,
+        issue: reportIssue.trim(),
+        reportedAt: serverTimestamp(),
+        status: 'pending',
+        reportedBy: user.email || user.uid,
+        pyqDetails: reportingPyq.documentType === 'PYQ' ? `${reportingPyq.subjectName} (${reportingPyq.examType} ${reportingPyq.examYear})` : `${reportingPyq.subjectName} (${reportingPyq.documentType || 'Document'})`,
+        fileUrl: reportingPyq.fileUrl || ''
+      });
+      setReportSuccess(true);
+      setTimeout(() => {
+        setReportingPyq(null);
+        setReportSuccess(false);
+        setReportIssue('');
+      }, 2000);
+    } catch (err) {
+      console.error("Error submitting report", err);
+      alert("Failed to submit report. Please try again.");
+    }
+    setSubmittingReport(false);
   };
 
   if (loginLoading) {
@@ -406,10 +442,16 @@ export default function StudentView() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download ZIP</span>
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="outline" size="sm" onClick={() => { setReportingPyq(pyq); setReportSuccess(false); setReportIssue(''); }} className="hidden sm:flex space-x-1.5 shadow-sm text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                          <span>Report</span>
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Download ZIP</span>
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -418,6 +460,76 @@ export default function StudentView() {
           </div>
         )}
       </div>
+
+      {/* Report Modal */}
+      {reportingPyq && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+            <div className="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+              <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-amber-500" />
+                Report Issue
+              </h3>
+              <button 
+                onClick={() => setReportingPyq(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={submittingReport || reportSuccess}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-5">
+              {reportSuccess ? (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-3">
+                    ✓
+                  </div>
+                  <h4 className="text-lg font-medium text-gray-900">Report Submitted</h4>
+                  <p className="text-sm text-gray-500 mt-1">Thank you for helping us improve our resources.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleReportSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Resource: <span className="font-semibold text-gray-900">{reportingPyq.subjectName} ({reportingPyq.subjectCode})</span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Describe the issue *</label>
+                    <textarea 
+                      required
+                      rows={4}
+                      value={reportIssue}
+                      onChange={(e) => setReportIssue(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                      placeholder="e.g. Missing page 4, Wrong semester marked, Broken link..."
+                    />
+                  </div>
+                  <div className="flex justify-end gap-3 pt-2">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setReportingPyq(null)}
+                      disabled={submittingReport}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                      disabled={submittingReport || !reportIssue.trim()}
+                    >
+                      {submittingReport ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                      {submittingReport ? 'Submitting...' : 'Submit Report'}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,3 +1,16 @@
+export interface Report {
+  id?: string;
+  pyqId: string;
+  subjectCode: string;
+  department: string;
+  issue: string; // The text of the report
+  reportedAt: any; // Firestore Timestamp
+  status: 'pending' | 'resolved';
+  reportedBy?: string;
+  pyqDetails?: string; // Optional field to store context about the PYQ
+  fileUrl?: string; // Optional file URL for admin to view
+}
+
 export interface PYQ {
   id?: string;
   department: string;

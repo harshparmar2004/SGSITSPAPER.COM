@@ -1,41 +1,51 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { collection, query, getDocs, orderBy, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
+import { Report } from '../types';
 
 export default function AdminReports() {
   const { adminRole, assignedDepartments } = useAuth();
-  // In a real app, these would come from Firestore
-  const [reports] = useState([
-    {
-      id: 'rep-1',
-      subjectCode: 'CS-402',
-      department: 'Computer Science',
-      issue: 'Broken PDF Link',
-      reportedAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-      status: 'pending'
-    },
-    {
-      id: 'rep-2',
-      subjectCode: 'EC-301',
-      department: 'Electronics',
-      issue: 'Wrong Semester marked (says 3rd, is actually 5th)',
-      reportedAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-      status: 'pending'
-    },
-    {
-      id: 'rep-3',
-      subjectCode: 'IT-201',
-      department: 'Information Technology',
-      issue: 'Missing page 4',
-      reportedAt: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 days ago
-      status: 'resolved'
-    }
-  ]);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true);
+      try {
+        const q = query(collection(db, "reports"), orderBy("reportedAt", "desc"));
+        const pyqSnap = await getDocs(q);
+        const allReports = pyqSnap.docs.map(d => ({ id: d.id, ...d.data() } as Report));
+        setReports(allReports);
+      } catch (err) {
+         console.error("Error fetching reports", err);
+      }
+      setLoading(false);
+    };
+    fetchReports();
+  }, []);
+
+  const handleMarkResolved = async (reportId: string) => {
+     try {
+       await updateDoc(doc(db, "reports", reportId), {
+         status: 'resolved'
+       });
+       setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'resolved' } : r));
+     } catch (err) {
+        console.error("Error marking as resolved", err);
+        alert("Failed to mark report as resolved.");
+     }
+  };
 
   const filteredReports = reports.filter(r => {
     if (adminRole === 'superadmin') return true;
     return assignedDepartments.some(d => d.includes(r.department));
   });
+
+  if (loading) {
+     return <div className="p-12 text-center text-gray-500">Loading reports...</div>;
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
@@ -75,15 +85,34 @@ export default function AdminReports() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-gray-900">{report.issue}</h3>
+                    {report.pyqDetails && (
+                      <div className="mt-1 flex items-center space-x-2 text-xs text-gray-700">
+                        <span>Resource: <span className="font-semibold">{report.pyqDetails}</span></span>
+                        {report.fileUrl && (
+                          <>
+                            <span>•</span>
+                            <a href={report.fileUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 hover:underline inline-flex items-center gap-1">
+                              View PDF
+                            </a>
+                          </>
+                        )}
+                      </div>
+                    )}
                     <div className="mt-1 flex items-center space-x-2 text-xs text-gray-500">
                        <span className="font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{report.subjectCode}</span>
                        <span>•</span>
-                       <span>Reported {report.reportedAt.toLocaleDateString()}</span>
+                       <span>Reported {report.reportedAt ? (typeof report.reportedAt === 'string' ? new Date(report.reportedAt).toLocaleDateString() : new Date(report.reportedAt.seconds * 1000).toLocaleDateString()) : 'Unknown Date'}</span>
+                       {report.reportedBy && (
+                         <>
+                           <span>•</span>
+                           <span>By: {report.reportedBy}</span>
+                         </>
+                       )}
                     </div>
                   </div>
                 </div>
                 {report.status === 'pending' && (
-                  <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-md transition-colors">
+                  <button onClick={() => handleMarkResolved(report.id!)} className="text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-md transition-colors">
                     Mark Resolved
                   </button>
                 )}
