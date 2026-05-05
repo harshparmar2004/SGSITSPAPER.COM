@@ -233,7 +233,7 @@ export default function AdminUpload() {
         fileName,
         fileSize,
         uploadedAt: serverTimestamp(),
-        uploadedBy: user?.uid || 'unknown'
+        uploadedBy: user?.email || 'unknown'
       };
 
       if (formData.documentType === 'PYQ') {
