@@ -19,7 +19,7 @@ export default function AdminLayout() {
       const reports = snapshot.docs.map(doc => doc.data() as Report);
       const filteredReports = reports.filter(r => {
         if (adminRole === 'superadmin') return true;
-        return assignedDepartments.includes(r.department);
+        return assignedDepartments.some(d => d.includes(r.department));
       });
       setPendingReportsCount(filteredReports.length);
     }, (error) => {
