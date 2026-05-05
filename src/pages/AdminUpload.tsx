@@ -276,22 +276,22 @@ export default function AdminUpload() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="mb-8">
+    <div className="max-w-4xl mx-auto space-y-3">
+      <div className="mb-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Upload Study Material</h1>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">Upload Study Material</h1>
         </div>
-        <p className="mt-2 text-lg text-gray-600">Fill in the metadata and upload a PDF. Max size 700KB.</p>
+        <p className="mt-1 text-[11px] text-gray-500">Fill in the metadata and upload a PDF. Max size 700KB.</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-        {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-md border border-red-200 text-sm">{error}</div>}
-        {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-md border border-green-200 text-sm">Upload successful! You can upload another.</div>}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+        {error && <div className="mb-3 p-2 bg-red-50 text-red-700 rounded-md border border-red-200 text-xs">{error}</div>}
+        {success && <div className="mb-3 p-2 bg-green-50 text-green-700 rounded-md border border-green-200 text-xs">Upload successful! You can upload another.</div>}
         
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2 mb-4">
-            <label className="text-sm font-medium text-gray-900 block">Document Type *</label>
-            <div className="flex gap-4">
+            <label className="text-xs font-medium text-gray-900 block">Document Type *</label>
+            <div className="flex gap-3">
               {DOCUMENT_TYPES.map(type => (
                 <label key={type} className="flex items-center gap-2">
                   <input
@@ -302,16 +302,16 @@ export default function AdminUpload() {
                     onChange={handleChange}
                     className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-xs text-gray-700">
                     {type === 'PYQ' ? 'Previous Year Question (PYQ)' : type === 'Notes' ? 'Handwritten Notes' : type === 'Syllabus' ? 'Course Syllabus' : type === 'Lab Manual' ? 'Lab Manual' : type}
                   </span>
                 </label>
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-2 md:col-span-2">
-              <label className="text-sm font-medium text-gray-900">Select Subject *</label>
+              <label className="text-xs font-medium text-gray-900">Select Subject *</label>
               {availableSubjects && availableSubjects.length > 0 ? (
                 <Select value={isCustomSubject ? 'custom' : (availableSubjects.some(s => s.code === formData.subjectCode) ? formData.subjectCode : '')} onChange={handleSubjectSelect} required={!isCustomSubject && formData.subjectCode === ''}>
                   <option value="">-- Choose from predefined subjects --</option>
@@ -323,7 +323,7 @@ export default function AdminUpload() {
                   <option value="custom">Other (Enter Manually)</option>
                 </Select>
               ) : (
-                <div className="text-sm text-gray-500 mb-2 italic">
+                <div className="text-[11px] text-gray-500 mb-2 italic">
                   No predefined subjects available for this department. Add them in the 'Manage Subjects' section, or create manually.
                 </div>
               )}
@@ -331,9 +331,9 @@ export default function AdminUpload() {
 
             {(isCustomSubject || availableSubjects.length === 0 || formData.subjectCode !== '') && (
               <div className="space-y-2 md:col-span-2">
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col md:flex-row gap-3">
                   <div className="flex-1 space-y-2">
-                    <label className="text-sm font-medium text-gray-900">Subject Code *</label>
+                    <label className="text-xs font-medium text-gray-900">Subject Code *</label>
                     <Input 
                       placeholder="e.g. CS101" 
                       name="subjectCode" 
@@ -344,7 +344,7 @@ export default function AdminUpload() {
                     />
                   </div>
                   <div className="flex-[2] space-y-2">
-                    <label className="text-sm font-medium text-gray-900">Subject Name *</label>
+                    <label className="text-xs font-medium text-gray-900">Subject Name *</label>
                     <Input 
                       placeholder="e.g. Data Structures" 
                       name="subjectName" 
@@ -359,14 +359,14 @@ export default function AdminUpload() {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Course *</label>
+              <label className="text-xs font-medium text-gray-900">Course *</label>
               <Select name="course" value={formData.course} onChange={handleCourseChange} required>
                 <option value="">Select Course/Program</option>
                 {availableCourses.map(c => <option key={c} value={c}>{c}</option>)}
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Department *</label>
+              <label className="text-xs font-medium text-gray-900">Department *</label>
               <Select name="department" value={formData.department} onChange={handleChange} required disabled={!formData.course}>
                 <option value="">{formData.course ? 'Select Department' : 'Select Course First'}</option>
                 {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
@@ -374,13 +374,13 @@ export default function AdminUpload() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Year *</label>
+              <label className="text-xs font-medium text-gray-900">Year *</label>
               <Select name="year" value={formData.year} onChange={handleChange} required>
                 {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
               </Select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Semester *</label>
+              <label className="text-xs font-medium text-gray-900">Semester *</label>
               <Select name="semester" value={formData.semester} onChange={handleChange} required>
                 {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
               </Select>
@@ -389,14 +389,14 @@ export default function AdminUpload() {
             {formData.documentType === 'PYQ' && (
               <>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Exam Type *</label>
+                  <label className="text-xs font-medium text-gray-900">Exam Type *</label>
                   <Select name="examType" value={formData.examType} onChange={handleChange} required={formData.documentType === 'PYQ'}>
                     {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
                   </Select>
                 </div>
-                <div className="space-y-2 flex gap-4">
+                <div className="space-y-2 flex gap-3">
                    <div className="flex-1 space-y-2">
-                     <label className="text-sm font-medium text-gray-900">Exam Year *</label>
+                     <label className="text-xs font-medium text-gray-900">Exam Year *</label>
                      <Input name="examYear" value={formData.examYear} onChange={handleChange} required={formData.documentType === 'PYQ'} />
                    </div>
                 </div>
@@ -404,14 +404,14 @@ export default function AdminUpload() {
             )}
             
             <div className={`space-y-2 ${formData.documentType !== 'PYQ' ? 'md:col-span-2' : ''}`}>
-              <label className="text-sm font-medium text-gray-900">Section (Optional)</label>
+              <label className="text-xs font-medium text-gray-900">Section (Optional)</label>
               <Input placeholder="e.g. A" name="section" value={formData.section} onChange={handleChange} />
             </div>
           </div>
 
           <div className="pt-4 border-t border-gray-100">
             <div className="flex items-center justify-between mb-4">
-              <label className="block text-sm font-medium text-gray-900">File Source *</label>
+              <label className="block text-xs font-medium text-gray-900">File Source *</label>
               <div className="flex space-x-2 bg-gray-100 p-1 rounded-lg">
                 <button
                   type="button"
@@ -439,13 +439,13 @@ export default function AdminUpload() {
                   value={externalLink} 
                   onChange={(e) => setExternalLink(e.target.value)} 
                 />
-                <p className="text-xs text-gray-500">Paste a public link to the PDF hosted on Google Drive, Dropbox, or any other service. (Free and does not require Storage setup).</p>
+                <p className="text-[11px] text-gray-500">Paste a public link to the PDF hosted on Google Drive, Dropbox, or any other service. (Free and does not require Storage setup).</p>
               </div>
             ) : (
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 bg-gray-50/50 hover:bg-gray-50 transition-colors">
                 <div className="text-center">
                   <UploadCloud className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                  <div className="mt-4 flex flex-col items-center text-sm leading-6 text-gray-600">
+                  <div className="mt-4 flex flex-col items-center text-xs leading-6 text-gray-600">
                     <label
                       htmlFor="file-upload"
                       className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
@@ -456,7 +456,7 @@ export default function AdminUpload() {
                     <p className="pl-1 mt-1">or drag and drop</p>
                   </div>
                   <p className="text-xs leading-5 text-gray-500 mt-2">PDF up to 700KB</p>
-                  {file && <p className="text-sm font-medium text-indigo-600 mt-4">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
+                  {file && <p className="text-xs font-medium text-indigo-600 mt-4">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
                 </div>
               </div>
             )}
@@ -471,7 +471,7 @@ export default function AdminUpload() {
         </form>
       </div>
       
-      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mt-6 shadow-sm">
+      <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 mt-4 shadow-sm">
         <div className="flex">
           <div className="flex-shrink-0">
             <svg className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
@@ -479,8 +479,8 @@ export default function AdminUpload() {
             </svg>
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-indigo-800">Time-saving tip</h3>
-            <p className="mt-1 text-sm text-indigo-700">
+            <h3 className="text-xs font-medium text-indigo-800">Time-saving tip</h3>
+            <p className="mt-1 text-xs text-indigo-700">
               Selecting a predefined subject will automatically fill in the Course, Department, Year, and Semester fields for you.
             </p>
           </div>

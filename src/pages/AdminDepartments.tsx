@@ -158,20 +158,20 @@ export default function AdminDepartments() {
   if (configLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-3 max-w-6xl mx-auto pb-8">
       {deleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-3 animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               {deleteModal.step === 1 ? 'Confirm Deletion' : 'DOUBLE CHECK!'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4">
               {deleteModal.step === 1 ? (
                 <>Are you sure you want to delete the {deleteModal.type} <span className="font-semibold text-gray-900">"{deleteModal.type === 'program' ? deleteModal.courseName : deleteModal.deptName}"</span>?</>
               ) : (
@@ -190,21 +190,21 @@ export default function AdminDepartments() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Programs & Departments</h1>
-          <p className="mt-2 text-sm text-gray-500">Manage academic programs and their respective branches. These will be available when users upload PYQs.</p>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">Programs & Departments</h1>
+          <p className="mt-2 text-[11px] text-gray-500">Manage academic programs and their respective branches. These will be available when users upload PYQs.</p>
         </div>
-        <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg text-sm font-semibold inline-flex items-center gap-2 border border-indigo-100 shadow-sm w-fit">
+        <div className="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-2 border border-indigo-100 shadow-sm w-fit">
            <Layers className="w-5 h-5" />
            <span>{Object.values(stats).reduce((acc, curr: any) => acc + curr.total, 0)} Total Indexed Papers</span>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8 flex flex-col md:flex-row gap-6 items-center">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-4 flex flex-col md:flex-row gap-3 items-center">
         <div className="flex-1">
            <h3 className="text-lg font-semibold text-gray-900">Add New Program</h3>
-           <p className="text-sm text-gray-500">Create a new core academic program (e.g., Ph.D, B.Sc).</p>
+           <p className="text-[11px] text-gray-500">Create a new core academic program (e.g., Ph.D, B.Sc).</p>
         </div>
         <form onSubmit={handleAddProgram} className="flex gap-3 w-full md:w-auto">
           <Input 
@@ -221,10 +221,10 @@ export default function AdminDepartments() {
 
       {statsLoading ? (
         <div className="flex items-center justify-center p-24">
-          <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-3">
           {programs.map(prog => {
             const course = prog.course;
             const courseData = stats[course] || { total: 0, departments: {} };
@@ -234,21 +234,21 @@ export default function AdminDepartments() {
               <div key={course} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md">
                 {/* Course Header */}
                 <div 
-                  className="px-6 py-5 cursor-pointer select-none flex items-center justify-between bg-gray-50/50 hover:bg-indigo-50/30 transition-colors"
+                  className="px-3 py-2 cursor-pointer select-none flex items-center justify-between bg-gray-50/50 hover:bg-indigo-50/30 transition-colors"
                   onClick={() => toggleCourse(course)}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <div className="bg-white border border-gray-200 shadow-sm p-3 rounded-xl text-indigo-600">
                       <BookMarked className="w-6 h-6" />
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-gray-900">{course}</h2>
-                      <p className="text-sm text-gray-500 mt-1 capitalize font-medium">{courseData.total} PYQs Uploaded</p>
+                      <p className="text-[11px] text-gray-500 mt-1 capitalize font-medium">{courseData.total} PYQs Uploaded</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    <div className="hidden sm:flex text-sm text-gray-400 font-medium bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex text-[11px] text-gray-400 font-medium bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm">
                        {prog.departments.length} Active Branches
                     </div>
                     <button 
@@ -266,8 +266,8 @@ export default function AdminDepartments() {
 
                 {/* Departments Grid */}
                 {isExpanded && (
-                  <div className="p-6 border-t border-gray-100 bg-white">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                  <div className="p-3 border-t border-gray-100 bg-white">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                       {prog.departments.map(dept => {
                          const count = courseData.departments[dept] || 0;
                          const isActive = count > 0;
@@ -275,7 +275,7 @@ export default function AdminDepartments() {
                          return (
                            <div 
                              key={dept} 
-                             className={`flex items-center justify-between p-4 rounded-lg border ${
+                             className={`flex items-center justify-between p-3 rounded-lg border ${
                                isActive 
                                  ? 'border-indigo-100 bg-indigo-50/20 shadow-sm hover:border-indigo-300 transition-colors' 
                                  : 'border-gray-100 bg-gray-50/50 opacity-70'
@@ -284,7 +284,7 @@ export default function AdminDepartments() {
                              <div className="flex items-start gap-3 overflow-hidden">
                                <FolderOpen className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isActive ? 'text-indigo-500' : 'text-gray-400'}`} />
                                <div className="truncate">
-                                 <p className={`text-sm font-semibold truncate ${isActive ? 'text-gray-900' : 'text-gray-500'}`} title={dept}>
+                                 <p className={`text-xs font-semibold truncate ${isActive ? 'text-gray-900' : 'text-gray-500'}`} title={dept}>
                                    {dept}
                                  </p>
                                  <span className={`text-xs mt-0.5 block font-medium ${isActive ? 'text-indigo-600' : 'text-gray-400'}`}>
@@ -319,7 +319,7 @@ export default function AdminDepartments() {
                     <div className="flex items-center gap-3 pt-4 border-t border-gray-100 mt-4">
                       <Input
                         placeholder={`New department in ${course}`}
-                        className="max-w-xs text-sm"
+                        className="max-w-xs text-xs"
                         value={newDepartmentNames[course] || ''}
                         onChange={(e) => setNewDepartmentNames({...newDepartmentNames, [course]: e.target.value})}
                         onKeyDown={(e) => {

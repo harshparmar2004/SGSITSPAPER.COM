@@ -83,41 +83,41 @@ export default function AdminAnalytics() {
     setLoading(false);
   };
 
-  if (loading) return <div className="flex justify-center p-20"><Loader2 className="w-10 h-10 animate-spin text-indigo-600"/></div>;
+  if (loading) return <div className="flex justify-center p-20"><Loader2 className="w-8 h-8 animate-spin text-indigo-600"/></div>;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-3 max-w-6xl mx-auto pb-8">
       <div>
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Download Analytics</h1>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">Download Analytics</h1>
         </div>
-        <p className="mt-2 text-sm text-gray-500">Track student engagement, view the most popular papers, and see download distribution.</p>
+        <p className="mt-2 text-[11px] text-gray-500">Track student engagement, view the most popular papers, and see download distribution.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between text-indigo-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Downloads</span>
              <Download className="w-4 h-4" />
           </div>
-          <span className="text-2xl font-extrabold text-gray-900 mt-2">{totalDownloads}</span>
+          <span className="text-xl font-extrabold text-gray-900 mt-2">{totalDownloads}</span>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between text-green-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Peak Download Day</span>
              <TrendingUp className="w-4 h-4" />
           </div>
-          <span className="text-2xl font-extrabold text-gray-900 mt-2">
+          <span className="text-xl font-extrabold text-gray-900 mt-2">
             {downloadTrends.length > 0 ? downloadTrends.reduce((max, obj) => obj.downloads > max.downloads ? obj : max).date : '-'}
           </span>
         </div>
       </div>
 
       {/* Graphical Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
          {/* Download Activity Area Chart */}
-         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-6">Student Download Trends (Last 7 Days)</h2>
+         <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4">Student Download Trends (Last 7 Days)</h2>
             <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={downloadTrends} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
@@ -138,8 +138,8 @@ export default function AdminAnalytics() {
          </div>
 
          {/* Distribution Pie Chart */}
-         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-6">Downloads by Department</h2>
+         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4">Downloads by Department</h2>
             <div className="h-72 w-full">
                <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -164,10 +164,10 @@ export default function AdminAnalytics() {
          </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
          {/* Exam Type Bar Chart */}
-         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700 mb-6">Downloads by Exam Type</h2>
+         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4">Downloads by Exam Type</h2>
             <div className="h-64 w-full">
                <ResponsiveContainer width="100%" height="100%">
                  <BarChart data={examTypeData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
@@ -183,31 +183,31 @@ export default function AdminAnalytics() {
 
          {/* Extracted Leaderboard Table */}
          <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-5 border-b border-gray-100 bg-gray-50/50">
-               <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">Highest Engagement Papers</h2>
+            <div className="px-3 py-2 border-b border-gray-100 bg-gray-50/50">
+               <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">Highest Engagement Papers</h2>
             </div>
             <div className="overflow-x-auto">
-               <table className="w-full text-left text-sm whitespace-nowrap">
+               <table className="w-full text-left text-xs whitespace-nowrap">
                  <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                    <tr>
-                     <th className="px-6 py-3 w-16 text-center">S.No.</th>
-                     <th className="px-6 py-3">Paper Details</th>
-                     <th className="px-6 py-3">Department</th>
-                     <th className="px-6 py-3">Type</th>
-                     <th className="px-6 py-3 text-right">Total Downloads</th>
+                     <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                     <th className="px-3 py-2">Paper Details</th>
+                     <th className="px-3 py-2">Department</th>
+                     <th className="px-3 py-2">Type</th>
+                     <th className="px-3 py-2 text-right">Total Downloads</th>
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-gray-100">
                    {topPapers.map((p, i) => (
                      <tr key={i} className="hover:bg-gray-50/50 transition-colors">
-                       <td className="px-6 py-3 text-center text-gray-500 font-medium">{i + 1}</td>
-                       <td className="px-6 py-3">
+                       <td className="px-3 py-2 text-center text-gray-500 font-medium">{i + 1}</td>
+                       <td className="px-3 py-2">
                          <div className="font-semibold text-gray-900">{p.name}</div>
                          <div className="text-gray-500 text-xs font-mono mt-0.5">{p.code}</div>
                        </td>
-                       <td className="px-6 py-3 text-gray-600 font-medium">{p.dept}</td>
-                       <td className="px-6 py-3 text-gray-500 text-xs">{p.type}</td>
-                       <td className="px-6 py-3 text-right">
+                       <td className="px-3 py-2 text-gray-600 font-medium">{p.dept}</td>
+                       <td className="px-3 py-2 text-gray-500 text-xs">{p.type}</td>
+                       <td className="px-3 py-2 text-right">
                           <span className="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-indigo-700 bg-indigo-50 font-bold text-xs ring-1 ring-indigo-200">
                              {p.downloads}
                           </span>

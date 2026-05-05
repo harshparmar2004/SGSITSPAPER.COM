@@ -71,16 +71,16 @@ export default function AdminStudents() {
   });
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div className="space-y-3 max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Student Logins</h1>
-          <p className="mt-2 text-sm text-gray-500">View and manage students who have accessed the portal.</p>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">Student Logins</h1>
+          <p className="mt-2 text-[11px] text-gray-500">View and manage students who have accessed the portal.</p>
         </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row gap-3 items-center justify-between">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input 
@@ -90,18 +90,18 @@ export default function AdminStudents() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="text-sm text-gray-500 font-medium">
+          <div className="text-[11px] text-gray-500 font-medium">
             Showing {filteredUsers.length} student(s)
           </div>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center p-16">
+          <div className="flex items-center justify-center p-8">
             <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
           </div>
         ) : filteredUsers.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 text-center">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+          <div className="flex flex-col items-center justify-center p-8 text-center">
+            <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center mb-4">
               <Users className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-medium text-gray-900">No students found</h3>
@@ -109,25 +109,25 @@ export default function AdminStudents() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
-                  <th className="px-6 py-4">Student Profile</th>
-                  <th className="px-6 py-4">Contact</th>
-                  <th className="px-6 py-4">Last Active</th>
+                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2">Student Profile</th>
+                  <th className="px-3 py-2">Contact</th>
+                  <th className="px-3 py-2">Last Active</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredUsers.map((u, index) => (
                   <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
+                    <td className="px-3 py-2">
                       <div className="flex items-center space-x-3">
                         {u.photoURL ? (
-                           <img src={u.photoURL} alt={u.displayName || 'Avatar'} className="w-10 h-10 rounded-full border border-gray-200 shadow-sm object-cover" />
+                           <img src={u.photoURL} alt={u.displayName || 'Avatar'} className="w-8 h-8 rounded-full border border-gray-200 shadow-sm object-cover" />
                         ) : (
-                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                              <Users className="w-5 h-5" />
                            </div>
                         )}
@@ -137,13 +137,13 @@ export default function AdminStudents() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="flex items-center space-x-2 text-gray-600">
                         <Mail className="w-4 h-4 text-gray-400" />
                         <span>{u.email}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 font-medium">
+                    <td className="px-3 py-2 text-gray-500 font-medium">
                        {u.lastLoginAt ? new Date(u.lastLoginAt.seconds * 1000).toLocaleString(undefined, {
                          dateStyle: 'medium',
                          timeStyle: 'short'

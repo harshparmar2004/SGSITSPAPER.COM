@@ -103,20 +103,20 @@ export default function AdminReports() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-3 max-w-full px-4 sm:px-6 mx-auto pb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Flagged Content</h1>
-        <p className="mt-2 text-sm text-gray-500">Review and resolve issues reported by students for your assigned departments.</p>
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">Flagged Content</h1>
+        <p className="mt-2 text-[11px] text-gray-500">Review and resolve issues reported by students for your assigned departments.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-200 p-4 flex flex-col justify-between">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+        <div className="bg-amber-50 rounded-lg shadow-sm border border-amber-200 p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-amber-700">Needs Review</span>
             <AlertTriangle className="w-5 h-5 text-amber-600" />
           </div>
           <div className="mt-2">
-            <span className="text-2xl font-extrabold text-amber-900 tracking-tight">
+            <span className="text-xl font-extrabold text-amber-900 tracking-tight">
               {pendingReports.length}
             </span>
           </div>
@@ -124,21 +124,18 @@ export default function AdminReports() {
       </div>
 
       {highVolumeSubjects.length > 0 && (
-         <div className="mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-red-600 mb-3 flex items-center gap-2">
-               <AlertTriangle className="w-4 h-4" /> Highly Reported Subjects
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+         <div className="mb-4 bg-red-50/50 border border-red-100 rounded-lg p-2.5">
+            <div className="flex flex-wrap items-center gap-2">
+               <h2 className="text-[10px] font-bold uppercase tracking-wider text-red-600 flex items-center gap-1.5 whitespace-nowrap mr-2">
+                  <AlertTriangle className="w-3.5 h-3.5" /> High Volume:
+               </h2>
                {highVolumeSubjects.map(([subjectCode, data]) => (
-                  <div key={subjectCode} className="bg-red-50 rounded-lg border border-red-100 p-4 relative overflow-hidden shadow-sm">
-                     <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-bl-lg">
-                         {data.count} Reports
-                     </div>
-                     <h3 className="font-bold text-gray-900 border-b border-red-200/50 pb-2 mb-2 pr-12 text-sm">{subjectCode}</h3>
-                     <p className="text-xs text-red-800 line-clamp-2">Latest: {data.reports[0].issue}</p>
+                  <div key={subjectCode} className="inline-flex items-center gap-1.5 bg-white border border-red-100 px-2 py-1 rounded text-[11px] shadow-sm">
+                     <span className="font-bold text-gray-900">{subjectCode}</span>
+                     <span className="bg-red-100 text-red-700 px-1 rounded-sm font-semibold">{data.count}</span>
                      {data.reports[0].fileUrl && (
-                        <a href={data.reports[0].fileUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-red-700 hover:text-red-900 underline">
-                          View Resource
+                        <a href={data.reports[0].fileUrl} target="_blank" rel="noopener noreferrer" className="ml-1 text-red-600 hover:text-red-800 underline">
+                          View
                         </a>
                      )}
                   </div>
@@ -148,8 +145,8 @@ export default function AdminReports() {
       )}
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-700">All Reports Log</h2>
+        <div className="px-3 py-2 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">All Reports Log</h2>
           {filteredReports.filter(r => r.status === 'resolved').length > 0 && adminRole === 'superadmin' && (
              <button 
                  onClick={() => handleDeleteAllResolved(filteredReports)}
@@ -163,15 +160,15 @@ export default function AdminReports() {
         </div>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="w-full text-left whitespace-nowrap">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-4 py-3 w-16 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">S.No.</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Issue Description</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Target Resource</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Reported By</th>
-                <th scope="col" className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                <th scope="col" className="px-3 py-2 w-12 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">S.No.</th>
+                <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+                <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Issue Description</th>
+                <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Target Resource</th>
+                <th scope="col" className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Reported By</th>
+                <th scope="col" className="px-3 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
@@ -181,8 +178,8 @@ export default function AdminReports() {
                  </tr>
               ) : filteredReports.map((report, index) => (
                 <tr key={report.id} className={`hover:bg-gray-50/50 transition-colors ${report.status === 'resolved' ? 'opacity-60 bg-gray-50' : ''}`}>
-                  <td className="px-4 py-4 text-center text-gray-500 font-medium whitespace-nowrap">{index + 1}</td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-3 py-2 text-center text-gray-500 font-medium whitespace-nowrap">{index + 1}</td>
+                  <td className="px-3 py-2 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                        <div className={`p-1.5 rounded-full shrink-0 ${report.status === 'pending' ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-600'}`}>
                          {report.status === 'pending' ? <Clock className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
@@ -192,19 +189,19 @@ export default function AdminReports() {
                        </span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 min-w-[250px] max-w-sm">
+                  <td className="px-3 py-2 min-w-[150px] max-w-sm">
                     {report.issueCategory && (
                       <span className="text-[9px] font-bold uppercase tracking-widest bg-red-100 text-red-700 px-1.5 py-0.5 rounded border border-red-200 mb-1 inline-block">
                         {report.issueCategory}
                       </span>
                     )}
-                    <p className="text-sm font-medium text-gray-900 line-clamp-2">{report.issue}</p>
+                    <p className="text-xs font-medium text-gray-900 line-clamp-2">{report.issue}</p>
                     <span className="text-[10px] text-gray-400 mt-1 block">
                        {report.reportedAt ? (typeof report.reportedAt === 'string' ? new Date(report.reportedAt).toLocaleString() : new Date(report.reportedAt.seconds * 1000).toLocaleString()) : 'Unknown Date'}
                     </span>
                   </td>
-                  <td className="px-4 py-4 max-w-[200px]">
-                    <div className="text-sm font-medium text-gray-800 line-clamp-2" title={report.pyqDetails}>{report.pyqDetails || 'Unknown Resource'}</div>
+                  <td className="px-3 py-2 max-w-[200px]">
+                    <div className="text-xs font-medium text-gray-800 line-clamp-2" title={report.pyqDetails}>{report.pyqDetails || 'Unknown Resource'}</div>
                     <div className="flex items-center flex-wrap gap-1 mt-1">
                       <span className="font-mono bg-gray-100 text-gray-600 px-1 py-0.5 rounded text-[10px]">
                         {report.subjectCode}
@@ -216,14 +213,14 @@ export default function AdminReports() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <div className="text-sm">
+                  <td className="px-3 py-2">
+                    <div className="text-xs">
                       <span className="font-semibold text-gray-900 block">{report.reporterName || 'Unknown'}</span>
                       {report.reporterId && <span className="text-gray-500 font-mono text-[10px] block">{report.reporterId}</span>}
                       {report.reporterBranch && <span className="text-gray-500 text-[10px] inline-block bg-gray-100 px-1 rounded mt-0.5">{report.reporterBranch}</span>}
                     </div>
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-right">
+                  <td className="px-3 py-2 whitespace-nowrap text-right">
                     <div className="flex items-center justify-end gap-2">
                        {report.status === 'pending' && (
                          <button onClick={() => handleMarkResolved(report.id!)} className="text-xs font-semibold text-indigo-700 hover:text-white bg-indigo-50 hover:bg-indigo-600 border border-indigo-100 px-3 py-1.5 rounded transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

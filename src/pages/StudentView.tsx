@@ -274,114 +274,109 @@ export default function StudentView() {
   const studentName = user.displayName || user.email?.split('@')[0] || 'Student';
 
   return (
-    <div className="space-y-6">
-      <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="space-y-3">
+      <div className="mb-4 flex flex-col md:flex-row md:items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 leading-tight">Welcome, {studentName}! 👋</h1>
-          <p className="mt-2 text-base md:text-lg text-gray-600">Find and download previous year question papers and handwritten notes instantly.</p>
+          <h1 className="text-xl md:text-xl lg:text-2xl font-bold tracking-tight text-gray-900 leading-tight">Welcome, {studentName}! 👋</h1>
+          <p className="mt-1 text-xs md:text-xs text-gray-500">Find and download previous year question papers and handwritten notes instantly.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-4xl mb-6 gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-4xl mb-4 gap-1">
         <button
           onClick={() => setActiveTab('PYQ')}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === 'PYQ' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Previous Year Questions
         </button>
         <button
           onClick={() => setActiveTab('Notes')}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Notes' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === 'Notes' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Handwritten Notes
         </button>
         <button
           onClick={() => setActiveTab('Syllabus')}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Syllabus' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === 'Syllabus' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Course Syllabus
         </button>
         <button
           onClick={() => setActiveTab('Lab Manual')}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all ${activeTab === 'Lab Manual' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === 'Lab Manual' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Lab Manuals
         </button>
         <button
           onClick={() => setActiveTab('Books & Resources')}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-sm font-medium rounded-md transition-all border-none ${activeTab === 'Books & Resources' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all border-none ${activeTab === 'Books & Resources' ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Books & Resources
         </button>
       </div>
 
       {/* Advanced Filter Form */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-           <Search className="w-5 h-5 text-indigo-500" />
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+           <Search className="w-4 h-4 text-indigo-500" />
            Search Criteria
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-          {/* Row 1 */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-x-4 gap-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Course / Program</label>
-            <Select value={course} onChange={(e) => { setCourse(e.target.value); setDepartment(''); }} className="w-full">
+            <label className="block text-xs font-medium text-gray-700 mb-1">Course / Program</label>
+            <Select value={course} onChange={(e) => { setCourse(e.target.value); setDepartment(''); }} className="w-full text-xs py-1.5 h-8">
               <option value="">All Courses</option>
               {availableCourses.map(d => <option key={d} value={d}>{d}</option>)}
             </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-            <Select value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full" disabled={!course}>
-              <option value="">{course ? 'All Departments' : 'Select Course First'}</option>
+            <label className="block text-xs font-medium text-gray-700 mb-1">Department</label>
+            <Select value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full text-xs py-1.5 h-8" disabled={!course}>
+              <option value="">{course ? 'All Depts' : 'Select Course'}</option>
               {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
             </Select>
           </div>
-
-          {/* Row 2 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-            <Select value={year} onChange={(e) => setYear(e.target.value)} className="w-full">
+            <label className="block text-xs font-medium text-gray-700 mb-1">Year</label>
+            <Select value={year} onChange={(e) => setYear(e.target.value)} className="w-full text-xs py-1.5 h-8">
               <option value="">All Years</option>
               {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
             </Select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
-            <Select value={semester} onChange={(e) => setSemester(e.target.value)} className="w-full">
+            <label className="block text-xs font-medium text-gray-700 mb-1">Semester</label>
+            <Select value={semester} onChange={(e) => setSemester(e.target.value)} className="w-full text-xs py-1.5 h-8">
               <option value="">All Semesters</option>
               {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
             </Select>
           </div>
-
-          {/* Row 3 */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subject Code</label>
-            <Input placeholder="e.g. CS101" value={subjectCode} onChange={(e) => setSubjectCode(e.target.value)} className="w-full" />
+            <label className="block text-xs font-medium text-gray-700 mb-1">Subject Code</label>
+            <Input placeholder="CS101" value={subjectCode} onChange={(e) => setSubjectCode(e.target.value)} className="w-full text-xs h-8" />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subject Name</label>
-            <Input placeholder="e.g. Data Structures" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full" />
+          <div className="col-span-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">Subject Name</label>
+            <Input placeholder="Data Structures" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full text-xs h-8" />
           </div>
-
-          {/* Row 4 */}
-          {activeTab === 'PYQ' && (
+          
+          {activeTab === 'PYQ' ? (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Exam Type</label>
-              <Select value={examType} onChange={(e) => setExamType(e.target.value)} className="w-full">
-                <option value="">All Exam Types</option>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Exam Type</label>
+              <Select value={examType} onChange={(e) => setExamType(e.target.value)} className="w-full text-xs py-1.5 h-8">
+                <option value="">All Types</option>
                 {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
               </Select>
             </div>
+          ) : (
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Section (Optional)</label>
+              <Input placeholder="e.g. A" value={section} onChange={(e) => setSection(e.target.value)} className="w-full text-xs h-8" />
+            </div>
           )}
-          <div className={activeTab !== 'PYQ' ? 'md:col-span-2' : ''}>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Section (Optional)</label>
-            <Input placeholder="e.g. A" value={section} onChange={(e) => setSection(e.target.value)} className="w-full" />
-          </div>
         </div>
         
-        <div className="mt-6 flex justify-end">
+        <div className="mt-4 flex justify-end">
            <Button 
              onClick={handleBulkDownload} 
              disabled={downloadingZip || filteredPyqs.length === 0}
@@ -399,40 +394,40 @@ export default function StudentView() {
             <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
           </div>
         ) : filteredPyqs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 text-center">
-            <FileDown className="w-12 h-12 text-gray-300 mb-4" />
+          <div className="flex flex-col items-center justify-center p-8 text-center">
+            <FileDown className="w-8 h-8 text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900">No PYQs found</h3>
             <p className="mt-1 text-gray-500">Try adjusting your filters to find existing records.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
-                  <th className="px-6 py-4">Title / Code</th>
-                  <th className="px-6 py-4">Program / Sem</th>
-                  <th className="px-6 py-4">Department</th>
-                  <th className="px-6 py-4">{activeTab === 'PYQ' ? 'Exam Type' : 'Type'}</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2">Title / Code</th>
+                  <th className="px-3 py-2">Program / Sem</th>
+                  <th className="px-3 py-2">Department</th>
+                  <th className="px-3 py-2">{activeTab === 'PYQ' ? 'Exam Type' : 'Type'}</th>
+                  <th className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredPyqs.map((pyq, index) => (
                   <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
-                    <td className="px-6 py-4 max-w-xs truncate">
+                    <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
+                    <td className="px-3 py-2 max-w-xs truncate">
                       <div className="font-semibold text-gray-900 truncate" title={pyq.subjectName}>{pyq.subjectName}</div>
                       <div className="text-gray-500 text-xs font-mono mt-0.5">{pyq.subjectCode}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">{pyq.course}</div>
                       <div className="text-gray-500 text-xs mt-0.5">{pyq.semester}</div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-gray-900 text-sm font-medium">{pyq.department}</div>
+                    <td className="px-3 py-2">
+                      <div className="text-gray-900 text-xs font-medium">{pyq.department}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">
                         {pyq.documentType === 'Notes' ? (
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
@@ -455,7 +450,7 @@ export default function StudentView() {
                         ) : 'PYQ'}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 py-2 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button variant="outline" size="sm" onClick={() => { setReportingPyq(pyq); setReportSuccess(false); setReportIssue(''); }} className="hidden sm:flex space-x-1.5 shadow-sm text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">
                           <AlertTriangle className="w-3.5 h-3.5" />
@@ -477,9 +472,9 @@ export default function StudentView() {
 
       {/* Report Modal */}
       {reportingPyq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-            <div className="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+            <div className="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
               <h3 className="font-bold text-gray-900 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-amber-500" />
                 Report Issue
@@ -493,67 +488,67 @@ export default function StudentView() {
               </button>
             </div>
             
-            <div className="p-5">
+            <div className="p-3">
               {reportSuccess ? (
                 <div className="text-center py-6">
-                  <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-3">
                     ✓
                   </div>
                   <h4 className="text-lg font-medium text-gray-900">Report Submitted</h4>
-                  <p className="text-sm text-gray-500 mt-1">Thank you for helping us improve our resources.</p>
+                  <p className="text-[11px] text-gray-500 mt-1">Thank you for helping us improve our resources.</p>
                 </div>
               ) : (
-                <form onSubmit={handleReportSubmit} className="space-y-4">
+                <form onSubmit={handleReportSubmit} className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
                       Resource: <span className="font-semibold text-gray-900">{reportingPyq.subjectName} ({reportingPyq.subjectCode})</span>
                     </label>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Your Name *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Your Name *</label>
                       <input 
                         type="text"
                         required
                         value={reporterName}
                         onChange={(e) => setReporterName(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                         placeholder="John Doe"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">College ID / Reg No *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">College ID / Reg No *</label>
                       <input 
                         type="text"
                         required
                         value={reporterId}
                         onChange={(e) => setReporterId(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                         placeholder="0801CS201..."
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Branch/Dept *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Branch/Dept *</label>
                       <input 
                         type="text"
                         required
                         value={reporterBranch}
                         onChange={(e) => setReporterBranch(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                         placeholder="Computer Science"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Issue Category *</label>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Issue Category *</label>
                       <select
                         required
                         value={reportCategory}
                         onChange={(e) => setReportCategory(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                       >
                         <option value="Broken Link">Broken Link / PDF</option>
                         <option value="Wrong Info">Wrong Information</option>
@@ -565,13 +560,13 @@ export default function StudentView() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Describe the issue *</label>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Describe the issue *</label>
                     <textarea 
                       required
                       rows={3}
                       value={reportIssue}
                       onChange={(e) => setReportIssue(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                      className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                       placeholder="e.g. Missing page 4, Wrong semester marked, Broken link..."
                     />
                   </div>

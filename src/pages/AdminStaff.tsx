@@ -152,12 +152,12 @@ export default function AdminStaff() {
   if (adminRole !== 'superadmin') return null;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
+    <div className="space-y-3 max-w-5xl mx-auto pb-8">
       {deleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-3 animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-gray-900 mb-2">Confirm Delete</h3>
-            <p className="text-gray-600 mb-6">Are you sure you want to remove this staff member?</p>
+            <p className="text-gray-600 mb-4">Are you sure you want to remove this staff member?</p>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setDeleteModal(null)}>Cancel</Button>
               <Button variant="danger" onClick={handleDeleteStaff}>Delete</Button>
@@ -166,23 +166,23 @@ export default function AdminStaff() {
         </div>
       )}
 
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage Staff</h1>
-        <p className="mt-2 text-sm text-gray-500">Assign users to Department Panels or make them Super Admins.</p>
+      <div className="mb-4">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage Staff</h1>
+        <p className="mt-2 text-[11px] text-gray-500">Assign users to Department Panels or make them Super Admins.</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <UserPlus className="w-5 h-5 text-indigo-600" />
           Add New Staff Member
         </h3>
         
-        {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
+        {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">{error}</div>}
 
-        <form onSubmit={handleAddStaff} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <form onSubmit={handleAddStaff} className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">User Email Address *</label>
+              <label className="text-xs font-medium text-gray-900">User Email Address *</label>
               <Input 
                 type="email" 
                 placeholder="staff@example.com" 
@@ -192,7 +192,7 @@ export default function AdminStaff() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Staff Name (Optional)</label>
+              <label className="text-xs font-medium text-gray-900">Staff Name (Optional)</label>
               <Input 
                 type="text" 
                 placeholder="John Doe" 
@@ -201,7 +201,7 @@ export default function AdminStaff() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Role *</label>
+              <label className="text-xs font-medium text-gray-900">Role *</label>
               <Select value={newRole} onChange={e => setNewRole(e.target.value as any)}>
                 <option value="department">Department Admin</option>
                 <option value="superadmin">Super Admin</option>
@@ -210,15 +210,15 @@ export default function AdminStaff() {
           </div>
 
           {newRole === 'department' && (
-            <div className="space-y-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <label className="text-sm font-medium text-gray-900">Assign Departments *</label>
-              <div className="max-h-64 overflow-y-auto space-y-4 pr-2">
+            <div className="space-y-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+              <label className="text-xs font-medium text-gray-900">Assign Departments *</label>
+              <div className="max-h-64 overflow-y-auto space-y-3 pr-2">
                 {programs.map(prog => (
                   <div key={prog.course} className="bg-white p-3 border border-gray-100 rounded-md">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 border-b border-gray-100 pb-2">{prog.course} Programs</h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-3">
                       {prog.departments.map(dept => (
-                        <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                        <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-xs cursor-pointer select-none">
                           <input 
                             type="checkbox" 
                             checked={selectedDepartments.includes(`${prog.course}::${dept}`)}
@@ -232,7 +232,7 @@ export default function AdminStaff() {
                     </div>
                   </div>
                 ))}
-                {programs.length === 0 && <span className="text-gray-400 text-sm py-2 block">No programs available. Create programs/departments first.</span>}
+                {programs.length === 0 && <span className="text-gray-400 text-xs py-2 block">No programs available. Create programs/departments first.</span>}
               </div>
               {selectedDepartments.length === 0 && <p className="text-xs text-amber-600">Please select at least one department.</p>}
             </div>
@@ -247,8 +247,8 @@ export default function AdminStaff() {
         </form>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-8">
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-4">
+        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
              <Shield className="w-4 h-4 text-gray-500" />
              Current Staff Members
@@ -261,30 +261,30 @@ export default function AdminStaff() {
            <div className="p-8 text-center text-gray-500 bg-gray-50/30">No staff members assigned yet.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
-                  <th className="px-6 py-4">Name & Email</th>
-                  <th className="px-6 py-4">Role</th>
-                  <th className="px-6 py-4">Assigned Departments</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2">Name & Email</th>
+                  <th className="px-3 py-2">Role</th>
+                  <th className="px-3 py-2">Assigned Departments</th>
+                  <th className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {admins.map((admin, index) => (
                   <tr key={admin.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
+                    <td className="px-3 py-2">
                       {admin.name && <div className="font-medium text-gray-900">{admin.name}</div>}
                       <div className={`text-gray-600 ${admin.name ? 'text-xs mt-0.5' : 'font-medium text-gray-900'}`}>{admin.email}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${admin.role === 'superadmin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
                          {admin.role === 'superadmin' ? 'Super Admin' : 'Department Admin'}
                        </span>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-3 py-2 text-gray-600">
                        {admin.role === 'superadmin' ? (
                          <span className="text-gray-400 italic">All Access</span>
                        ) : (
@@ -298,7 +298,7 @@ export default function AdminStaff() {
                          </div>
                        )}
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 py-2 text-right">
                       <div className="flex justify-end gap-2">
                         <button 
                           onClick={() => handleOpenEdit(admin)}
@@ -328,25 +328,25 @@ export default function AdminStaff() {
 
       {/* Edit Modal */}
       {editModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-3 animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Staff Member</h3>
             
-            {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
+            {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">{error}</div>}
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">User Email</label>
+                  <label className="text-xs font-medium text-gray-900">User Email</label>
                   <Input 
                     type="email" 
                     value={editModal.email}
                     disabled
                   />
-                  <p className="text-xs text-gray-500">Email cannot be changed.</p>
+                  <p className="text-[11px] text-gray-500">Email cannot be changed.</p>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Staff Name</label>
+                  <label className="text-xs font-medium text-gray-900">Staff Name</label>
                   <Input 
                     type="text" 
                     value={editName}
@@ -354,7 +354,7 @@ export default function AdminStaff() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-900">Role *</label>
+                  <label className="text-xs font-medium text-gray-900">Role *</label>
                   <Select value={editRole} onChange={e => setEditRole(e.target.value as any)}>
                     <option value="department">Department Admin</option>
                     <option value="superadmin">Super Admin</option>
@@ -363,15 +363,15 @@ export default function AdminStaff() {
               </div>
 
               {editRole === 'department' && (
-                <div className="space-y-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                  <label className="text-sm font-medium text-gray-900">Assign Departments *</label>
-                  <div className="max-h-56 overflow-y-auto space-y-4 pr-2">
+                <div className="space-y-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  <label className="text-xs font-medium text-gray-900">Assign Departments *</label>
+                  <div className="max-h-56 overflow-y-auto space-y-3 pr-2">
                     {programs.map(prog => (
                       <div key={prog.course} className="bg-white p-3 border border-gray-100 rounded-md">
                         <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 border-b border-gray-100 pb-2">{prog.course} Programs</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-3">
                           {prog.departments.map(dept => (
-                            <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                            <label key={`${prog.course}-${dept}`} className="flex items-start gap-2 text-xs cursor-pointer select-none">
                               <input 
                                 type="checkbox" 
                                 checked={editDepartments.includes(`${prog.course}::${dept}`)}
@@ -385,7 +385,7 @@ export default function AdminStaff() {
                         </div>
                       </div>
                     ))}
-                    {programs.length === 0 && <span className="text-gray-400 text-sm py-2 block">No programs available.</span>}
+                    {programs.length === 0 && <span className="text-gray-400 text-xs py-2 block">No programs available.</span>}
                   </div>
                   {editDepartments.length === 0 && <p className="text-xs text-amber-600">Please select at least one department.</p>}
                 </div>

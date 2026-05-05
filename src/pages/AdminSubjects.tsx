@@ -184,16 +184,16 @@ export default function AdminSubjects() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage Subjects</h1>
-        <p className="mt-2 text-sm text-gray-500">
+    <div className="max-w-4xl mx-auto space-y-3 pb-8">
+      <div className="mb-4">
+        <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage Subjects</h1>
+        <p className="mt-2 text-[11px] text-gray-500">
           Create and manage subjects, assign them to departments, year, and semester.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {editingSubjectCode ? <Edit className="w-5 h-5 text-indigo-600" /> : <BookOpen className="w-5 h-5 text-indigo-600" />}
             <h3 className="font-semibold text-gray-900">{editingSubjectCode ? 'Edit Subject' : 'Add New Subject'}</h3>
@@ -204,12 +204,12 @@ export default function AdminSubjects() {
             </Button>
           )}
         </div>
-        <div className="p-6">
-          {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded border border-red-200">{error}</div>}
-          <form onSubmit={handleSubmitSubject} className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-3">
+          {error && <div className="mb-4 p-3 bg-red-50 text-red-700 text-xs rounded border border-red-200">{error}</div>}
+          <form onSubmit={handleSubmitSubject} className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Subject Code *</label>
+                <label className="text-xs font-medium text-gray-900">Subject Code *</label>
                 <Input 
                   placeholder="e.g. CS101" 
                   value={newSubjectCode}
@@ -217,7 +217,7 @@ export default function AdminSubjects() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Subject Name *</label>
+                <label className="text-xs font-medium text-gray-900">Subject Name *</label>
                 <Input 
                   placeholder="e.g. Data Structures & Algorithms" 
                   value={newSubjectName}
@@ -225,7 +225,7 @@ export default function AdminSubjects() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Year (Optional)</label>
+                <label className="text-xs font-medium text-gray-900">Year (Optional)</label>
                 <Select value={newSubjectYear} onChange={(e) => setNewSubjectYear(e.target.value)}>
                   <option value="">Select Year...</option>
                   {YEARS.map(y => (
@@ -235,7 +235,7 @@ export default function AdminSubjects() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">Semester (Optional)</label>
+                <label className="text-xs font-medium text-gray-900">Semester (Optional)</label>
                 <Select value={newSubjectSemester} onChange={(e) => setNewSubjectSemester(e.target.value)}>
                   <option value="">Select Semester...</option>
                   {SEMESTERS.map(s => (
@@ -247,7 +247,7 @@ export default function AdminSubjects() {
             </div>
             
             <div className="space-y-3 pt-2">
-              <label className="text-sm font-medium text-gray-900">Assign to Departments *</label>
+              <label className="text-xs font-medium text-gray-900">Assign to Departments *</label>
               <div className="max-h-48 overflow-y-auto space-y-3 p-3 bg-white border border-gray-200 rounded-md">
                 {availablePrograms.map(prog => (
                   <div key={prog.course}>
@@ -256,7 +256,7 @@ export default function AdminSubjects() {
                       {prog.departments.map(dept => {
                         const deptValue = `${prog.course}::${dept}`;
                         return (
-                          <label key={deptValue} className="flex items-start gap-2 text-sm cursor-pointer select-none">
+                          <label key={deptValue} className="flex items-start gap-2 text-xs cursor-pointer select-none">
                             <input 
                               type="checkbox" 
                               checked={newSubjectDepartments.includes(deptValue)}
@@ -284,10 +284,10 @@ export default function AdminSubjects() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h3 className="font-semibold text-gray-900">Existing Subjects ({displayedSubjects.length})</h3>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500 whitespace-nowrap">Filter by Department:</span>
+            <span className="text-[11px] text-gray-500 whitespace-nowrap">Filter by Department:</span>
             <Select 
               value={departmentFilter} 
               onChange={(e) => setDepartmentFilter(e.target.value)}
@@ -303,28 +303,28 @@ export default function AdminSubjects() {
         </div>
         {displayedSubjects.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
-                  <th className="px-6 py-4">Subject Code</th>
-                  <th className="px-6 py-4">Subject Name</th>
-                  <th className="px-6 py-4">Year / Sem</th>
-                  <th className="px-6 py-4">Departments</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2">Subject Code</th>
+                  <th className="px-3 py-2">Subject Name</th>
+                  <th className="px-3 py-2">Year / Sem</th>
+                  <th className="px-3 py-2">Departments</th>
+                  <th className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {displayedSubjects.map((sub, index) => (
                   <tr key={sub.code} className={`hover:bg-gray-50/50 transition-colors ${editingSubjectCode === sub.code ? 'bg-indigo-50/30' : ''}`}>
-                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
-                    <td className="px-6 py-4 font-mono font-medium text-indigo-600">{sub.code}</td>
-                    <td className="px-6 py-4 text-gray-900">{sub.name}</td>
-                    <td className="px-6 py-4 text-gray-500">{sub.year || '-'} / {sub.semester || '-'}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
+                    <td className="px-3 py-2 font-mono font-medium text-indigo-600">{sub.code}</td>
+                    <td className="px-3 py-2 text-gray-900">{sub.name}</td>
+                    <td className="px-3 py-2 text-gray-500">{sub.year || '-'} / {sub.semester || '-'}</td>
+                    <td className="px-3 py-2">
                       <div className="flex flex-wrap gap-1 max-w-sm">
                         {(!sub.departments || sub.departments.length === 0) ? (
-                           <span className="text-xs text-gray-400 italic">All Departments (Legacy)</span>
+                           <span className="text-[11px] text-gray-400 italic">All Departments (Legacy)</span>
                         ) : (
                            sub.departments.map(d => {
                              const displayLabel = d.includes('::') ? d.split('::').join(' - ') : d;
@@ -337,7 +337,7 @@ export default function AdminSubjects() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right space-x-2">
+                    <td className="px-3 py-2 text-right space-x-2">
                       <button 
                         onClick={() => handleEditSubject(sub)}
                         disabled={saving}

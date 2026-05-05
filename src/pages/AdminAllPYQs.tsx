@@ -180,14 +180,14 @@ export default function AdminAllPYQs() {
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
+    <div className="space-y-3 max-w-6xl mx-auto pb-8">
       {deleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-3 animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               {deleteModal.step === 1 ? 'Confirm Deletion' : 'DOUBLE CHECK!'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4">
               {deleteModal.step === 1 ? (
                 <>Are you sure you want to delete <span className="font-semibold text-gray-900">"{deleteModal.pyq.subjectCode} - {deleteModal.pyq.subjectName}"</span>?</>
               ) : (
@@ -206,12 +206,12 @@ export default function AdminAllPYQs() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Manage PYQs</h1>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage PYQs</h1>
           </div>
-          <p className="mt-2 text-sm text-gray-500">View, search, replace, and delete all uploaded papers.</p>
+          <p className="mt-2 text-[11px] text-gray-500">View, search, replace, and delete all uploaded papers.</p>
         </div>
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -231,33 +231,33 @@ export default function AdminAllPYQs() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
+            <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4 w-16 text-center">S.No.</th>
-                  <th className="px-6 py-4">Title / Code</th>
-                  <th className="px-6 py-4">Department / Program</th>
-                  <th className="px-6 py-4">Semester</th>
-                  <th className="px-6 py-4">Type / Year</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2">Title / Code</th>
+                  <th className="px-3 py-2">Department / Program</th>
+                  <th className="px-3 py-2">Semester</th>
+                  <th className="px-3 py-2">Type / Year</th>
+                  <th className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {filteredPyqs.map((pyq, index) => (
                   <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 text-center text-gray-500 font-medium">{index + 1}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
+                    <td className="px-3 py-2">
                       <div className="font-semibold text-gray-900">{pyq.subjectName}</div>
                       <div className="text-gray-500 text-xs mt-0.5 font-mono">{pyq.subjectCode}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">{pyq.department}</div>
                       <div className="text-gray-500 text-xs mt-0.5">{pyq.course}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">{pyq.semester}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">
                         {pyq.documentType === 'Notes' ? (
                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
@@ -281,7 +281,7 @@ export default function AdminAllPYQs() {
                       </div>
                       <div className="text-gray-500 text-xs mt-0.5">{(pyq.documentType === 'Notes' || pyq.documentType === 'Syllabus' || pyq.documentType === 'Lab Manual' || pyq.documentType === 'Books & Resources') ? '' : `${pyq.examYear || ''}`}</div>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 py-2 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button 
                           variant="outline" 
@@ -320,29 +320,29 @@ export default function AdminAllPYQs() {
 
       {/* Replace PDF Modal */}
       {replacingPyq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-gray-900/50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-200">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+            <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <h3 className="font-semibold text-gray-900">Replace PDF</h3>
               <button onClick={closeReplaceModal} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <div className="p-6 space-y-6">
-              <div className="bg-indigo-50/50 p-4 rounded-lg flex items-start gap-3 border border-indigo-100">
+            <div className="p-3 space-y-3">
+              <div className="bg-indigo-50/50 p-3 rounded-lg flex items-start gap-3 border border-indigo-100">
                  <FileText className="w-5 h-5 text-indigo-500 mt-0.5" />
                  <div>
-                   <h4 className="font-medium text-sm text-indigo-900">{replacingPyq.subjectCode}: {replacingPyq.subjectName}</h4>
+                   <h4 className="font-medium text-xs text-indigo-900">{replacingPyq.subjectCode}: {replacingPyq.subjectName}</h4>
                    <p className="text-xs text-indigo-700 mt-1">Replacing this will overwrite the existing PDF while keeping all metadata.</p>
                  </div>
               </div>
 
-              {error && <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-200">{error}</div>}
+              {error && <div className="p-3 bg-red-50 text-red-700 text-xs rounded-lg border border-red-200">{error}</div>}
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                  <div className="flex items-center justify-between">
-                   <label className="block text-sm font-medium text-gray-900">New File Source</label>
+                   <label className="block text-xs font-medium text-gray-900">New File Source</label>
                    <div className="flex space-x-1.5 bg-gray-100 p-1 rounded-lg">
                      <button
                        type="button"
@@ -373,20 +373,20 @@ export default function AdminAllPYQs() {
                    <div className="flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-8 bg-gray-50 hover:bg-gray-100 transition-colors">
                      <div className="text-center">
                        <UploadCloud className="mx-auto h-8 w-8 text-gray-400" />
-                       <div className="mt-3 flex flex-col items-center text-sm text-gray-600">
+                       <div className="mt-3 flex flex-col items-center text-xs text-gray-600">
                          <label className="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500">
                            <span>Select new PDF</span>
                            <input type="file" accept="application/pdf" className="sr-only" onChange={handleFileChange} />
                          </label>
                        </div>
-                       {file && <p className="text-sm font-medium text-indigo-600 mt-2">{file.name}</p>}
+                       {file && <p className="text-xs font-medium text-indigo-600 mt-2">{file.name}</p>}
                      </div>
                    </div>
                  )}
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3 bg-gray-50/50">
+            <div className="px-3 py-2 border-t border-gray-100 flex items-center justify-end gap-3 bg-gray-50/50">
               <Button variant="outline" onClick={closeReplaceModal} disabled={replaceLoading}>Cancel</Button>
               <Button onClick={submitReplace} disabled={replaceLoading || (replaceMethod === 'storage' && !file) || (replaceMethod === 'link' && !externalLink)}>
                 {replaceLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

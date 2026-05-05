@@ -78,13 +78,13 @@ export default function AdminSubjectPYQs() {
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-3 max-w-6xl mx-auto pb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Subject-wise View</h1>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900">Subject-wise View</h1>
           </div>
-          <p className="mt-2 text-sm text-gray-500">View PYQs organized by semester and subject.</p>
+          <p className="mt-2 text-[11px] text-gray-500">View PYQs organized by semester and subject.</p>
         </div>
         <div className="relative max-w-xs w-full">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -106,7 +106,7 @@ export default function AdminSubjectPYQs() {
            No matching PDFs found.
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {Object.keys(groupedByDepartment).sort((a,b) => a.localeCompare(b)).map(departmentKey => {
             const deptGroup = groupedByDepartment[departmentKey];
             const semestersObj = organizeBySemester(deptGroup);
@@ -116,7 +116,7 @@ export default function AdminSubjectPYQs() {
               <div key={departmentKey} className="bg-white border text-gray-900 border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <button 
                   onClick={() => setExpandedDepartment(isDeptExpanded ? null : departmentKey)}
-                  className="w-full flex items-center justify-between p-4 bg-gray-100 hover:bg-gray-200 transition-colors border-b border-gray-200/50"
+                  className="w-full flex items-center justify-between p-3 bg-gray-100 hover:bg-gray-200 transition-colors border-b border-gray-200/50"
                   style={{ borderBottomWidth: isDeptExpanded ? '1px' : '0px' }}
                 >
                   <div className="flex items-center gap-2">
@@ -180,14 +180,14 @@ export default function AdminSubjectPYQs() {
                                                         <FileText className="w-6 h-6" />
                                                      </div>
                                                      <div>
-                                                       <p className="font-medium text-sm text-gray-900 line-clamp-2 leading-snug">
+                                                       <p className="font-medium text-xs text-gray-900 line-clamp-2 leading-snug">
                                                          {pyq.documentType === 'Notes' ? 'Class Notes' : 
                                                           pyq.documentType === 'Syllabus' ? 'Syllabus PDF' : 
                                                           pyq.documentType === 'Lab Manual' ? 'Lab Manual' :
                                                           pyq.documentType === 'Books & Resources' ? 'Books & Resources' :
                                                           `${pyq.examYear} ${pyq.examType}`}
                                                        </p>
-                                                       <p className="text-xs text-gray-500 mt-1">{(pyq.fileSize / 1024).toFixed(1)} KB • {typeof pyq.uploadedAt === 'string' ? new Date(pyq.uploadedAt).toLocaleDateString() : new Date(pyq.uploadedAt?.seconds * 1000).toLocaleDateString()}</p>
+                                                       <p className="text-[11px] text-gray-500 mt-1">{(pyq.fileSize / 1024).toFixed(1)} KB • {typeof pyq.uploadedAt === 'string' ? new Date(pyq.uploadedAt).toLocaleDateString() : new Date(pyq.uploadedAt?.seconds * 1000).toLocaleDateString()}</p>
                                                      </div>
                                                    </div>
                                                    <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
