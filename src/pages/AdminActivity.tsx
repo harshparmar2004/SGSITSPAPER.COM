@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs, orderBy, where } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Loader2, Activity, Users, UserCheck } from 'lucide-react';
+import { Loader2, Activity, Users, UserCheck, Download } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PYQ } from '../types';
 import { format } from 'date-fns';
+import { Button } from '../components/ui';
 
 interface AdminData {
   id: string; // UID
@@ -80,6 +81,59 @@ export default function AdminActivity() {
     }
   }, [user, adminRole, assignedDepartments]);
 
+  const exportActivityLog = () => {
+    let targetData: PYQ[] = [];
+    let logName = '';
+
+    if (activeTab === 'your') {
+      targetData = myHistory;
+      logName = 'Your_Uploads';
+    } else if (activeTab === 'staff') {
+      targetData = staffHistory;
+      logName = 'Staff_History';
+    } else {
+      targetData = studentHistory;
+      logName = 'Student_History';
+    }
+
+    if (targetData.length === 0) return;
+
+    const headers = ["ID", "Uploaded By", "Subject Code", "Subject Name", "Department", "Course", "Year", "Semester", "Document Type", "Date"];
+    const rows = targetData.map(p => {
+      let uploader = p.uploadedBy || 'unknown';
+      if (activeTab === 'staff') {
+        const staffMatch = admins.find(a => a.email?.toLowerCase() === p.uploadedBy?.toLowerCase() || a.id === p.uploadedBy);
+        if (staffMatch) {
+          uploader = staffMatch.email;
+        }
+      }
+      return [
+        p.id,
+        `"${uploader}"`,
+        `"${p.subjectCode}"`,
+        `"${p.subjectName}"`,
+        `"${p.department}"`,
+        `"${p.course}"`,
+        `"${p.year}"`,
+        `"${p.semester}"`,
+        `"${p.documentType || 'PYQ'}"`,
+        p.uploadedAt ? `"${format(p.uploadedAt.toDate(), "MMM d, yyyy h:mm a")}"` : "Unknown"
+      ];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + rows.map(e => e.join(",")).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Activity_Log_${logName}_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-3 max-w-6xl mx-auto pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
@@ -87,28 +141,33 @@ export default function AdminActivity() {
           <h1 className="text-xl font-bold tracking-tight text-gray-900">Activity Log</h1>
           <p className="mt-2 text-[11px] text-gray-500">View recent portal activity including uploads by staff members and students.</p>
         </div>
-        {adminRole === 'superadmin' && (
-          <div className="flex bg-gray-100 p-1 rounded-lg">
-            <button
-              onClick={() => setActiveTab('your')}
-              className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'your' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-            >
-              Your Upload History
-            </button>
-            <button
-               onClick={() => setActiveTab('staff')}
-              className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'staff' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-            >
-              Staff History
-            </button>
-            <button
-              onClick={() => setActiveTab('student')}
-              className={`px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
-            >
-              Student Log History
-            </button>
-          </div>
-        )}
+        <div className="flex flex-col sm:flex-row gap-3 items-center">
+          <Button variant="outline" size="sm" onClick={exportActivityLog} disabled={loading} className="w-full sm:w-auto text-xs whitespace-nowrap">
+            <Download className="w-4 h-4 mr-2" /> Export Log
+          </Button>
+          {adminRole === 'superadmin' && (
+            <div className="flex bg-gray-100 p-1 rounded-lg w-full sm:w-auto overflow-x-auto min-w-min">
+              <button
+                onClick={() => setActiveTab('your')}
+                className={`flex-shrink-0 px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'your' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+              >
+                Your Upload History
+              </button>
+              <button
+                 onClick={() => setActiveTab('staff')}
+                className={`flex-shrink-0 px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'staff' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+              >
+                Staff History
+              </button>
+              <button
+                onClick={() => setActiveTab('student')}
+                className={`flex-shrink-0 px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'student' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+              >
+                Student Log History
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {activeTab === 'your' && adminRole === 'superadmin' && (

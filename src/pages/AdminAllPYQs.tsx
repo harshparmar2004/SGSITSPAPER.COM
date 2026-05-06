@@ -4,7 +4,7 @@ import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebas
 import { db, storage } from '../lib/firebase';
 import { PYQ } from '../types';
 import { Button, Input } from '../components/ui';
-import { Loader2, Search, Trash2, Edit, FileText, UploadCloud, X } from 'lucide-react';
+import { Loader2, Search, Trash2, Edit, FileText, UploadCloud, X, Download } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export default function AdminAllPYQs() {
@@ -177,6 +177,38 @@ export default function AdminAllPYQs() {
     p.subjectName.toLowerCase().includes(search.toLowerCase())
   );
 
+  const exportToCsv = () => {
+    if (pyqs.length === 0) return;
+    
+    const headers = ["ID", "Subject Code", "Subject Name", "Department", "Course", "Year", "Semester", "Exam Type", "Exam Year", "Document Type", "File Size (KB)"];
+    
+    const rows = pyqs.map(p => [
+      p.id,
+      `"${p.subjectCode}"`,
+      `"${p.subjectName}"`,
+      `"${p.department}"`,
+      `"${p.course}"`,
+      `"${p.year}"`,
+      `"${p.semester}"`,
+      `"${p.examType || ''}"`,
+      `"${p.examYear || ''}"`,
+      `"${p.documentType || 'PYQ'}"`,
+      p.fileSize ? Math.round(p.fileSize / 1024) : 0
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + rows.map(e => e.join(",")).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `all_resources_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!isAdmin) return null;
 
   return (
@@ -213,14 +245,19 @@ export default function AdminAllPYQs() {
           </div>
           <p className="mt-2 text-[11px] text-gray-500">View, search, replace, and delete all uploaded papers.</p>
         </div>
-        <div className="relative max-w-xs w-full">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <Input 
-            placeholder="Search code or subject..." 
-            value={search} 
-            onChange={(e) => setSearch(e.target.value)} 
-            className="pl-9 w-full bg-white"
-          />
+        <div className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
+          <Button variant="outline" size="sm" onClick={exportToCsv} className="w-full sm:w-auto text-xs whitespace-nowrap">
+            <Download className="w-4 h-4 mr-2" /> Export to CSV
+          </Button>
+          <div className="relative max-w-xs w-full">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Input 
+              placeholder="Search code or subject..." 
+              value={search} 
+              onChange={(e) => setSearch(e.target.value)} 
+              className="pl-9 w-full bg-white"
+            />
+          </div>
         </div>
       </div>
 

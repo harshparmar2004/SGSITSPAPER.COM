@@ -3,7 +3,7 @@ import { useAcademicConfig, Subject } from '../hooks/useAcademicConfig';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 import { Button, Input, Select } from '../components/ui';
-import { BookOpen, Plus, Trash2, Loader2, Save, Edit, X } from 'lucide-react';
+import { BookOpen, Plus, Trash2, Loader2, Save, Edit, X, UploadCloud, Download } from 'lucide-react';
 import { YEARS, SEMESTERS } from '../types';
 
 export default function AdminSubjects() {
@@ -183,6 +183,78 @@ export default function AdminSubjects() {
     setSaving(false);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSaving(true);
+    setError('');
+    
+    try {
+      const text = await file.text();
+      const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      
+      const newSubjectsMap: Record<string, Subject> = {};
+      
+      let skipped = 0;
+      let added = 0;
+      
+      for (let i = 1; i < lines.length; i++) { // Skip header
+        const columns = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+        if (columns.length < 2) continue;
+        
+        const [code, name, year, semester, deptsStr] = columns;
+        
+        if (!code || !name) continue;
+        
+        const depts = deptsStr ? deptsStr.split(';').map(d => d.trim()).filter(Boolean) : [];
+        
+        newSubjectsMap[code.toUpperCase()] = {
+          code: code.toUpperCase(),
+          name,
+          year: year || '',
+          semester: semester || '',
+          departments: depts
+        };
+        added++;
+      }
+      
+      let updatedSubjects = [...subjects];
+      
+      Object.keys(newSubjectsMap).forEach(code => {
+        const existingIndex = updatedSubjects.findIndex(s => s.code === code);
+        if (existingIndex >= 0) {
+          updatedSubjects[existingIndex] = newSubjectsMap[code];
+        } else {
+          updatedSubjects.push(newSubjectsMap[code]);
+        }
+      });
+      
+      updatedSubjects.sort((a, b) => a.code.localeCompare(b.code));
+      
+      await updateSubjects(updatedSubjects);
+      
+      alert(`CSV Upload Processed. ${added} subjects processed.`);
+    } catch (err: any) {
+      setError("Failed to parse CSV: " + err.message);
+    }
+    setSaving(false);
+    
+    // Reset file input
+    e.target.value = '';
+  };
+
+  const downloadCsvTemplate = () => {
+    const csvContent = "data:text/csv;charset=utf-8," + "Code,Name,Year,Semester,Departments(separated by ;)\nCS101,Computer Science,1,1,B.Tech::Computer Science;B.Tech::IT";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "subject_template.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-3 pb-8">
       <div className="mb-4">
@@ -273,7 +345,18 @@ export default function AdminSubjects() {
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-between items-center pt-2">
+              <div className="flex items-center gap-2">
+                <label className="cursor-pointer text-xs flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-300 rounded-md bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors disabled:opacity-50 min-w-[120px]">
+                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                   {saving ? 'Processing...' : 'Bulk CSV Upload'}
+                   <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} disabled={saving} />
+                </label>
+                <button type="button" onClick={downloadCsvTemplate} className="text-[11px] text-indigo-600 hover:text-indigo-800 underline flex items-center gap-1">
+                  <Download className="w-3 h-3" /> Template
+                </button>
+              </div>
+
               <Button type="submit" disabled={saving || !newSubjectCode.trim() || !newSubjectName.trim() || newSubjectDepartments.length === 0} className="w-full md:w-auto">
                 {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : (editingSubjectCode ? <Save className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />)}
                 {editingSubjectCode ? 'Save Changes' : 'Add Subject'}
