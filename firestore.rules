@@ -32,8 +32,7 @@ service cloud.firestore {
     function isValidPYQ(data) {
       let documentType = data.get('documentType', 'PYQ');
       let isPYQ = documentType == "PYQ";
-      let isNotes = documentType == "Notes";
-      let isSyllabus = documentType == "Syllabus";
+      let isValidDocType = documentType == "PYQ" || documentType == "Notes" || documentType == "Syllabus" || documentType == "Lab Manual" || documentType == "Books & Resources";
       
       let baseValid = data.keys().hasAll([
         "department", "course", "year", "semester", "subjectCode",
@@ -58,7 +57,7 @@ service cloud.firestore {
         data.examYear is string && data.examYear.size() > 0 && data.examYear.size() <= 50
       );
 
-      return baseValid && pyqValid && (isPYQ || isNotes || isSyllabus);
+      return baseValid && pyqValid && isValidDocType;
     }
 
     function isValidDownload(data) {
@@ -118,7 +117,11 @@ service cloud.firestore {
       allow create: if isAdmin() && isValidPYQ(incoming());
       
       // Admins can update things if they really need to, though we won't implement it first.
-      allow update: if false; // Not needed per spec, but could add.
+      allow update: if isAdmin() &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['fileUrl', 'fileName', 'fileSize']) &&
+                    incoming().fileUrl is string && incoming().fileUrl.size() > 0 && incoming().fileUrl.size() <= 5000000 &&
+                    incoming().fileName is string && incoming().fileName.size() > 0 && incoming().fileName.size() <= 255 &&
+                    incoming().fileSize is number && incoming().fileSize <= 10485760;
       allow delete: if isAdmin();
     }
 
