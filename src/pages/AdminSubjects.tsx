@@ -255,13 +255,52 @@ export default function AdminSubjects() {
     document.body.removeChild(link);
   };
 
+  const exportSubjectsCsv = () => {
+    if (subjects.length === 0) return;
+    
+    const dataToExport = displayedSubjects.length > 0 ? displayedSubjects : subjects;
+    
+    const headers = ["S.No.", "Subject Code", "Subject Name", "Year", "Semester", "Departments"];
+    const rows = dataToExport.map((sub, index) => {
+      const depts = (!sub.departments || sub.departments.length === 0) 
+        ? "All Departments" 
+        : sub.departments.join(';');
+        
+      return [
+        index + 1,
+        `"${sub.code}"`,
+        `"${sub.name}"`,
+        `"${sub.year || ''}"`,
+        `"${sub.semester || ''}"`,
+        `"${depts}"`
+      ];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + rows.map(e => e.join(",")).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Subjects_List_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-3 pb-8">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage Subjects</h1>
-        <p className="mt-2 text-[11px] text-gray-500">
-          Create and manage subjects, assign them to departments, year, and semester.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage Subjects</h1>
+          <p className="mt-2 text-[11px] text-gray-500">
+            Create and manage subjects, assign them to departments, year, and semester.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportSubjectsCsv} disabled={configLoading || displayedSubjects.length === 0} className="w-full sm:w-auto text-xs whitespace-nowrap">
+          <Download className="w-4 h-4 mr-2" /> Export Subjects
+        </Button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">

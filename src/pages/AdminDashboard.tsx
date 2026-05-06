@@ -3,7 +3,7 @@ import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteD
 import { db } from '../lib/firebase';
 import { PYQ } from '../types';
 import { Button } from '../components/ui';
-import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit, BookOpen, Layers } from 'lucide-react';
+import { FileText, Loader2, Calendar, Users, HardDrive, Activity, Trash2, Edit, BookOpen, Layers, Download } from 'lucide-react';
 import { Link } from 'react-router';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { format, subDays } from 'date-fns';
@@ -29,6 +29,7 @@ export default function AdminDashboard() {
   // Mock data for charts if DB is empty
   const [uploadData, setUploadData] = useState<any[]>([]);
   const [subjectData, setSubjectData] = useState<any[]>([]);
+  const [dashboardPyqs, setDashboardPyqs] = useState<PYQ[]>([]);
 
   useEffect(() => {
     if (!configLoading) {
@@ -121,6 +122,7 @@ export default function AdminDashboard() {
          setStorageUsed(finalStorage);
       }
       
+      setDashboardPyqs(pyqData);
       setRecentPyqs(pyqData.slice(0, 10)); // Show only 10 in table
       
       // Generate last 30 days for area chart
@@ -175,6 +177,39 @@ export default function AdminDashboard() {
     setDeletingId(null);
   };
 
+  const exportDashboardCsv = () => {
+    if (dashboardPyqs.length === 0) return;
+    
+    const headers = ["ID", "Subject Code", "Subject Name", "Department", "Course", "Year", "Semester", "Exam Type", "Exam Year", "Document Type", "File Size (KB)", "Date Uploaded"];
+    
+    const rows = dashboardPyqs.map(p => [
+      p.id,
+      `"${p.subjectCode}"`,
+      `"${p.subjectName}"`,
+      `"${p.department}"`,
+      `"${p.course}"`,
+      `"${p.year}"`,
+      `"${p.semester}"`,
+      `"${p.examType || ''}"`,
+      `"${p.examYear || ''}"`,
+      `"${p.documentType || 'PYQ'}"`,
+      p.fileSize ? Math.round(p.fileSize / 1024) : 0,
+       p.uploadedAt ? `"${format(new Date(p.uploadedAt.seconds * 1000), 'yyyy-MM-dd')}"` : "Unknown"
+    ]);
+    
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + rows.map(e => e.join(",")).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `dashboard_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-3 max-w-6xl mx-auto pb-8">
       {deleteModal && (
@@ -212,9 +247,14 @@ export default function AdminDashboard() {
           </div>
           <p className="mt-2 text-[11px] text-gray-500">Track portal engagement, manage storage, and monitor uploads.</p>
         </div>
-        <Link to="/admin/upload">
-           <Button className="w-full sm:w-auto shadow-sm">Upload New PYQ</Button>
-        </Link>
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <Button variant="outline" onClick={exportDashboardCsv} disabled={dashboardPyqs.length === 0} className="w-full sm:w-auto shadow-sm">
+             <Download className="w-4 h-4 mr-2" /> Export Report
+          </Button>
+          <Link to="/admin/upload" className="w-full sm:w-auto">
+             <Button className="w-full shadow-sm">Upload New PYQ</Button>
+          </Link>
+        </div>
       </div>
 
       {/* Top Stats Row */}

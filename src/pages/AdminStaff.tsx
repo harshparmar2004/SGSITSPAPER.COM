@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, getDocs, doc, setDoc, deleteDoc, where, orderBy, limit } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Button, Input, Select } from '../components/ui';
-import { Loader2, UserPlus, Trash2, Shield, Search, FileText, Activity, Edit2 } from 'lucide-react';
+import { Loader2, UserPlus, Trash2, Shield, Search, FileText, Activity, Edit2, Download } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useAcademicConfig } from '../hooks/useAcademicConfig';
 import { PYQ } from '../types';
@@ -149,6 +149,35 @@ export default function AdminStaff() {
     );
   };
 
+  const exportStaffCsv = () => {
+    if (admins.length === 0) return;
+    
+    const headers = ["S.No.", "ID", "Name", "Email", "Role", "Assigned Departments"];
+    const rows = admins.map((admin, index) => {
+      const assigned = admin.role === 'superadmin' ? 'All Access' : admin.departments?.join('; ') || '';
+      return [
+        index + 1,
+        `"${admin.id}"`,
+        `"${admin.name || ''}"`,
+        `"${admin.email}"`,
+        `"${admin.role}"`,
+        `"${assigned}"`
+      ];
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + rows.map(e => e.join(",")).join("\n");
+      
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Staff_List_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (adminRole !== 'superadmin') return null;
 
   return (
@@ -166,9 +195,14 @@ export default function AdminStaff() {
         </div>
       )}
 
-      <div className="mb-4">
-        <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage Staff</h1>
-        <p className="mt-2 text-[11px] text-gray-500">Assign users to Department Panels or make them Super Admins.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900">Manage Staff</h1>
+          <p className="mt-2 text-[11px] text-gray-500">Assign users to Department Panels or make them Super Admins.</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportStaffCsv} disabled={loading || admins.length === 0} className="w-full sm:w-auto text-xs whitespace-nowrap">
+          <Download className="w-4 h-4 mr-2" /> Export to CSV
+        </Button>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
