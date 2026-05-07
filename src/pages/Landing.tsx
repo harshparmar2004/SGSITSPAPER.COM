@@ -337,10 +337,10 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="mt-4 text-center hidden lg:block">
-              <p className="text-xs text-slate-600 font-bold uppercase tracking-[0.15em]">
+            <div className="mt-6 text-center">
+              <p className="text-[10px] sm:text-xs text-slate-600 font-bold uppercase tracking-[0.15em]">
                 Developed by{" "}
-                <span className="text-slate-400">Harsh Parmar</span>
+                <span className="text-slate-400">Harsh Sharma</span>
               </p>
             </div>
           </motion.div>
