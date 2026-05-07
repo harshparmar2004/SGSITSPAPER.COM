@@ -322,7 +322,7 @@ export default function StudentView() {
            Search Criteria
         </h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-x-4 gap-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-3">
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Course / Program</label>
             <Select value={course} onChange={(e) => { setCourse(e.target.value); setDepartment(''); }} className="w-full text-xs py-1.5 h-8">
@@ -355,7 +355,7 @@ export default function StudentView() {
             <label className="block text-xs font-medium text-gray-700 mb-1">Subject Code</label>
             <Input placeholder="CS101" value={subjectCode} onChange={(e) => setSubjectCode(e.target.value)} className="w-full text-xs h-8" />
           </div>
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <label className="block text-xs font-medium text-gray-700 mb-1">Subject Name</label>
             <Input placeholder="Data Structures" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full text-xs h-8" />
           </div>
