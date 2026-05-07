@@ -58,23 +58,7 @@ function LandingNavbar() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {!user ? (
-              <div className="hidden md:flex items-center gap-4">
-                <button
-                  onClick={loginWithGoogle}
-                  className="text-slate-400 hover:text-sky-300 transition-colors duration-200 font-medium text-xs tracking-widest uppercase"
-                >
-                  STUDENT PORTAL
-                </button>
-                <div className="w-px h-4 bg-slate-700"></div>
-                <button
-                  onClick={loginWithGoogle}
-                  className="px-4 py-2 rounded-full border border-sky-300/30 text-sky-300 font-bold text-xs tracking-widest uppercase hover:bg-sky-300/10 transition-all duration-300 shadow-[0_0_20px_rgba(125,211,252,0.1)]"
-                >
-                  ADMIN ACCESS
-                </button>
-              </div>
-            ) : (
+            {user && (
               <div className="hidden md:block">
                 <button
                   onClick={loginWithGoogle}
@@ -135,22 +119,7 @@ function LandingNavbar() {
 
             <div className="flex flex-col gap-4 mt-auto pb-4">
               <div className="w-full h-px bg-white/10 mb-2"></div>
-              {!user ? (
-                <>
-                  <button
-                    onClick={loginWithGoogle}
-                    className="w-full py-4 text-center rounded-xl bg-white/5 text-slate-300 hover:text-white transition-colors duration-200 font-bold tracking-widest uppercase border border-white/10"
-                  >
-                    STUDENT LOGIN
-                  </button>
-                  <button
-                    onClick={loginWithGoogle}
-                    className="w-full py-4 text-center rounded-xl bg-sky-300/10 border border-sky-300/30 text-sky-300 font-bold tracking-widest uppercase shadow-[0_0_20px_rgba(125,211,252,0.1)]"
-                  >
-                    ADMIN / STAFF ACCESS
-                  </button>
-                </>
-              ) : (
+              {user && (
                 <button
                   onClick={loginWithGoogle}
                   className="w-full py-4 text-center rounded-xl bg-sky-300/10 border border-sky-300/30 text-sky-300 font-bold tracking-widest uppercase shadow-[0_0_20px_rgba(125,211,252,0.1)]"
@@ -315,10 +284,10 @@ export default function Landing() {
                   <UserCog className="text-sky-300 w-8 h-8 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]" />
                 </div>
                 <h2 className="text-xl font-bold text-white tracking-tight">
-                  Student Login
+                  Secure Login
                 </h2>
                 <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-[0.15em] mt-2">
-                  Login with your @sgsits.ac.in Gmail ID
+                  Access portal with your Gmail ID
                 </p>
               </div>
 

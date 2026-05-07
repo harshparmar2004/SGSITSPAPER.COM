@@ -99,8 +99,9 @@ service cloud.firestore {
     }
 
     match /admins/{adminUid} {
-      allow read: if isAdmin();
+      allow read: if request.auth.uid == adminUid || isAdmin();
       allow create: if isAdmin();
+      allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 
@@ -141,7 +142,7 @@ service cloud.firestore {
     }
 
     match /settings/{docId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow write: if isAdmin();
     }
   }
