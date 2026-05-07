@@ -322,61 +322,69 @@ export default function StudentView() {
            Search Criteria
         </h2>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-3">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Course / Program</label>
-            <Select value={course} onChange={(e) => { setCourse(e.target.value); setDepartment(''); }} className="w-full text-xs py-1.5 h-8">
-              <option value="">All Courses</option>
-              {availableCourses.map(d => <option key={d} value={d}>{d}</option>)}
-            </Select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Department</label>
-            <Select value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full text-xs py-1.5 h-8" disabled={!course}>
-              <option value="">{course ? 'All Depts' : 'Select Course'}</option>
-              {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
-            </Select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Year</label>
-            <Select value={year} onChange={(e) => setYear(e.target.value)} className="w-full text-xs py-1.5 h-8">
-              <option value="">All Years</option>
-              {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-            </Select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Semester</label>
-            <Select value={semester} onChange={(e) => setSemester(e.target.value)} className="w-full text-xs py-1.5 h-8">
-              <option value="">All Semesters</option>
-              {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
-            </Select>
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Subject Code</label>
-            <Input placeholder="CS101" value={subjectCode} onChange={(e) => setSubjectCode(e.target.value)} className="w-full text-xs h-8" />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="block text-xs font-medium text-gray-700 mb-1">Subject Name</label>
-            <Input placeholder="Data Structures" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full text-xs h-8" />
+        <div className="flex flex-col gap-3">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Input 
+              placeholder="Search by Subject Code (e.g. CS101) - Highest Priority" 
+              value={subjectCode} 
+              onChange={(e) => setSubjectCode(e.target.value)} 
+              className="pl-9 w-full text-sm h-10 border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm" 
+            />
           </div>
           
-          {activeTab === 'PYQ' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-3 gap-y-3">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Exam Type</label>
-              <Select value={examType} onChange={(e) => setExamType(e.target.value)} className="w-full text-xs py-1.5 h-8">
-                <option value="">All Types</option>
-                {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
+              <label className="block text-xs font-medium text-gray-700 mb-1">Course / Program</label>
+              <Select value={course} onChange={(e) => { setCourse(e.target.value); setDepartment(''); }} className="w-full text-xs py-1.5 h-8">
+                <option value="">All Courses</option>
+                {availableCourses.map(d => <option key={d} value={d}>{d}</option>)}
               </Select>
             </div>
-          ) : (
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Section (Optional)</label>
-              <Input placeholder="e.g. A" value={section} onChange={(e) => setSection(e.target.value)} className="w-full text-xs h-8" />
+              <label className="block text-xs font-medium text-gray-700 mb-1">Department</label>
+              <Select value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full text-xs py-1.5 h-8" disabled={!course}>
+                <option value="">{course ? 'All Depts' : 'Select Course'}</option>
+                {availableDepartments.map(d => <option key={d} value={d}>{d}</option>)}
+              </Select>
             </div>
-          )}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Year</label>
+              <Select value={year} onChange={(e) => setYear(e.target.value)} className="w-full text-xs py-1.5 h-8">
+                <option value="">All Years</option>
+                {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
+              </Select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Semester</label>
+              <Select value={semester} onChange={(e) => setSemester(e.target.value)} className="w-full text-xs py-1.5 h-8">
+                <option value="">All Semesters</option>
+                {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+              </Select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Subject Name</label>
+              <Input placeholder="Data Structures" value={subjectName} onChange={(e) => setSubjectName(e.target.value)} className="w-full text-xs h-8" />
+            </div>
+            
+            {activeTab === 'PYQ' ? (
+              <div className="sm:col-span-2 lg:col-span-5">
+                <label className="block text-xs font-medium text-gray-700 mb-1">Exam Type</label>
+                <Select value={examType} onChange={(e) => setExamType(e.target.value)} className="w-full text-xs py-1.5 h-8 sm:w-1/2 lg:w-1/5">
+                  <option value="">All Types</option>
+                  {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
+                </Select>
+              </div>
+            ) : (
+              <div className="sm:col-span-2 lg:col-span-5">
+                <label className="block text-xs font-medium text-gray-700 mb-1">Section (Optional)</label>
+                <Input placeholder="e.g. A" value={section} onChange={(e) => setSection(e.target.value)} className="w-full text-xs h-8 sm:w-1/2 lg:w-1/5" />
+              </div>
+            )}
+          </div>
         </div>
         
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex flex-col sm:flex-row justify-end">
            <Button 
              onClick={handleBulkDownload} 
              disabled={downloadingZip || filteredPyqs.length === 0}
@@ -417,8 +425,8 @@ export default function StudentView() {
                   <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-3 py-2 max-w-xs truncate">
-                      <div className="font-semibold text-gray-900 truncate" title={pyq.subjectName}>{pyq.subjectName}</div>
-                      <div className="text-gray-500 text-xs font-mono mt-0.5">{pyq.subjectCode}</div>
+                      <div className="font-bold text-indigo-700 font-mono text-sm truncate" title={pyq.subjectCode}>{pyq.subjectCode}</div>
+                      <div className="text-gray-600 font-medium text-xs mt-0.5 truncate" title={pyq.subjectName}>{pyq.subjectName}</div>
                     </td>
                     <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">{pyq.course}</div>

@@ -249,13 +249,13 @@ export default function AdminAllPYQs() {
           <Button variant="outline" size="sm" onClick={exportToCsv} className="w-full sm:w-auto text-xs whitespace-nowrap">
             <Download className="w-4 h-4 mr-2" /> Export to CSV
           </Button>
-          <div className="relative max-w-xs w-full">
+          <div className="relative max-w-sm w-full">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <Input 
-              placeholder="Search code or subject..." 
+              placeholder="Search explicitly by Subject Code (Priority)..." 
               value={search} 
               onChange={(e) => setSearch(e.target.value)} 
-              className="pl-9 w-full bg-white"
+              className="pl-9 w-full bg-white border-indigo-300 focus:border-indigo-500 shadow-sm font-medium"
             />
           </div>
         </div>
@@ -284,8 +284,8 @@ export default function AdminAllPYQs() {
                   <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
                     <td className="px-3 py-2">
-                      <div className="font-semibold text-gray-900">{pyq.subjectName}</div>
-                      <div className="text-gray-500 text-xs mt-0.5 font-mono">{pyq.subjectCode}</div>
+                      <div className="font-bold text-indigo-700 font-mono text-sm">{pyq.subjectCode}</div>
+                      <div className="text-gray-600 font-medium text-xs mt-0.5 truncate max-w-[200px]" title={pyq.subjectName}>{pyq.subjectName}</div>
                     </td>
                     <td className="px-3 py-2">
                       <div className="text-gray-900 font-medium">{pyq.department}</div>
