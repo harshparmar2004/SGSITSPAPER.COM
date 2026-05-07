@@ -460,13 +460,13 @@ export default function StudentView() {
                     </td>
                     <td className="px-3 py-2 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="outline" size="sm" onClick={() => { setReportingPyq(pyq); setReportSuccess(false); setReportIssue(''); }} className="hidden sm:flex space-x-1.5 shadow-sm text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">
+                        <Button variant="outline" size="sm" onClick={() => { setReportingPyq(pyq); setReportSuccess(false); setReportIssue(''); }} className="flex space-x-1.5 shadow-sm text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100">
                           <AlertTriangle className="w-3.5 h-3.5" />
-                          <span>Report</span>
+                          <span className="hidden sm:inline">Report</span>
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">
+                        <Button variant="outline" size="sm" onClick={() => handleDownload(pyq)} className="flex space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100">
                           <Download className="w-3.5 h-3.5" />
-                          <span>Download ZIP</span>
+                          <span className="hidden sm:inline">Download</span>
                         </Button>
                       </div>
                     </td>
