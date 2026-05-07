@@ -92,9 +92,17 @@ export default function StudentView() {
   };
 
   const filteredPyqs = pyqs.filter((p) => {
+    // Filter by document type
+    const docType = p.documentType || "PYQ";
+    if (activeTab !== docType) return false;
+
     if (department && p.department !== department) return false;
     if (course && p.course !== course) return false;
     if (year && p.year !== year) return false;
+
+    // Syllabus is for the whole year and department, so skip semester/subject filtering
+    if (activeTab === "Syllabus") return true;
+
     if (semester && p.semester !== semester) return false;
     if (
       subjectCode &&
@@ -106,10 +114,6 @@ export default function StudentView() {
       !p.subjectName.toLowerCase().includes(subjectName.toLowerCase())
     )
       return false;
-
-    // Filter by document type
-    const docType = p.documentType || "PYQ";
-    if (activeTab !== docType) return false;
 
     // Some fields like examType might be undefined for Notes
     if (examType && p.examType !== examType) return false;
@@ -369,15 +373,17 @@ export default function StudentView() {
         </h2>
 
         <div className="flex flex-col gap-3">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <Input
-              placeholder="Search by Subject Code (e.g. CS101) - Highest Priority"
-              value={subjectCode}
-              onChange={(e) => setSubjectCode(e.target.value)}
-              className="pl-9 w-full text-sm h-10 border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm"
-            />
-          </div>
+          {activeTab !== "Syllabus" && (
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Input
+                placeholder="Search by Subject Code (e.g. CS101) - Highest Priority"
+                value={subjectCode}
+                onChange={(e) => setSubjectCode(e.target.value)}
+                className="pl-9 w-full text-sm h-10 border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-3 gap-y-3">
             <div>
@@ -437,34 +443,38 @@ export default function StudentView() {
                 ))}
               </Select>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Semester
-              </label>
-              <Select
-                value={semester}
-                onChange={(e) => setSemester(e.target.value)}
-                className="w-full text-xs py-1.5 h-8"
-              >
-                <option value="">All Semesters</option>
-                {SEMESTERS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Subject Name
-              </label>
-              <Input
-                placeholder="Data Structures"
-                value={subjectName}
-                onChange={(e) => setSubjectName(e.target.value)}
-                className="w-full text-xs h-8"
-              />
-            </div>
+            {activeTab !== "Syllabus" && (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Semester
+                </label>
+                <Select
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
+                  className="w-full text-xs py-1.5 h-8"
+                >
+                  <option value="">All Semesters</option>
+                  {SEMESTERS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
+            {activeTab !== "Syllabus" && (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Subject Name
+                </label>
+                <Input
+                  placeholder="Data Structures"
+                  value={subjectName}
+                  onChange={(e) => setSubjectName(e.target.value)}
+                  className="w-full text-xs h-8"
+                />
+              </div>
+            )}
 
             {activeTab === "PYQ" ? (
               <div className="sm:col-span-2 lg:col-span-5">

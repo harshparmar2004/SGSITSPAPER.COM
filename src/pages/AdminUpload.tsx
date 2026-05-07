@@ -416,96 +416,97 @@ export default function AdminUpload() {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="space-y-2 md:col-span-2">
-              <label className="text-xs font-medium text-gray-900">
-                Select Subject {formData.documentType !== "Syllabus" && "*"}
-              </label>
-              {availableSubjects && availableSubjects.length > 0 ? (
-                <Select
-                  value={
-                    isCustomSubject
-                      ? "custom"
-                      : availableSubjects.some(
-                            (s) => s.code === formData.subjectCode,
-                          )
-                        ? formData.subjectCode
-                        : ""
-                  }
-                  onChange={handleSubjectSelect}
-                  required={
-                    !isCustomSubject &&
-                    formData.subjectCode === "" &&
-                    formData.documentType !== "Syllabus"
-                  }
-                >
-                  <option value="">
-                    {formData.documentType === "Syllabus"
-                      ? "-- Full Year / Department Syllabus (No specific subject) --"
-                      : "-- Choose from predefined subjects --"}
-                  </option>
-                  {availableSubjects.map((s) => (
-                    <option key={s.code} value={s.code}>
-                      {s.code} - {s.name}{" "}
-                      {s.year || s.semester
-                        ? `(${s.year ? s.year : ""}${s.year && s.semester ? ", " : ""}${s.semester ? s.semester : ""})`
-                        : ""}
+          {formData.documentType !== 'Syllabus' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-xs font-medium text-gray-900">
+                  Select Subject *
+                </label>
+                {availableSubjects && availableSubjects.length > 0 ? (
+                  <Select
+                    value={
+                      isCustomSubject
+                        ? "custom"
+                        : availableSubjects.some(
+                              (s) => s.code === formData.subjectCode,
+                            )
+                          ? formData.subjectCode
+                          : ""
+                    }
+                    onChange={handleSubjectSelect}
+                    required={
+                      !isCustomSubject &&
+                      formData.subjectCode === "" &&
+                      formData.documentType !== "Syllabus"
+                    }
+                  >
+                    <option value="">
+                      -- Choose from predefined subjects --
                     </option>
-                  ))}
-                  <option value="custom">Other (Enter Manually)</option>
-                </Select>
-              ) : (
-                <div className="text-[11px] text-gray-500 mb-2 italic">
-                  No predefined subjects available for this department. Add them
-                  in the 'Manage Subjects' section, or create manually.
+                    {availableSubjects.map((s) => (
+                      <option key={s.code} value={s.code}>
+                        {s.code} - {s.name}{" "}
+                        {s.year || s.semester
+                          ? `(${s.year ? s.year : ""}${s.year && s.semester ? ", " : ""}${s.semester ? s.semester : ""})`
+                          : ""}
+                      </option>
+                    ))}
+                    <option value="custom">Other (Enter Manually)</option>
+                  </Select>
+                ) : (
+                  <div className="text-[11px] text-gray-500 mb-2 italic">
+                    No predefined subjects available for this department. Add them
+                    in the 'Manage Subjects' section, or create manually.
+                  </div>
+                )}
+              </div>
+
+              {(isCustomSubject ||
+                availableSubjects.length === 0 ||
+                formData.subjectCode !== "") && (
+                <div className="space-y-2 md:col-span-2">
+                  <div className="flex flex-col md:flex-row gap-3">
+                    <div className="flex-1 space-y-2">
+                      <label className="text-xs font-medium text-gray-900">
+                        Subject Code *
+                      </label>
+                      <Input
+                        placeholder="e.g. CS101"
+                        name="subjectCode"
+                        value={formData.subjectCode}
+                        onChange={handleChange}
+                        disabled={
+                          !isCustomSubject &&
+                          availableSubjects.length > 0 &&
+                          formData.subjectCode !== ""
+                        }
+                        required={formData.documentType !== "Syllabus"}
+                      />
+                    </div>
+                    <div className="flex-[2] space-y-2">
+                      <label className="text-xs font-medium text-gray-900">
+                        Subject Name *
+                      </label>
+                      <Input
+                        placeholder="e.g. Data Structures"
+                        name="subjectName"
+                        value={formData.subjectName}
+                        onChange={handleChange}
+                        disabled={
+                          !isCustomSubject &&
+                          availableSubjects.length > 0 &&
+                          formData.subjectCode !== ""
+                        }
+                        required={formData.documentType !== "Syllabus"}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
+          )}
 
-            {(isCustomSubject ||
-              availableSubjects.length === 0 ||
-              formData.subjectCode !== "" ||
-              formData.documentType !== "Syllabus") && (
-              <div className="space-y-2 md:col-span-2">
-                <div className="flex flex-col md:flex-row gap-3">
-                  <div className="flex-1 space-y-2">
-                    <label className="text-xs font-medium text-gray-900">
-                      Subject Code {formData.documentType !== "Syllabus" && "*"}
-                    </label>
-                    <Input
-                      placeholder="e.g. CS101"
-                      name="subjectCode"
-                      value={formData.subjectCode}
-                      onChange={handleChange}
-                      disabled={
-                        !isCustomSubject &&
-                        availableSubjects.length > 0 &&
-                        formData.subjectCode !== ""
-                      }
-                      required={formData.documentType !== "Syllabus"}
-                    />
-                  </div>
-                  <div className="flex-[2] space-y-2">
-                    <label className="text-xs font-medium text-gray-900">
-                      Subject Name {formData.documentType !== "Syllabus" && "*"}
-                    </label>
-                    <Input
-                      placeholder="e.g. Data Structures"
-                      name="subjectName"
-                      value={formData.subjectName}
-                      onChange={handleChange}
-                      disabled={
-                        !isCustomSubject &&
-                        availableSubjects.length > 0 &&
-                        formData.subjectCode !== ""
-                      }
-                      required={formData.documentType !== "Syllabus"}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-2">
               <label className="text-xs font-medium text-gray-900">
                 Course *
@@ -565,23 +566,25 @@ export default function AdminUpload() {
                 ))}
               </Select>
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-gray-900">
-                Semester *
-              </label>
-              <Select
-                name="semester"
-                value={formData.semester}
-                onChange={handleChange}
-                required
-              >
-                {SEMESTERS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </Select>
-            </div>
+            {formData.documentType !== "Syllabus" && (
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-gray-900">
+                  Semester *
+                </label>
+                <Select
+                  name="semester"
+                  value={formData.semester}
+                  onChange={handleChange}
+                  required
+                >
+                  {SEMESTERS.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
 
             {formData.documentType === "PYQ" && (
               <>
