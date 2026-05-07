@@ -274,7 +274,7 @@ export default function Landing() {
             {/* Glowing Orb Behind Card */}
             <div className="absolute -inset-1 bg-gradient-to-r from-sky-300/20 to-sky-500/20 rounded-[20px] blur-2xl opacity-40 group-hover:opacity-60 transition duration-1000"></div>
 
-            <div className="relative bg-white/[0.02] backdrop-blur-xl p-8 md:p-12 rounded-[20px] border border-white/10 overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
+            <div className="relative bg-white/[0.02] backdrop-blur-xl p-6 sm:p-8 md:p-12 rounded-[20px] border border-white/10 overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
               {/* Reflection effect simulated via gradient */}
               <div className="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -skew-x-[25deg] group-hover:left-[150%] transition-all duration-[750ms] pointer-events-none"></div>
 
@@ -286,7 +286,7 @@ export default function Landing() {
                 <h2 className="text-xl font-bold text-white tracking-tight">
                   Secure Login
                 </h2>
-                <p className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-[0.15em] mt-2">
+                <p className="text-[8px] sm:text-[10px] text-slate-500 uppercase tracking-[0.15em] mt-2 leading-relaxed">
                   Access portal with your Gmail ID
                 </p>
               </div>
@@ -295,11 +295,11 @@ export default function Landing() {
               <div className="space-y-3">
                 <button
                   onClick={loginWithGoogle}
-                  className="w-full flex items-center justify-center gap-3 bg-white/[0.03] hover:bg-white/[0.08] text-white border border-white/10 hover:border-sky-300/40 py-4 px-6 rounded-lg transition-all duration-300 group/btn relative overflow-hidden"
+                  className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-white/[0.03] hover:bg-white/[0.08] text-white border border-white/10 hover:border-sky-300/40 py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 group/btn relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-sky-300/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
                   <svg
-                    className="w-5 h-5 relative z-10"
+                    className="w-4 h-4 sm:w-5 sm:h-5 relative z-10 shrink-0"
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -320,18 +320,18 @@ export default function Landing() {
                       fill="#bae6fd"
                     ></path>
                   </svg>
-                  <span className="font-bold tracking-wider text-xs uppercase relative z-10">
+                  <span className="font-bold tracking-[0.1em] text-[11px] sm:text-xs uppercase relative z-10 whitespace-nowrap">
                     Continue with Google
                   </span>
                 </button>
               </div>
 
               {/* Security Alert */}
-              <div className="mt-4 pt-6 border-t border-white/5 text-center">
-                <div className="flex items-center justify-center gap-2 text-slate-500 mb-2">
-                  <ShieldAlert className="w-4 h-4" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest">
-                    Authorized Access Only • AES-256 Encrypted
+              <div className="mt-4 pt-4 sm:pt-6 border-t border-white/5 text-center">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 text-slate-500 mb-2">
+                  <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-snug text-center">
+                    Authorized Access Only <span className="hidden sm:inline">•</span><br className="sm:hidden" /> AES-256 Encrypted
                   </p>
                 </div>
               </div>
