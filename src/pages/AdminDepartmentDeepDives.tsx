@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import { Loader2, Download, FolderOpen, X, Activity, FileText } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  FolderOpen,
+  X,
+  Activity,
+  FileText,
+} from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -18,7 +25,9 @@ export default function AdminDepartmentDeepDive() {
   const { adminRole, assignedDepartments } = useAuth();
   const [loading, setLoading] = useState(true);
   const [deptInsights, setDeptInsights] = useState<Record<string, any>>({});
-  const [selectedDeptInsight, setSelectedDeptInsight] = useState<any | null>(null);
+  const [selectedDeptInsight, setSelectedDeptInsight] = useState<any | null>(
+    null,
+  );
 
   useEffect(() => {
     fetchAnalytics();
@@ -30,29 +39,29 @@ export default function AdminDepartmentDeepDive() {
     try {
       const downQuery = query(
         collection(db, "downloads"),
-        orderBy("downloadedAt", "desc")
+        orderBy("downloadedAt", "desc"),
       );
       const snap = await getDocs(downQuery);
 
       const pyqQuery = query(
         collection(db, "pyqs"),
-        orderBy("uploadedAt", "desc")
+        orderBy("uploadedAt", "desc"),
       );
       const pyqSnap = await getDocs(pyqQuery);
 
-      let docs = snap.docs.map((d) => d.data());
-      let pyqDocs = pyqSnap.docs.map((d) => d.data());
+      let docs: any[] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      let pyqDocs: any[] = pyqSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
       if (adminRole === "department") {
         docs = docs.filter(
           (d) =>
             assignedDepartments.includes(d.department) ||
-            assignedDepartments.includes(`${d.course}::${d.department}`)
+            assignedDepartments.includes(`${d.course}::${d.department}`),
         );
         pyqDocs = pyqDocs.filter(
           (d) =>
             assignedDepartments.includes(d.department) ||
-            assignedDepartments.includes(`${d.course}::${d.department}`)
+            assignedDepartments.includes(`${d.course}::${d.department}`),
         );
       }
 
@@ -104,7 +113,10 @@ export default function AdminDepartmentDeepDive() {
 
       docs.forEach((doc: any) => {
         if (doc.department && doc.downloadedAt) {
-          const dStr = format(new Date(doc.downloadedAt.seconds * 1000), "MMM dd");
+          const dStr = format(
+            new Date(doc.downloadedAt.seconds * 1000),
+            "MMM dd",
+          );
           deptMap[doc.department].totalDownloads++;
           if (deptMap[doc.department].downloadData[dStr] !== undefined) {
             deptMap[doc.department].downloadData[dStr]++;
@@ -114,7 +126,10 @@ export default function AdminDepartmentDeepDive() {
 
       pyqDocs.forEach((doc: any) => {
         if (doc.department && doc.uploadedAt) {
-          const dStr = format(new Date(doc.uploadedAt.seconds * 1000), "MMM dd");
+          const dStr = format(
+            new Date(doc.uploadedAt.seconds * 1000),
+            "MMM dd",
+          );
           deptMap[doc.department].totalUploads++;
           if (deptMap[doc.department].uploadData[dStr] !== undefined) {
             deptMap[doc.department].uploadData[dStr]++;
@@ -132,9 +147,16 @@ export default function AdminDepartmentDeepDive() {
 
           deptMap[doc.department].files.push({
             id: doc.id || doc.fileName || String(Math.random()),
-            fileName: doc.fileName || doc.subjectName || doc.subjectCode || "Unknown File",
+            fileName:
+              doc.fileName ||
+              doc.subjectName ||
+              doc.subjectCode ||
+              "Unknown File",
             date: new Date(doc.uploadedAt.seconds * 1000),
-            dateStr: format(new Date(doc.uploadedAt.seconds * 1000), "dd MMM yyyy, hh:mm a"),
+            dateStr: format(
+              new Date(doc.uploadedAt.seconds * 1000),
+              "dd MMM yyyy, hh:mm a",
+            ),
             documentType: docType,
             course: doc.course || "N/A",
             subject: doc.subjectName || doc.subjectCode || "N/A",
@@ -276,7 +298,7 @@ export default function AdminDepartmentDeepDive() {
                   </span>
                   <span className="text-xl font-bold text-blue-600 truncate">
                     {Object.entries(selectedDeptInsight.documentTypes).sort(
-                      (a: any, b: any) => b[1] - a[1]
+                      (a: any, b: any) => b[1] - a[1],
                     )[0]?.[0] || "N/A"}
                   </span>
                 </div>
@@ -302,7 +324,7 @@ export default function AdminDepartmentDeepDive() {
                             {count}
                           </span>
                         </div>
-                      )
+                      ),
                     )}
                     {Object.keys(selectedDeptInsight.documentTypes).length ===
                       0 && (

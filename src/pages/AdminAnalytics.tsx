@@ -66,8 +66,8 @@ export default function AdminAnalytics() {
       );
       const pyqSnap = await getDocs(pyqQuery);
 
-      let docs = snap.docs.map((d) => d.data());
-      let pyqDocs = pyqSnap.docs.map((d) => d.data());
+      let docs: any[] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      let pyqDocs: any[] = pyqSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
       if (adminRole === "department") {
         docs = docs.filter(
