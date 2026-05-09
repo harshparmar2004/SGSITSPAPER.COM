@@ -11,7 +11,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../lib/firebase";
 import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from "../types";
 import { Button, Input, Select } from "../components/ui";
-import { UploadCloud, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { UploadCloud, Loader2, ArrowLeft, CheckCircle2, X } from "lucide-react";
 import { Link, Navigate, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useAcademicConfig } from "../hooks/useAcademicConfig";
@@ -136,7 +136,9 @@ export default function AdminUpload() {
   };
 
   const [file, setFile] = useState<File | null>(null);
-  const [uploadMethod, setUploadMethod] = useState<"link" | "storage">("link");
+  const [uploadMethod, setUploadMethod] = useState<"link" | "storage">(
+    "storage",
+  );
   const [externalLink, setExternalLink] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -677,6 +679,51 @@ export default function AdminUpload() {
                   Storage setup).
                 </p>
               </div>
+            ) : file ? (
+              <div className="mt-2 flex flex-col items-center justify-center rounded-lg border border-indigo-200 px-6 py-10 bg-indigo-50/50">
+                <div className="flex items-center gap-3 bg-white p-3 rounded-lg border border-indigo-100 shadow-sm max-w-full">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-indigo-900 truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-indigo-500 mt-0.5">
+                      {(file.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFile(null);
+                      const fileInput = document.getElementById(
+                        "file-upload",
+                      ) as HTMLInputElement;
+                      if (fileInput) fileInput.value = "";
+                      const replaceInput = document.getElementById(
+                        "file-upload-replace",
+                      ) as HTMLInputElement;
+                      if (replaceInput) replaceInput.value = "";
+                    }}
+                    className="p-1.5 text-red-500 hover:bg-red-50 hover:text-red-600 rounded-md transition-colors"
+                    title="Remove file"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <label
+                  htmlFor="file-upload-replace"
+                  className="mt-4 cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+                >
+                  Replace file
+                  <input
+                    id="file-upload-replace"
+                    name="file-upload-replace"
+                    type="file"
+                    accept="application/pdf"
+                    className="sr-only"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
             ) : (
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-10 bg-gray-50/50 hover:bg-gray-50 transition-colors">
                 <div className="text-center">
@@ -704,11 +751,6 @@ export default function AdminUpload() {
                   <p className="text-xs leading-5 text-gray-500 mt-2">
                     PDF up to 700KB
                   </p>
-                  {file && (
-                    <p className="text-xs font-medium text-indigo-600 mt-4">
-                      {file.name} ({(file.size / 1024).toFixed(1)} KB)
-                    </p>
-                  )}
                 </div>
               </div>
             )}
