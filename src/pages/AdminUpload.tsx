@@ -11,7 +11,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../lib/firebase";
 import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from "../types";
 import { Button, Input, Select } from "../components/ui";
-import { UploadCloud, Loader2, ArrowLeft } from "lucide-react";
+import { UploadCloud, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Link, Navigate, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { useAcademicConfig } from "../hooks/useAcademicConfig";
@@ -140,7 +140,7 @@ export default function AdminUpload() {
   const [externalLink, setExternalLink] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -199,7 +199,7 @@ export default function AdminUpload() {
 
     setError("");
     setUploading(true);
-    setSuccess(false);
+    setSuccess("");
 
     try {
       // 1. Check duplicate
@@ -324,7 +324,9 @@ export default function AdminUpload() {
         throw err;
       }
 
-      setSuccess(true);
+      setSuccess(
+        `Upload successful! "${fileName || "Link"}" has been uploaded.`,
+      );
       setFile(null);
       setExternalLink("");
       // Reset some fields
@@ -380,8 +382,9 @@ export default function AdminUpload() {
           </div>
         )}
         {success && (
-          <div className="mb-3 p-2 bg-green-50 text-green-700 rounded-md border border-green-200 text-xs">
-            Upload successful! You can upload another.
+          <div className="mb-4 p-3 bg-green-50 text-green-800 rounded-lg border border-green-200 text-sm flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+            <span className="font-medium">{success}</span>
           </div>
         )}
 
@@ -416,7 +419,7 @@ export default function AdminUpload() {
               ))}
             </div>
           </div>
-          {formData.documentType !== 'Syllabus' && (
+          {formData.documentType !== "Syllabus" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               <div className="space-y-2 md:col-span-2">
                 <label className="text-xs font-medium text-gray-900">
@@ -455,8 +458,8 @@ export default function AdminUpload() {
                   </Select>
                 ) : (
                   <div className="text-[11px] text-gray-500 mb-2 italic">
-                    No predefined subjects available for this department. Add them
-                    in the 'Manage Subjects' section, or create manually.
+                    No predefined subjects available for this department. Add
+                    them in the 'Manage Subjects' section, or create manually.
                   </div>
                 )}
               </div>

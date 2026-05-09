@@ -1,0 +1,101 @@
+139-  const [uploadMethod, setUploadMethod] = useState<"link" | "storage">("link");
+140-  const [externalLink, setExternalLink] = useState("");
+141-  const [uploading, setUploading] = useState(false);
+142-  const [error, setError] = useState("");
+143-  const [success, setSuccess] = useState(false);
+144-
+145-  const handleChange = (
+146-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+147-  ) => {
+148-    const { name, value } = e.target;
+149-    setFormData((prev) => ({ ...prev, [name]: value }));
+150-  };
+151-
+152-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+153-    if (e.target.files && e.target.files[0]) {
+154-      const selectedFile = e.target.files[0];
+155-      if (selectedFile.type !== "application/pdf") {
+156-        setError("Only PDF files are allowed.");
+157-        return;
+158-      }
+159-      if (selectedFile.size > 700 * 1024) {
+160-        setError("File size must be less than 700KB to fit in Firestore.");
+161-        return;
+162-      }
+163-      setError("");
+164-      setFile(selectedFile);
+165-    }
+166-  };
+167-
+168-  const checkDuplicate = async () => {
+169-    // We query just by subjectCode to avoid needing a composite index immediately,
+170-    // then filter the rest locally since the dataset per subject is small.
+171-    const q = query(
+172-      collection(db, "pyqs"),
+173-      where("subjectCode", "==", formData.subjectCode),
+174-    );
+175-    const snapshot = await getDocs(q);
+176-    let isDuplicate = false;
+177-    snapshot.forEach((doc) => {
+178-      const data = doc.data();
+179-      if (
+180-        data.examYear === formData.examYear &&
+181-        data.examType === formData.examType
+182-      ) {
+183-        isDuplicate = true;
+184-      }
+185-    });
+186-    return isDuplicate;
+187-  };
+188-
+189:  const handleSubmit = async (e: React.FormEvent) => {
+190-    e.preventDefault();
+191-    if (uploadMethod === "storage" && !file) {
+192-      setError("Please select a PDF file to upload.");
+193-      return;
+194-    }
+195-    if (uploadMethod === "link" && !externalLink) {
+196-      setError("Please provide an external link to the PDF.");
+197-      return;
+198-    }
+199-
+200-    setError("");
+201-    setUploading(true);
+202-    setSuccess(false);
+203-
+204-    try {
+205-      // 1. Check duplicate
+206-      if (formData.documentType === "PYQ") {
+207-        const isDupe = await checkDuplicate();
+208-        if (isDupe) {
+209-          setError(
+210-            "A PYQ for this Subject Code, Exam Year, and Exam Type already exists.",
+211-          );
+212-          setUploading(false);
+213-          return;
+214-        }
+215-      }
+216-
+217-      let fileUrl = "";
+218-      let fileName = "";
+219-      let fileSize = 0;
+220-
+221-      // 2. Upload file or use link
+222-      if (uploadMethod === "storage" && file) {
+223-        if (formData.documentType === "PYQ") {
+224-          fileName =
+225-            `${formData.subjectCode}_${formData.examType}_${formData.examYear}.pdf`.replace(
+226-              /[^a-zA-Z0-9.\-_]/g,
+227-              "_",
+228-            );
+229-        } else if (formData.documentType === "Syllabus") {
+230-          const sCode =
+231-            formData.subjectCode ||
+232-            formData.department.substring(0, 10).toUpperCase();
+233-          fileName = `${sCode}_Syllabus_${Date.now()}.pdf`.replace(
+234-            /[^a-zA-Z0-9.\-_]/g,
+235-            "_",
+236-          );
+237-        } else if (formData.documentType === "Lab Manual") {
+238-          fileName =
+239-            `${formData.subjectCode}_Lab_Manual_${Date.now()}.pdf`.replace(

@@ -23,6 +23,7 @@ import {
   Download,
   FolderOpen,
   ArrowLeft,
+  CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
@@ -52,6 +53,7 @@ export default function AdminAllPYQs() {
   const [file, setFile] = useState<File | null>(null);
   const [replaceLoading, setReplaceLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   // Delete Modal State
   const [deleteModal, setDeleteModal] = useState<{
@@ -128,6 +130,8 @@ export default function AdminAllPYQs() {
       });
 
       setDeleteModal(null);
+      setSuccessMsg(`Successfully deleted document for ${pyq.subjectCode}`);
+      setTimeout(() => setSuccessMsg(""), 5000);
     } catch (e) {
       console.error("Error deleting PYQ", e);
       setError("Error deleting PYQ");
@@ -244,6 +248,10 @@ export default function AdminAllPYQs() {
       });
 
       closeReplaceModal();
+      setSuccessMsg(
+        `Successfully updated document for ${replacingPyq.subjectCode} to "${fileName}"`,
+      );
+      setTimeout(() => setSuccessMsg(""), 5000);
     } catch (e: any) {
       console.error(e);
       setError(e.message || "Failed to replace");
@@ -543,6 +551,13 @@ export default function AdminAllPYQs() {
           )}
         </div>
       </div>
+
+      {successMsg && (
+        <div className="p-3 bg-green-50 text-green-800 rounded-lg border border-green-200 text-sm flex items-center gap-2 animate-in fade-in duration-300">
+          <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+          <span className="font-medium">{successMsg}</span>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-24 bg-white rounded-xl shadow-sm border border-gray-200">
