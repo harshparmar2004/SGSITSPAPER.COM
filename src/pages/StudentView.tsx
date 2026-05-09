@@ -121,6 +121,16 @@ export default function StudentView() {
     return true;
   });
 
+  const hasSearchCriteria =
+    department !== "" ||
+    course !== "" ||
+    year !== "" ||
+    semester !== "" ||
+    subjectCode.trim() !== "" ||
+    subjectName.trim() !== "" ||
+    examType !== "" ||
+    section !== "";
+
   const handleDownload = async (pyq: PYQ) => {
     if (user) {
       try {
@@ -510,28 +520,41 @@ export default function StudentView() {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col sm:flex-row justify-end">
-          <Button
-            onClick={handleBulkDownload}
-            disabled={downloadingZip || filteredPyqs.length === 0}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
-          >
-            {downloadingZip ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <DownloadCloud className="w-4 h-4" />
-            )}
-            {downloadingZip
-              ? "Zipping Files..."
-              : `Download ${filteredPyqs.length} Result(s) as ZIP`}
-          </Button>
-        </div>
+        {hasSearchCriteria && (
+          <div className="mt-4 flex flex-col sm:flex-row justify-end">
+            <Button
+              onClick={handleBulkDownload}
+              disabled={downloadingZip || filteredPyqs.length === 0}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {downloadingZip ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <DownloadCloud className="w-4 h-4" />
+              )}
+              {downloadingZip
+                ? "Zipping Files..."
+                : `Download ${filteredPyqs.length} Result(s) as ZIP`}
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+          </div>
+        ) : !hasSearchCriteria ? (
+          <div className="flex flex-col items-center justify-center p-8 text-center bg-indigo-50/30">
+            <Search className="w-8 h-8 text-indigo-300 mb-3" />
+            <h3 className="text-sm font-medium text-indigo-900">
+              Search for Resources
+            </h3>
+            <p className="mt-1 text-xs text-indigo-600 max-w-sm mx-auto">
+              Please search by subject code, or use filters to display
+              resources.
+            </p>
           </div>
         ) : filteredPyqs.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-8 text-center">
