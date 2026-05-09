@@ -153,26 +153,26 @@ export default function AdminAnalytics() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex flex-col justify-between">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between text-indigo-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Total Downloads
             </span>
-            <Download className="w-4 h-4" />
+            <Download className="w-5 h-5" />
           </div>
-          <span className="text-xl font-extrabold text-gray-900 mt-2">
+          <span className="text-2xl font-extrabold text-gray-900 mt-3">
             {totalDownloads}
           </span>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between text-green-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Peak Download Day
             </span>
-            <TrendingUp className="w-4 h-4" />
+            <TrendingUp className="w-5 h-5" />
           </div>
-          <span className="text-xl font-extrabold text-gray-900 mt-2">
+          <span className="text-2xl font-extrabold text-gray-900 mt-3">
             {downloadTrends.length > 0
               ? downloadTrends.reduce((max, obj) =>
                   obj.downloads > max.downloads ? obj : max,
@@ -293,41 +293,16 @@ export default function AdminAnalytics() {
             Downloads by Department
           </h2>
           <div className="flex flex-col sm:flex-row w-full min-h-[300px] gap-6">
-            {/* Left side: Legend */}
-            <div className="w-full sm:w-1/3 lg:w-1/4 flex flex-col justify-center border-b sm:border-b-0 sm:border-r border-gray-100 pb-4 sm:pb-0 sm:pr-4 overflow-y-auto max-h-72">
-              <div className="flex flex-col gap-3 my-auto">
-                {deptData.map((d, i) => (
-                  <div
-                    key={d.name}
-                    className="flex items-center text-xs text-gray-600"
-                  >
-                    <span
-                      className="w-3 h-3 rounded-full mr-3 shrink-0"
-                      style={{ backgroundColor: COLORS[i % COLORS.length] }}
-                    ></span>
-                    <span className="truncate" title={d.name}>
-                      {d.name}
-                    </span>{" "}
-                    <span className="ml-auto font-medium pl-2">{d.value}</span>
-                  </div>
-                ))}
-                {deptData.length === 0 && (
-                  <div className="text-gray-500 text-xs italic text-center">
-                    No department data
-                  </div>
-                )}
-              </div>
-            </div>
-            {/* Right side: Circle */}
-            <div className="w-full sm:w-2/3 lg:w-3/4 h-72">
+            {/* Left side: Circle */}
+            <div className="w-full sm:w-1/3 lg:w-1/4 h-72 border-b sm:border-b-0 sm:border-r border-gray-100 pb-4 sm:pb-0 sm:pr-4 flex justify-center items-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={deptData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={80}
-                    outerRadius={110}
+                    innerRadius={60}
+                    outerRadius={90}
                     paddingAngle={5}
                     dataKey="value"
                   >
@@ -347,6 +322,34 @@ export default function AdminAnalytics() {
                   />
                 </PieChart>
               </ResponsiveContainer>
+            </div>
+
+            {/* Right side: Legend */}
+            <div className="w-full sm:w-2/3 lg:w-3/4 pt-4 sm:pt-0 overflow-y-auto h-72 custom-scrollbar">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-3 p-2">
+                {deptData.map((d, i) => (
+                  <div
+                    key={d.name}
+                    className="flex text-[11px] text-gray-600 justify-between items-center bg-gray-50/50 p-2 rounded border border-gray-100"
+                  >
+                    <div className="flex items-center truncate min-w-0 pr-2">
+                      <span
+                        className="w-2 h-2 rounded-full mr-2 shrink-0"
+                        style={{ backgroundColor: COLORS[i % COLORS.length] }}
+                      ></span>
+                      <span className="truncate font-medium" title={d.name}>
+                        {d.name}
+                      </span>
+                    </div>
+                    <span className="font-bold text-gray-900 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100">{d.value}</span>
+                  </div>
+                ))}
+                {deptData.length === 0 && (
+                  <div className="text-gray-500 text-[11px] italic col-span-full mt-4">
+                    No department data
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
