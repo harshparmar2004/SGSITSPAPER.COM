@@ -49,6 +49,7 @@ export default function AdminLayout() {
     
     // Super admin only routes
     { name: 'Programs & Departments', path: '/admin/departments', icon: Layers, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Dept. Deep Dives', path: '/admin/department-deep-dives', icon: Layers, exact: false, showForAuth: adminRole === 'superadmin' },
     { name: 'Manage Subjects', path: '/admin/subjects', icon: BookOpen, exact: false, showForAuth: true },
     { name: 'Monthly Uploads', path: '/admin/monthly-uploads', icon: CalendarDays, exact: false, showForAuth: true }, // 2
     { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false, showForAuth: true },

@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import { Loader2, Download, TrendingUp, Users } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  TrendingUp,
+  Users,
+  FolderOpen,
+  X,
+  Activity,
+  FileText,
+} from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -48,11 +57,18 @@ export default function AdminAnalytics() {
       const downQuery = query(
         collection(db, "downloads"),
         orderBy("downloadedAt", "desc"),
-        limit(2000),
       );
       const snap = await getDocs(downQuery);
 
+      const pyqQuery = query(
+        collection(db, "pyqs"),
+        orderBy("uploadedAt", "desc"),
+      );
+      const pyqSnap = await getDocs(pyqQuery);
+
       let docs = snap.docs.map((d) => d.data());
+      let pyqDocs = pyqSnap.docs.map((d) => d.data());
+
       if (adminRole === "department") {
         docs = docs.filter(
           (d) =>
@@ -341,7 +357,9 @@ export default function AdminAnalytics() {
                         {d.name}
                       </span>
                     </div>
-                    <span className="font-bold text-gray-900 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100">{d.value}</span>
+                    <span className="font-bold text-gray-900 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100">
+                      {d.value}
+                    </span>
                   </div>
                 ))}
                 {deptData.length === 0 && (
