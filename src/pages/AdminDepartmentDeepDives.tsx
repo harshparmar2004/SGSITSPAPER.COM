@@ -18,7 +18,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { format, subDays } from "date-fns";
+import { format, subDays, subMonths } from "date-fns";
 import { useAuth } from "../hooks/useAuth";
 
 export default function AdminDepartmentDeepDive() {
@@ -101,21 +101,21 @@ export default function AdminDepartmentDeepDive() {
         }
       });
 
-      const template30Days: Record<string, number> = {};
-      for (let i = 0; i < 30; i++) {
-        template30Days[format(subDays(new Date(), 29 - i), "MMM dd")] = 0;
+      const template12Months: Record<string, number> = {};
+      for (let i = 0; i < 12; i++) {
+        template12Months[format(subMonths(new Date(), 11 - i), "MMM yyyy")] = 0;
       }
 
       Object.values(deptMap).forEach((dept) => {
-        dept.downloadData = { ...template30Days };
-        dept.uploadData = { ...template30Days };
+        dept.downloadData = { ...template12Months };
+        dept.uploadData = { ...template12Months };
       });
 
       docs.forEach((doc: any) => {
         if (doc.department && doc.downloadedAt) {
           const dStr = format(
             new Date(doc.downloadedAt.seconds * 1000),
-            "MMM dd",
+            "MMM yyyy",
           );
           deptMap[doc.department].totalDownloads++;
           if (deptMap[doc.department].downloadData[dStr] !== undefined) {
@@ -128,7 +128,7 @@ export default function AdminDepartmentDeepDive() {
         if (doc.department && doc.uploadedAt) {
           const dStr = format(
             new Date(doc.uploadedAt.seconds * 1000),
-            "MMM dd",
+            "MMM yyyy",
           );
           deptMap[doc.department].totalUploads++;
           if (deptMap[doc.department].uploadData[dStr] !== undefined) {
