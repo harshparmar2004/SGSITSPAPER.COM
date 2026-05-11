@@ -80,8 +80,8 @@ export default function AdminStaff() {
 
     try {
       await setDoc(doc(db, "admins", editModal.id), {
-        email: editModal.email, // preserve existing email
-        name: editName.trim(),
+        email: editModal.email || (editModal.id.includes('@') ? editModal.id : ''),
+        name: editName ? editName.trim() : '',
         role: editRole,
         departments: editRole === "department" ? editDepartments : [],
       });
