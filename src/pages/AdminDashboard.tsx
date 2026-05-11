@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, query, orderBy, getDocs, limit, getCountFromServer, deleteDoc, doc, getAggregateFromServer, sum, where } from 'firebase/firestore';
+import { getCachedCollection } from "../lib/cache";
 import { db } from '../lib/firebase';
 import { PYQ } from '../types';
 import { Button } from '../components/ui';
@@ -77,8 +78,8 @@ export default function AdminDashboard() {
       } else {
         // For department admins, we'll fetch downloads to show engagement instead of total users
         try {
-           const downSnap = await getDocs(query(collection(db, "downloads"), limit(1000)));
-           let downDocs = downSnap.docs.map(d => d.data());
+           const allDownloads = await getCachedCollection("downloads");
+           let downDocs = allDownloads.slice(0, 1000);
            downDocs = downDocs.filter(d => assignedDepartments.includes(d.department) || assignedDepartments.includes(`${d.course}::${d.department}`));
            
            // Count unique students who downloaded
@@ -96,12 +97,8 @@ export default function AdminDashboard() {
       // since 'in' query has 30 elements limits, but it's fine for small scales.
       const pyqQuery = query(pyqColl, orderBy("uploadedAt", "desc")); // Get all basically for graph..
       // To prevent large reads, we'll just get up to 1000 latest
-      const recentPyqsSnapshot = await getDocs(query(pyqColl, orderBy("uploadedAt", "desc"), limit(1000)));
-      
-      let pyqData: PYQ[] = [];
-      recentPyqsSnapshot.forEach((doc) => {
-        pyqData.push({ id: doc.id, ...doc.data() } as PYQ);
-      });
+      const allCachedPyqs = await getCachedCollection("pyqs");
+      let pyqData: PYQ[] = allCachedPyqs.slice(0, 1000);
 
       if (adminRole === 'department') {
          pyqData = pyqData.filter(p => assignedDepartments.includes(p.department) || assignedDepartments.includes(`${p.course}::${p.department}`));

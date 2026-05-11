@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { Loader2, Users, Search, Mail } from 'lucide-react';
 import { Input } from '../components/ui';
 import { useAuth } from '../hooks/useAuth';
+import { getCachedCollection } from "../lib/cache";
 
 interface AppUser {
   id: string;
@@ -39,21 +40,18 @@ export default function AdminStudents() {
         });
         setUsers(userData);
       } else if (adminRole === 'department') {
-        // Find users who have downloaded documents from this department
-        // Note: For large scale, you might do this differently, but this works for preview
-        const downSnap = await getDocs(query(collection(db, "downloads"), limit(2000)));
-        let downDocs = downSnap.docs.map(d => d.data());
+        const allDownloads = await getCachedCollection("downloads");
+        let downDocs: any[] = allDownloads.slice(0, 2000);
         downDocs = downDocs.filter(d => assignedDepartments.includes(d.department) || assignedDepartments.includes(`${d.course}::${d.department}`));
         
         const uniqueUserIds = Array.from(new Set(downDocs.map(d => d.userId).filter(Boolean)));
         
-        const usersColl = collection(db, "users");
-        const snapshot = await getDocs(usersColl);
+        const allUsers = await getCachedCollection("users");
         
         const userData: AppUser[] = [];
-        snapshot.forEach((doc) => {
+        allUsers.forEach((doc: any) => {
           if (uniqueUserIds.includes(doc.id)) {
-            userData.push({ id: doc.id, ...doc.data() } as AppUser);
+            userData.push(doc as AppUser);
           }
         });
         setUsers(userData);

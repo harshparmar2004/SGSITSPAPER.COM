@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { getCachedCollection } from "../lib/cache";
 import {
   Loader2,
   Download,
@@ -54,20 +55,8 @@ export default function AdminAnalytics() {
     if (!adminRole) return;
     setLoading(true);
     try {
-      const downQuery = query(
-        collection(db, "downloads"),
-        orderBy("downloadedAt", "desc"),
-      );
-      const snap = await getDocs(downQuery);
-
-      const pyqQuery = query(
-        collection(db, "pyqs"),
-        orderBy("uploadedAt", "desc"),
-      );
-      const pyqSnap = await getDocs(pyqQuery);
-
-      let docs: any[] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      let pyqDocs: any[] = pyqSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      let docs: any[] = await getCachedCollection("downloads");
+      let pyqDocs: any[] = await getCachedCollection("pyqs");
 
       if (adminRole === "department") {
         docs = docs.filter(

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { getCachedCollection } from "../lib/cache";
 import { PYQ } from "../types";
 import { Input, Button } from "../components/ui";
 import {
@@ -36,9 +37,7 @@ export default function AdminSubjectPYQs() {
     if (!adminRole) return;
     setLoading(true);
     try {
-      const q = query(collection(db, "pyqs"), orderBy("uploadedAt", "desc"));
-      const snapshot = await getDocs(q);
-      let data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as PYQ);
+      let data = await getCachedCollection("pyqs");
 
       // Filter by department if not superadmin
       if (adminRole === "department") {

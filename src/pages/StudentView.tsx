@@ -11,6 +11,7 @@ import {
 import { db } from "../lib/firebase";
 import { PYQ, YEARS, SEMESTERS, EXAM_TYPES, MONTHS } from "../types";
 import { Button, Input, Select } from "../components/ui";
+import { getCachedCollection } from "../lib/cache";
 import {
   ExternalLink,
   Loader2,
@@ -72,18 +73,8 @@ export default function StudentView() {
     setLoading(true);
     try {
       // Fetch recent PYQs. For full complex filtering, we do it client-side
-      // since Firestore requires custom composite indexes for many where clauses.
-      const q = query(
-        collection(db, "pyqs"),
-        orderBy("uploadedAt", "desc"),
-        limit(500),
-      );
-
-      const snapshot = await getDocs(q);
-      const data: PYQ[] = [];
-      snapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() } as PYQ);
-      });
+      const allPyqs = await getCachedCollection("pyqs");
+      const data: PYQ[] = allPyqs.slice(0, 800) as PYQ[];
       setPyqs(data);
     } catch (error) {
       console.error("Error fetching PYQs:", error);

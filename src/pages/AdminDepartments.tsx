@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { Layers, FolderOpen, FileText, Loader2, BookMarked, ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 import { useAcademicConfig, AcademicProgram } from '../hooks/useAcademicConfig';
 import { Button, Input } from '../components/ui';
+import { getCachedCollection } from '../lib/cache';
 
 // Define the aggregation structure
 type CourseStats = {
@@ -48,7 +49,7 @@ export default function AdminDepartments() {
   const fetchStats = async () => {
     setStatsLoading(true);
     try {
-      const pyqSnapshot = await getDocs(collection(db, "pyqs"));
+      const allPyqs = await getCachedCollection("pyqs");
       
       const newStats: CourseStats = {};
       
@@ -61,8 +62,7 @@ export default function AdminDepartments() {
       });
 
       // Aggregate data
-      pyqSnapshot.forEach((doc) => {
-        const data = doc.data();
+      allPyqs.forEach((data: any) => {
         if (data.course && data.department && newStats[data.course]) {
            newStats[data.course].total += 1;
            if (newStats[data.course].departments[data.department] !== undefined) {

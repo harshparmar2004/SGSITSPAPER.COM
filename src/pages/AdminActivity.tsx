@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { Loader2, Activity, Users, UserCheck, Download } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { PYQ } from '../types';
+import { getCachedCollection } from '../lib/cache';
 import { format } from 'date-fns';
 import { Button } from '../components/ui';
 
@@ -34,16 +35,12 @@ export default function AdminActivity() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [adminSnap, pyqSnap] = await Promise.all([
-           getDocs(query(collection(db, "admins"))),
-           // Fetch all to allow "forever" history for staff
-           getDocs(query(collection(db, "pyqs"), orderBy("uploadedAt", "desc")))
+        const [adminList, allPyqs] = await Promise.all([
+           getCachedCollection("admins"),
+           getCachedCollection("pyqs")
         ]);
         
-        const adminList = adminSnap.docs.map(d => ({ id: d.id, ...d.data() } as AdminData));
-        setAdmins(adminList);
-        
-        const allPyqs = pyqSnap.docs.map(d => ({ id: d.id, ...d.data() } as PYQ));
+        setAdmins(adminList as AdminData[]);
         
         const superadminEmails = new Set(adminList.filter(a => a.role === 'superadmin').map(a => a.email?.toLowerCase()).filter(Boolean));
         superadminEmails.add('harshparma007@gmail.com');

@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../lib/firebase";
+import { clearCache } from "../lib/cache";
 import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from "../types";
 import { Button, Input, Select } from "../components/ui";
 import { UploadCloud, Loader2, ArrowLeft, CheckCircle2, X } from "lucide-react";
@@ -308,6 +309,7 @@ export default function AdminUpload() {
       // 3. Save to Firestore
       try {
         await addDoc(collection(db, "pyqs"), payload);
+        clearCache("pyqs");
       } catch (err: any) {
         if (err.message && err.message.includes("permission")) {
           const authInfo = {

@@ -26,6 +26,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { getCachedCollection, clearCache } from "../lib/cache";
 
 const DOC_TYPES = [
   "All",
@@ -66,13 +67,11 @@ export default function AdminAllPYQs() {
     fetchPyqs();
   }, [adminRole, assignedDepartments]); // Re-fetch if role or assignments change
 
-  const fetchPyqs = async () => {
+  const fetchPyqs = async (forceRefresh = false) => {
     if (!adminRole) return;
     setLoading(true);
     try {
-      const q = query(collection(db, "pyqs"), orderBy("uploadedAt", "desc"));
-      const snapshot = await getDocs(q);
-      let data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as PYQ);
+      let data = await getCachedCollection("pyqs", forceRefresh);
 
       // Filter by department if not superadmin
       if (adminRole === "department") {
@@ -115,6 +114,7 @@ export default function AdminAllPYQs() {
         ); // Ignore if not found
       }
       await deleteDoc(doc(db, "pyqs", pyq.id));
+      clearCache("pyqs");
 
       setPyqsByDept((prev) => {
         const next = { ...prev };
@@ -231,6 +231,7 @@ export default function AdminAllPYQs() {
         fileName,
         fileSize,
       });
+      clearCache("pyqs");
 
       setPyqsByDept((prev) => {
         const next = { ...prev };

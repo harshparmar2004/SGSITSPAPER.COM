@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { getCachedCollection } from "../lib/cache";
 import { Loader2, CalendarDays, FileText, User, Layers, BarChart2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { format, parseISO } from 'date-fns';
@@ -32,21 +33,17 @@ export default function AdminMonthlyUploads() {
     setLoading(true);
     try {
       // 1. Fetch Users to map UID -> Email
-      const usersSnap = await getDocs(collection(db, "users"));
+      const cachedUsers = await getCachedCollection("users");
       const userMap: Record<string, string> = {};
-      usersSnap.forEach(doc => {
-        const data = doc.data();
-        userMap[doc.id] = data.email || data.name || 'Unknown User';
+      cachedUsers.forEach((data: any) => {
+        userMap[data.id] = data.email || data.name || 'Unknown User';
       });
 
       // 2. Fetch PYQs
-      const pyqQuery = query(collection(db, "pyqs"), orderBy("uploadedAt", "desc"));
-      const pyqSnap = await getDocs(pyqQuery);
+      const cachedPyqs = await getCachedCollection("pyqs");
       
       const records: UploadRecord[] = [];
-      pyqSnap.forEach(doc => {
-        const data = doc.data();
-        
+      cachedPyqs.forEach((data: any) => {
         // Filter by assigned departments if department admin
         if (adminRole === 'department') {
            const fullDept = `${data.course}::${data.department}`;
@@ -56,9 +53,9 @@ export default function AdminMonthlyUploads() {
         }
 
         if (data.uploadedAt) {
-          const dateObj = new Date(data.uploadedAt.seconds * 1000);
+          const dateObj = new Date(data.uploadedAt.seconds ? data.uploadedAt.seconds * 1000 : data.uploadedAt);
           records.push({
-            id: doc.id,
+            id: data.id,
             subjectCode: data.subjectCode || 'N/A',
             subjectName: data.subjectName || 'Unknown Subject',
             department: data.department || 'N/A',
