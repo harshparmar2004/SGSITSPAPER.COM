@@ -16,8 +16,9 @@ interface AdminData {
 
 export default function AdminActivity() {
   const { adminRole, user, assignedDepartments } = useAuth();
-  const [activeTab, setActiveTab] = useState<'your' | 'staff' | 'student'>('your');
+  const [activeTab, setActiveTab] = useState<'your' | 'superadmin' | 'staff' | 'student'>('your');
   const [myHistory, setMyHistory] = useState<PYQ[]>([]);
+  const [superadminHistory, setSuperadminHistory] = useState<PYQ[]>([]);
   const [staffHistory, setStaffHistory] = useState<PYQ[]>([]);
   const [studentHistory, setStudentHistory] = useState<PYQ[]>([]);
   const [admins, setAdmins] = useState<AdminData[]>([]);
@@ -44,9 +45,14 @@ export default function AdminActivity() {
         
         const allPyqs = pyqSnap.docs.map(d => ({ id: d.id, ...d.data() } as PYQ));
         
-        const staffEmails = new Set(adminList.map(a => a.email?.toLowerCase()).filter(Boolean));
-        const staffUids = new Set(adminList.map(a => a.id));
+        const superadminEmails = new Set(adminList.filter(a => a.role === 'superadmin').map(a => a.email?.toLowerCase()).filter(Boolean));
+        superadminEmails.add('harshparma007@gmail.com');
+        const superadminUids = new Set(adminList.filter(a => a.role === 'superadmin').map(a => a.id));
 
+        const staffEmails = new Set(adminList.filter(a => a.role === 'department').map(a => a.email?.toLowerCase()).filter(Boolean));
+        const staffUids = new Set(adminList.filter(a => a.role === 'department').map(a => a.id));
+
+        const superadminPyqs = allPyqs.filter(p => p.uploadedBy && (superadminEmails.has(p.uploadedBy.toLowerCase()) || superadminUids.has(p.uploadedBy)));
         let staffPyqs = allPyqs.filter(p => p.uploadedBy && (staffEmails.has(p.uploadedBy.toLowerCase()) || staffUids.has(p.uploadedBy)));
         
         // Filter staff Pyqs based on assigned departments if not superadmin
@@ -57,8 +63,9 @@ export default function AdminActivity() {
           });
         }
 
-        const studentPyqs = allPyqs.filter(p => p.uploadedBy && !(staffEmails.has(p.uploadedBy.toLowerCase()) || staffUids.has(p.uploadedBy)) && p.uploadedBy.toLowerCase() !== 'harshparma007@gmail.com' && p.uploadedBy !== user?.uid);
+        const studentPyqs = allPyqs.filter(p => p.uploadedBy && !(superadminEmails.has(p.uploadedBy.toLowerCase()) || superadminUids.has(p.uploadedBy)) && !(staffEmails.has(p.uploadedBy.toLowerCase()) || staffUids.has(p.uploadedBy)) && p.uploadedBy !== user?.uid);
 
+        setSuperadminHistory(superadminPyqs);
         setStaffHistory(staffPyqs);
         // User requested last 50 actions by the students
         setStudentHistory(studentPyqs.slice(0, 50));
@@ -88,6 +95,9 @@ export default function AdminActivity() {
     if (activeTab === 'your') {
       targetData = myHistory;
       logName = 'Your_Uploads';
+    } else if (activeTab === 'superadmin') {
+      targetData = superadminHistory;
+      logName = 'SuperAdmin_History';
     } else if (activeTab === 'staff') {
       targetData = staffHistory;
       logName = 'Staff_History';
@@ -101,7 +111,7 @@ export default function AdminActivity() {
     const headers = ["ID", "Uploaded By", "Subject Code", "Subject Name", "Department", "Course", "Year", "Semester", "Document Type", "Date"];
     const rows = targetData.map(p => {
       let uploader = p.uploadedBy || 'unknown';
-      if (activeTab === 'staff') {
+      if (activeTab === 'staff' || activeTab === 'superadmin') {
         const staffMatch = admins.find(a => a.email?.toLowerCase() === p.uploadedBy?.toLowerCase() || a.id === p.uploadedBy);
         if (staffMatch) {
           uploader = staffMatch.email;
@@ -152,6 +162,12 @@ export default function AdminActivity() {
                 className={`flex-shrink-0 px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'your' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
               >
                 Your Upload History
+              </button>
+              <button
+                 onClick={() => setActiveTab('superadmin')}
+                className={`flex-shrink-0 px-3 py-2 text-xs font-medium rounded-md transition-colors ${activeTab === 'superadmin' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+              >
+                Super Admin History
               </button>
               <button
                  onClick={() => setActiveTab('staff')}
@@ -211,6 +227,90 @@ export default function AdminActivity() {
                                  {pyq.uploadedBy || 'Unknown User'}
                               </div>
                               <div className="text-xs text-indigo-500 font-medium mt-0.5">You</div>
+                           </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2">
+                         <div className="font-medium text-gray-900">{pyq.subjectCode}</div>
+                         <div className="text-gray-500 text-xs mt-0.5 truncate max-w-[150px]" title={pyq.subjectName}>{pyq.subjectName}</div>
+                      </td>
+                      <td className="px-3 py-2">
+                         <div className="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                            {pyq.department}
+                         </div>
+                         <div className="text-gray-500 text-xs mt-1 ml-1">{pyq.examType} {pyq.examYear} - {pyq.semester}</div>
+                      </td>
+                      <td className="px-3 py-2 text-gray-500 font-medium">
+                        {pyq.uploadedAt ? format(new Date(pyq.uploadedAt.seconds * 1000), 'MMM dd, yyyy HH:mm') : 'Unknown'}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+      )}
+
+      {activeTab === 'superadmin' && adminRole === 'superadmin' && (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+             <UserCheck className="w-5 h-5 text-indigo-500" />
+             Super Admin History
+           </h3>
+           <span className="text-[11px] text-gray-500 font-medium">All Time</span>
+        </div>
+        
+        {loading ? (
+           <div className="flex justify-center p-12"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
+        ) : superadminHistory.length === 0 ? (
+           <div className="p-8 text-center text-gray-500 bg-gray-50/30">No super admin uploads found.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs whitespace-nowrap">
+              <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2">Action Done By</th>
+                  <th className="px-3 py-2">Target Document</th>
+                  <th className="px-3 py-2">Department Addressed</th>
+                  <th className="px-3 py-2">Time</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {superadminHistory.map((pyq, index) => {
+                  const adminMatch = admins.find(a => a.email?.toLowerCase() === pyq.uploadedBy?.toLowerCase() || a.id === pyq.uploadedBy);
+                  let displayName = adminMatch?.name || 'Unknown User';
+                  
+                  // if no name in admin doc but we have an email, use it
+                  if (!adminMatch?.name && adminMatch?.email) {
+                    displayName = adminMatch.email.split('@')[0];
+                  } else if (!adminMatch) {
+                    // if it's an email, use name part
+                    if (pyq.uploadedBy?.includes('@')) {
+                       displayName = pyq.uploadedBy.split('@')[0];
+                    } else if (pyq.uploadedBy === user?.uid) {
+                       displayName = 'You';
+                    } else {
+                       displayName = 'Super Admin';
+                    }
+                  }
+
+                  return (
+                    <tr key={pyq.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-3 py-2 text-center text-gray-500 font-medium">{index + 1}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex items-center gap-2">
+                           <div className={'w-8 h-8 rounded flex items-center justify-center font-bold text-xs uppercase bg-indigo-100 text-indigo-700'}>
+                              {displayName[0] || '?'}
+                           </div>
+                           <div>
+                              <div className="font-medium text-gray-900 truncate max-w-[200px]" title={displayName}>
+                                 {displayName}
+                              </div>
+                              <div className="text-xs text-indigo-500 font-medium mt-0.5">{pyq.uploadedBy}</div>
                            </div>
                         </div>
                       </td>
