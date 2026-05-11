@@ -354,35 +354,38 @@ export default function Landing() {
       </main>
 
       {/* Footer Area */}
-      <footer className="w-full py-12 bg-white/[0.02] backdrop-blur-md border-t border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] relative z-10 mt-12">
-        <div className="flex flex-col lg:flex-row justify-between items-center px-8 gap-3 max-w-full px-4 sm:px-6 mx-auto">
+      <footer className="w-full py-8 sm:py-12 bg-white/[0.02] backdrop-blur-md border-t border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] relative z-10 mt-12">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
           {/* Left Side */}
-          <div className="flex flex-col items-center lg:items-start gap-2">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
+            <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
               © {new Date().getFullYear()}{" "}
-              <span className="text-sky-300">SGSITSPAPER</span>. All rights
-              reserved to the creators.
-            </span>
-            <p className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.1em]">
+              <span className="text-sky-300 font-extrabold">SGSITSPAPER</span>. All rights reserved.
+            </p>
+            <p className="text-[10px] sm:text-xs text-slate-600 font-bold uppercase tracking-[0.1em]">
               Engineered for Excellence at SGSITS Indore
             </p>
           </div>
 
           {/* Right Side */}
-          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4">
-            {["Privacy", "Terms", "Contact", "Status"].map((link) => (
-              <a
-                key={link}
-                className="text-[10px] font-bold text-slate-500 hover:text-sky-300 transition-all uppercase tracking-[0.2em]"
-                href="#"
-              >
-                {link}
-              </a>
-            ))}
-            <div className="w-px h-4 bg-white/10 hidden md:block"></div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3">
+              {["Privacy", "Terms", "Contact", "Status"].map((link) => (
+                <a
+                  key={link}
+                  className="text-[10px] sm:text-xs font-bold text-slate-500 hover:text-sky-300 transition-all uppercase tracking-[0.2em]"
+                  href="#"
+                >
+                  {link}
+                </a>
+              ))}
+            </div>
+            
+            <div className="w-px h-4 bg-white/10 hidden sm:block"></div>
+            
             <a
               aria-label="LinkedIn"
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-sky-300 hover:border-sky-300/40 transition-all duration-300"
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-sky-300 hover:border-sky-300/40 transition-all duration-300 shrink-0 mt-2 sm:mt-0"
               href="https://www.linkedin.com/in/harsh-parmar-3b1160350"
               target="_blank"
               rel="noopener noreferrer"
