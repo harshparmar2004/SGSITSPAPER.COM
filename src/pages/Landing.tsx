@@ -36,7 +36,11 @@ function LandingNavbar() {
       >
         <div className="flex items-center justify-between py-3 max-w-full px-4 sm:px-6 mx-auto">
           <div className="flex items-center gap-2">
-            <Snowflake className="text-sky-300 w-6 h-6 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]" />
+            <img
+              src="/logo.png"
+              alt="SGSITS Logo"
+              className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]"
+            />
             <span className="text-lg font-extrabold text-white tracking-tighter uppercase">
               SGSITS <span className="text-sky-300">PYQ Hub</span>
             </span>
@@ -331,7 +335,9 @@ export default function Landing() {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 text-slate-500 mb-2">
                   <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-snug text-center">
-                    Authorized Access Only <span className="hidden sm:inline">•</span><br className="sm:hidden" /> AES-256 Encrypted
+                    Authorized Access Only{" "}
+                    <span className="hidden sm:inline">•</span>
+                    <br className="sm:hidden" /> AES-256 Encrypted
                   </p>
                 </div>
               </div>

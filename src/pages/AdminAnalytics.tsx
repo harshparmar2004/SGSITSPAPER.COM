@@ -84,7 +84,7 @@ export default function AdminAnalytics() {
       for (let i = 0; i < 30; i++)
         trendsRaw[format(subDays(new Date(), 29 - i), "MMM dd")] = 0;
 
-      const deptRaw: Record<string, number> = {};
+      const distributionRaw: Record<string, number> = {};
       const typeRaw: Record<string, number> = {};
       const papersRaw: Record<string, any> = {};
 
@@ -96,8 +96,17 @@ export default function AdminAnalytics() {
           );
           if (trendsRaw[dStr] !== undefined) trendsRaw[dStr]++;
         }
-        if (doc.department)
-          deptRaw[doc.department] = (deptRaw[doc.department] || 0) + 1;
+
+        if (adminRole === "department") {
+          const name = doc.subjectName || doc.subjectCode || "Unknown";
+          distributionRaw[name] = (distributionRaw[name] || 0) + 1;
+        } else {
+          if (doc.department) {
+            distributionRaw[doc.department] =
+              (distributionRaw[doc.department] || 0) + 1;
+          }
+        }
+
         if (doc.examType)
           typeRaw[doc.examType] = (typeRaw[doc.examType] || 0) + 1;
 
@@ -122,7 +131,7 @@ export default function AdminAnalytics() {
         })),
       );
       setDeptData(
-        Object.entries(deptRaw)
+        Object.entries(distributionRaw)
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value),
       );
@@ -305,12 +314,26 @@ export default function AdminAnalytics() {
 
         {/* Distribution Pie Chart */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4">
-            Downloads by Department
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4 text-center sm:text-left">
+            {adminRole === "department"
+              ? "Downloads by Subject"
+              : "Downloads by Department"}
           </h2>
-          <div className="flex flex-col sm:flex-row w-full min-h-[300px] gap-6">
-            {/* Left side: Circle */}
-            <div className="w-full sm:w-1/3 lg:w-1/4 h-72 border-b sm:border-b-0 sm:border-r border-gray-100 pb-4 sm:pb-0 sm:pr-4 flex justify-center items-center">
+          <div
+            className={`flex w-full min-h-[300px] gap-6 ${
+              adminRole === "department"
+                ? "flex-col items-center justify-center"
+                : "flex-col sm:flex-row"
+            }`}
+          >
+            {/* Circle */}
+            <div
+              className={`${
+                adminRole === "department"
+                  ? "w-full sm:w-1/2 h-72 border-b border-gray-100 pb-4 flex justify-center items-center"
+                  : "w-full sm:w-1/3 lg:w-1/4 h-72 border-b sm:border-b-0 sm:border-r border-gray-100 pb-4 sm:pb-0 sm:pr-4 flex justify-center items-center"
+              }`}
+            >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -340,8 +363,14 @@ export default function AdminAnalytics() {
               </ResponsiveContainer>
             </div>
 
-            {/* Right side: Legend */}
-            <div className="w-full sm:w-2/3 lg:w-3/4 pt-4 sm:pt-0 overflow-y-auto h-72 custom-scrollbar">
+            {/* Legend */}
+            <div
+              className={`${
+                adminRole === "department"
+                  ? "w-full sm:w-3/4 max-w-4xl pt-4 overflow-y-auto max-h-72 custom-scrollbar"
+                  : "w-full sm:w-2/3 lg:w-3/4 pt-4 sm:pt-0 overflow-y-auto h-72 custom-scrollbar"
+              }`}
+            >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-3 p-2">
                 {deptData.map((d, i) => (
                   <div
