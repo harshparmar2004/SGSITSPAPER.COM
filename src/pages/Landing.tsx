@@ -37,7 +37,7 @@ function LandingNavbar() {
         <div className="flex items-center justify-between py-3 max-w-full px-4 sm:px-6 mx-auto">
           <div className="flex items-center gap-2">
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="SGSITS Logo"
               className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]"
             />

@@ -41,7 +41,7 @@ function Navbar() {
               className="flex items-center space-x-2 md:space-x-3 text-indigo-900 font-extrabold text-lg md:text-xl hover:opacity-90 transition-opacity tracking-tight"
             >
               <img
-                src="/logo.png"
+                src="/logo.svg"
                 alt="SGSITS Logo"
                 className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0 drop-shadow-md"
               />
