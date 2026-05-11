@@ -134,18 +134,10 @@ export default function AdminStaff() {
       );
       const snap = await getDocs(q);
 
-      if (snap.empty) {
-        setError(
-          "User not found. They must log in to the application at least once before they can be assigned as staff.",
-        );
-        setAdding(false);
-        return;
-      }
-
-      const uid = snap.docs[0].id;
+      const adminId = snap.empty ? newEmail.trim().toLowerCase() : snap.docs[0].id;
 
       // 2. Add to admins collection
-      await setDoc(doc(db, "admins", uid), {
+      await setDoc(doc(db, "admins", adminId), {
         email: newEmail.trim().toLowerCase(),
         name: newName.trim(),
         role: newRole,

@@ -40,6 +40,18 @@ export function useAuth() {
               const data = adminDoc.data();
               setAdminRole(data.role || 'superadmin');
               setAssignedDepartments(data.departments || []);
+            } else if (currentUser.email) {
+              const emailAdminDoc = await getDoc(doc(db, "admins", currentUser.email.toLowerCase()));
+              if (emailAdminDoc.exists()) {
+                setIsAdmin(true);
+                const data = emailAdminDoc.data();
+                setAdminRole(data.role || 'superadmin');
+                setAssignedDepartments(data.departments || []);
+              } else {
+                setIsAdmin(false);
+                setAdminRole(null);
+                setAssignedDepartments([]);
+              }
             } else {
               setIsAdmin(false);
               setAdminRole(null);

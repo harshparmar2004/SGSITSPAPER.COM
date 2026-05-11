@@ -14,11 +14,14 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && (isBootstrappedAdmin() || exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+      return isSignedIn() && (isBootstrappedAdmin() || 
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email))
+      );
     }
 
     function isValidId(id) {
-      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-\\.]+$');
     }
 
     function incoming() {
@@ -98,8 +101,8 @@ service cloud.firestore {
       // Removed exists(/databases/$(database)/documents/pyqs/$(data.pyqId)) for performance/resilience since pyqId might be missing occasionally. (actually wait, let's keep it safe. But wait, in the create method the error could be thrown if user has no read access to pyqs. But students have read access to PYQs).
     }
 
-    match /admins/{adminUid} {
-      allow read: if request.auth.uid == adminUid || isAdmin();
+    match /admins/{adminId} {
+      allow read: if request.auth.uid == adminId || request.auth.token.email == adminId || isAdmin();
       allow create: if isAdmin();
       allow update: if isAdmin();
       allow delete: if isAdmin();
