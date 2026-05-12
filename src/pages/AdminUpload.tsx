@@ -33,6 +33,8 @@ export default function AdminUpload() {
     examType: EXAM_TYPES[0],
     examYear: new Date().getFullYear().toString(),
     section: "",
+    status: "Verified", // Default status
+    description: "",
   });
 
   const [isCustomSubject, setIsCustomSubject] = useState(false);
@@ -294,11 +296,14 @@ export default function AdminUpload() {
           formData.subjectName ||
           (formData.documentType === "Syllabus" ? "Full Syllabus" : ""),
         section: formData.section || "",
+        status: formData.status,
+        description: formData.description,
         fileUrl,
         fileName,
         fileSize,
         uploadedAt: serverTimestamp(),
         uploadedBy: user?.uid,
+        uploaderEmail: user?.email,
       };
 
       if (formData.documentType === "PYQ") {
@@ -638,6 +643,33 @@ export default function AdminUpload() {
                 placeholder="e.g. A"
                 name="section"
                 value={formData.section}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-900">
+                Status *
+              </label>
+              <Select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                required
+              >
+                <option value="Verified">Verified</option>
+                <option value="Unverified">Unverified</option>
+              </Select>
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label className="text-xs font-medium text-gray-900">
+                Brief Description (Optional)
+              </label>
+              <Input
+                placeholder="e.g. Needs formatting / Excellent handwritten notes"
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
               />
             </div>

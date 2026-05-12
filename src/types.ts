@@ -34,6 +34,8 @@ export interface PYQ {
   uploadedAt: any; // Firestore Timestamp
   uploadedBy: string;
   documentType?: string; // 'PYQ' or 'Notes'
+  status?: string; // 'Verified' or 'Unverified'
+  description?: string;
 }
 
 export const DOCUMENT_TYPES = [

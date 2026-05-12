@@ -303,6 +303,24 @@ export default function AdminSubjectPYQs() {
                                                                 1000,
                                                             ).toLocaleDateString()}
                                                       </p>
+                                                      {(pyq.status || pyq.description) && (
+                                                        <div className="mt-2 flex flex-col items-start gap-1">
+                                                          {pyq.status === "Verified" ? (
+                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                                                              Verified
+                                                            </span>
+                                                          ) : pyq.status === "Unverified" ? (
+                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800">
+                                                              Unverified
+                                                            </span>
+                                                          ) : null}
+                                                          {pyq.description && (
+                                                            <span className="text-[10px] text-gray-500 line-clamp-1" title={pyq.description}>
+                                                              {pyq.description}
+                                                            </span>
+                                                          )}
+                                                        </div>
+                                                      )}
                                                     </div>
                                                   </div>
                                                   <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">

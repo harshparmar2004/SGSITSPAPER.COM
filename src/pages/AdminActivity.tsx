@@ -23,6 +23,7 @@ export default function AdminActivity() {
   const [staffHistory, setStaffHistory] = useState<PYQ[]>([]);
   const [studentHistory, setStudentHistory] = useState<PYQ[]>([]);
   const [admins, setAdmins] = useState<AdminData[]>([]);
+  const [usersInfo, setUsersInfo] = useState<Map<string, { email: string, name?: string }>>(new Map());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,13 +36,25 @@ export default function AdminActivity() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [adminList, allPyqs] = await Promise.all([
+        const [adminList, allPyqs, userList] = await Promise.all([
            getCachedCollection("admins"),
-           getCachedCollection("pyqs")
+           getCachedCollection("pyqs"),
+           getCachedCollection("users")
         ]);
         
         setAdmins(adminList as AdminData[]);
         
+        // Map users to get emails for UIDs
+        const uidToEmail = new Map<string, string>();
+        const uidToUserMap = new Map<string, { email: string, name?: string }>();
+        userList.forEach(u => {
+          if (u.email && u.id) {
+            uidToEmail.set(u.id, u.email.toLowerCase());
+            uidToUserMap.set(u.id, { email: u.email.toLowerCase(), name: u.displayName || u.name });
+          }
+        });
+        setUsersInfo(uidToUserMap);
+
         const superadminEmails = new Set(adminList.filter(a => a.role === 'superadmin').map(a => a.email?.toLowerCase()).filter(Boolean));
         superadminEmails.add('harshparma007@gmail.com');
         const superadminUids = new Set(adminList.filter(a => a.role === 'superadmin').map(a => a.id));
@@ -49,8 +62,26 @@ export default function AdminActivity() {
         const staffEmails = new Set(adminList.filter(a => a.role === 'department').map(a => a.email?.toLowerCase()).filter(Boolean));
         const staffUids = new Set(adminList.filter(a => a.role === 'department').map(a => a.id));
 
-        const superadminPyqs = allPyqs.filter(p => p.uploadedBy && (superadminEmails.has(p.uploadedBy.toLowerCase()) || superadminUids.has(p.uploadedBy)));
-        let staffPyqs = allPyqs.filter(p => p.uploadedBy && (staffEmails.has(p.uploadedBy.toLowerCase()) || staffUids.has(p.uploadedBy)));
+        const isSuperadmin = (p: any) => {
+          if (!p.uploadedBy) return false;
+          if (superadminUids.has(p.uploadedBy) || superadminEmails.has(p.uploadedBy.toLowerCase())) return true;
+          if (p.uploaderEmail && superadminEmails.has(p.uploaderEmail.toLowerCase())) return true;
+          const userEmail = uidToEmail.get(p.uploadedBy);
+          if (userEmail && superadminEmails.has(userEmail)) return true;
+          return false;
+        };
+
+        const isStaff = (p: any) => {
+          if (!p.uploadedBy) return false;
+          if (staffUids.has(p.uploadedBy) || staffEmails.has(p.uploadedBy.toLowerCase())) return true;
+          if (p.uploaderEmail && staffEmails.has(p.uploaderEmail.toLowerCase())) return true;
+          const userEmail = uidToEmail.get(p.uploadedBy);
+          if (userEmail && staffEmails.has(userEmail)) return true;
+          return false;
+        };
+
+        const superadminPyqs = allPyqs.filter(p => isSuperadmin(p));
+        let staffPyqs = allPyqs.filter(p => !isSuperadmin(p) && isStaff(p));
         
         // Filter staff Pyqs based on assigned departments if not superadmin
         if (adminRole !== 'superadmin') {
@@ -60,7 +91,7 @@ export default function AdminActivity() {
           });
         }
 
-        const studentPyqs = allPyqs.filter(p => p.uploadedBy && !(superadminEmails.has(p.uploadedBy.toLowerCase()) || superadminUids.has(p.uploadedBy)) && !(staffEmails.has(p.uploadedBy.toLowerCase()) || staffUids.has(p.uploadedBy)) && p.uploadedBy !== user?.uid);
+        const studentPyqs = allPyqs.filter(p => p.uploadedBy && !isSuperadmin(p) && !isStaff(p) && p.uploadedBy !== user?.uid);
 
         setSuperadminHistory(superadminPyqs);
         setStaffHistory(staffPyqs);
@@ -109,9 +140,14 @@ export default function AdminActivity() {
     const rows = targetData.map(p => {
       let uploader = p.uploadedBy || 'unknown';
       if (activeTab === 'staff' || activeTab === 'superadmin') {
-        const staffMatch = admins.find(a => a.email?.toLowerCase() === p.uploadedBy?.toLowerCase() || a.id === p.uploadedBy);
+        const staffMatch = admins.find(a => a.email?.toLowerCase() === p.uploadedBy?.toLowerCase() || a.id === p.uploadedBy || a.email?.toLowerCase() === p.uploaderEmail?.toLowerCase() || a.email?.toLowerCase() === usersInfo.get(p.uploadedBy || '')?.email);
         if (staffMatch) {
           uploader = staffMatch.email;
+        } else if (p.uploaderEmail) {
+          uploader = p.uploaderEmail;
+        } else {
+          const userMeta = usersInfo.get(p.uploadedBy || '');
+          if (userMeta) uploader = userMeta.email;
         }
       }
       return [
@@ -278,21 +314,15 @@ export default function AdminActivity() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {superadminHistory.map((pyq, index) => {
-                  const adminMatch = admins.find(a => a.email?.toLowerCase() === pyq.uploadedBy?.toLowerCase() || a.id === pyq.uploadedBy);
-                  let displayName = adminMatch?.name || 'Unknown User';
+                  const adminMatch = admins.find(a => a.email?.toLowerCase() === pyq.uploadedBy?.toLowerCase() || a.id === pyq.uploadedBy || a.email?.toLowerCase() === pyq.uploaderEmail?.toLowerCase() || a.email?.toLowerCase() === usersInfo.get(pyq.uploadedBy || '')?.email);
+                  const userMeta = usersInfo.get(pyq.uploadedBy || '');
+                  let displayName = adminMatch?.name || userMeta?.name || 'Unknown User';
+                  let displayEmail = adminMatch?.email || pyq.uploaderEmail || userMeta?.email || pyq.uploadedBy;
                   
-                  // if no name in admin doc but we have an email, use it
-                  if (!adminMatch?.name && adminMatch?.email) {
-                    displayName = adminMatch.email.split('@')[0];
-                  } else if (!adminMatch) {
-                    // if it's an email, use name part
-                    if (pyq.uploadedBy?.includes('@')) {
-                       displayName = pyq.uploadedBy.split('@')[0];
-                    } else if (pyq.uploadedBy === user?.uid) {
-                       displayName = 'You';
-                    } else {
-                       displayName = 'Super Admin';
-                    }
+                  if (displayEmail === user?.email) {
+                      displayName = 'You';
+                  } else if (displayName === 'Unknown User' && displayEmail?.includes('@')) {
+                     displayName = displayEmail.split('@')[0];
                   }
 
                   return (
@@ -307,7 +337,7 @@ export default function AdminActivity() {
                               <div className="font-medium text-gray-900 truncate max-w-[200px]" title={displayName}>
                                  {displayName}
                               </div>
-                              <div className="text-xs text-indigo-500 font-medium mt-0.5">{pyq.uploadedBy}</div>
+                              <div className="text-xs text-indigo-500 font-medium mt-0.5">{displayEmail}</div>
                            </div>
                         </div>
                       </td>
@@ -362,19 +392,13 @@ export default function AdminActivity() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {staffHistory.map((pyq, index) => {
-                  const staffMatch = admins.find(a => a.email?.toLowerCase() === pyq.uploadedBy?.toLowerCase() || a.id === pyq.uploadedBy);
-                  let displayName = staffMatch?.name || 'Unknown User';
+                  const staffMatch = admins.find(a => a.email?.toLowerCase() === pyq.uploadedBy?.toLowerCase() || a.id === pyq.uploadedBy || a.email?.toLowerCase() === pyq.uploaderEmail?.toLowerCase() || a.email?.toLowerCase() === usersInfo.get(pyq.uploadedBy || '')?.email);
+                  const userMeta = usersInfo.get(pyq.uploadedBy || '');
+                  let displayName = staffMatch?.name || userMeta?.name || 'Unknown User';
+                  let displayEmail = staffMatch?.email || pyq.uploaderEmail || userMeta?.email || pyq.uploadedBy;
                   
-                  // if no name in admin doc but we have an email, use it
-                  if (!staffMatch?.name && staffMatch?.email) {
-                    displayName = staffMatch.email.split('@')[0];
-                  } else if (!staffMatch) {
-                    // if it's an email, use name part
-                    if (pyq.uploadedBy?.includes('@')) {
-                       displayName = pyq.uploadedBy.split('@')[0];
-                    } else {
-                       displayName = 'Staff Member'; // fallback when only UID is there
-                    }
+                  if (displayName === 'Unknown User' && displayEmail?.includes('@')) {
+                     displayName = displayEmail.split('@')[0];
                   }
                   
                   return (
@@ -389,7 +413,7 @@ export default function AdminActivity() {
                               <div className="font-medium text-gray-900 truncate max-w-[200px]" title={displayName}>
                                  {displayName}
                               </div>
-                              <div className="text-xs text-purple-500 font-medium mt-0.5">{pyq.uploadedBy}</div>
+                              <div className="text-xs text-purple-500 font-medium mt-0.5">{displayEmail}</div>
                            </div>
                         </div>
                       </td>

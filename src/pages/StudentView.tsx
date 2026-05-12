@@ -560,13 +560,14 @@ export default function StudentView() {
             <table className="w-full text-left text-xs whitespace-nowrap">
               <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
                 <tr>
-                  <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                  <th className="px-3 py-2 text-center">S.No.</th>
                   <th className="px-3 py-2">Title / Code</th>
                   <th className="px-3 py-2">Program / Sem</th>
                   <th className="px-3 py-2">Department</th>
                   <th className="px-3 py-2">
                     {activeTab === "PYQ" ? "Exam Type" : "Type"}
                   </th>
+                  <th className="px-3 py-2">Status & Info</th>
                   <th className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
@@ -630,6 +631,24 @@ export default function StudentView() {
                           pyq.examType
                         ) : (
                           "PYQ"
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 whitespace-normal max-w-[150px]">
+                      <div className="flex flex-col gap-1 items-start">
+                        {pyq.status === "Verified" ? (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                            Verified
+                          </span>
+                        ) : pyq.status === "Unverified" ? (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800">
+                            Unverified
+                          </span>
+                        ) : null}
+                        {pyq.description && (
+                          <span className="text-[10px] text-gray-500 line-clamp-2" title={pyq.description}>
+                            {pyq.description}
+                          </span>
                         )}
                       </div>
                     </td>

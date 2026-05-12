@@ -623,6 +623,7 @@ export default function AdminAllPYQs() {
                   <th className="px-4 py-3">Title / Code</th>
                   <th className="px-4 py-3">Course Info</th>
                   <th className="px-4 py-3">Type Details</th>
+                  <th className="px-4 py-3">Status & Info</th>
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -685,6 +686,24 @@ export default function AdminAllPYQs() {
                           {pyq.examType || "N/A"} • {pyq.examYear || "N/A"}
                         </div>
                       )}
+                    </td>
+                    <td className="px-4 py-3 whitespace-normal max-w-[150px]">
+                      <div className="flex flex-col gap-1 items-start">
+                        {pyq.status === "Verified" ? (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                            Verified
+                          </span>
+                        ) : pyq.status === "Unverified" ? (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800">
+                            Unverified
+                          </span>
+                        ) : null}
+                        {pyq.description && (
+                          <span className="text-[10px] text-gray-500 line-clamp-2" title={pyq.description}>
+                            {pyq.description}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
