@@ -346,7 +346,7 @@ export default function Landing() {
             <div className="mt-6 text-center">
               <p className="text-[10px] sm:text-xs text-slate-600 font-bold uppercase tracking-[0.15em]">
                 Developed by{" "}
-                <span className="text-slate-400">Harsh Sharma</span>
+                <span className="text-slate-400">Harsh Parmar</span>
               </p>
             </div>
           </motion.div>
