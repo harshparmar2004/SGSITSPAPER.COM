@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router';
-import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack, Activity, BookOpen } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Users, AlertTriangle, Layers, LineChart, CalendarDays, FileStack, Activity, BookOpen, UserCheck } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { Navigate } from 'react-router';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -55,6 +55,7 @@ export default function AdminLayout() {
     { name: 'Download Analytics', path: '/admin/analytics', icon: LineChart, exact: false, showForAuth: true },
     { name: 'Student Logins', path: '/admin/students', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' }, // 3
     { name: 'Manage Staff', path: '/admin/staff', icon: Users, exact: false, showForAuth: adminRole === 'superadmin' },
+    { name: 'Staff Insights', path: '/admin/staff-insights', icon: UserCheck, exact: false, showForAuth: adminRole === 'superadmin' },
     { name: 'Reports', path: '/admin/reports', icon: AlertTriangle, exact: false, showForAuth: true, badgeCount: pendingReportsCount }, // 5
     { name: 'Activity Log', path: '/admin/activity', icon: Activity, exact: false, showForAuth: true },
   ].filter(item => item.showForAuth);

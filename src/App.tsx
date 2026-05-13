@@ -17,6 +17,7 @@ import AdminDepartments from "./pages/AdminDepartments";
 import AdminDepartmentDeepDives from "./pages/AdminDepartmentDeepDives";
 import AdminLayout from "./components/AdminLayout";
 import AdminStaff from "./pages/AdminStaff";
+import AdminStaffInsights from "./pages/AdminStaffInsights";
 import AdminActivity from "./pages/AdminActivity";
 
 import AdminSubjects from "./pages/AdminSubjects";
@@ -177,6 +178,7 @@ export default function App() {
             <Route path="subject-pyqs" element={<AdminSubjectPYQs />} />
             <Route path="students" element={<AdminStudents />} />
             <Route path="staff" element={<AdminStaff />} />
+            <Route path="staff-insights" element={<AdminStaffInsights />} />
             <Route path="activity" element={<AdminActivity />} />
             <Route path="monthly-uploads" element={<AdminMonthlyUploads />} />
             <Route path="departments" element={<AdminDepartments />} />
