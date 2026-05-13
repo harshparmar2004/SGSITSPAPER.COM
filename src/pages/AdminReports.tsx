@@ -40,7 +40,11 @@ export default function AdminReports() {
   };
 
   const handleDeleteReport = async (reportId: string) => {
-      if (!window.confirm("Are you sure you want to delete this report? This cannot be undone.")) return;
+      const firstConfirm = window.confirm("Are you sure you want to delete this report?");
+      if (!firstConfirm) return;
+      const secondConfirm = window.confirm("WARNING: This action is irreversible. Are you REALLY sure you want to permanently delete this report?");
+      if (!secondConfirm) return;
+
       try {
           await deleteDoc(doc(db, "reports", reportId));
           setReports(prev => prev.filter(r => r.id !== reportId));
@@ -56,7 +60,11 @@ export default function AdminReports() {
           alert("No resolved reports to delete.");
           return;
       }
-      if (!window.confirm(`Are you sure you want to delete all ${resolvedReports.length} resolved report(s)? This cannot be undone.`)) return;
+      
+      const firstConfirm = window.confirm(`Are you sure you want to delete all ${resolvedReports.length} resolved report(s)?`);
+      if (!firstConfirm) return;
+      const secondConfirm = window.confirm("WARNING: This action is irreversible. Are you REALLY sure you want to permanently delete all resolved reports?");
+      if (!secondConfirm) return;
       
       setIsDeleting(true);
       try {
