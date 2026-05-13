@@ -20,7 +20,6 @@ import {
   Search,
   Download,
   AlertTriangle,
-  MessageSquarePlus,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useAcademicConfig } from "../hooks/useAcademicConfig";
@@ -56,11 +55,6 @@ export default function StudentView() {
     "PYQ" | "Notes" | "Syllabus" | "Lab Manual"
   >("PYQ");
 
-  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
-  const [feedbackText, setFeedbackText] = useState("");
-  const [feedbackSuccess, setFeedbackSuccess] = useState(false);
-  const [submittingFeedback, setSubmittingFeedback] = useState(false);
-
   const { programs, loading: configLoading } = useAcademicConfig();
 
   // Dynamic lists based on selections
@@ -85,32 +79,6 @@ export default function StudentView() {
       console.error("Error fetching PYQs:", error);
     }
     setLoading(false);
-  };
-
-  const submitAppFeedback = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!feedbackText.trim() || !user) return;
-    setSubmittingFeedback(true);
-    try {
-      await addDoc(collection(db, "feedbacks"), {
-        message: feedbackText.trim(),
-        category: "General",
-        submittedAt: serverTimestamp(),
-        submittedBy: user.uid,
-        userName: user.displayName || user.email?.split("@")[0] || "Student",
-        platform: "Web UI",
-      });
-      setFeedbackSuccess(true);
-      setTimeout(() => {
-        setFeedbackModalOpen(false);
-        setFeedbackSuccess(false);
-        setFeedbackText("");
-      }, 2000);
-    } catch (err: any) {
-      console.error("Error submitting feedback:", err);
-      alert("Failed to submit feedback: " + err.message);
-    }
-    setSubmittingFeedback(false);
   };
 
   const filteredPyqs = pyqs.filter((p) => {
@@ -362,14 +330,6 @@ export default function StudentView() {
             notes instantly.
           </p>
         </div>
-        <Button
-          onClick={() => setFeedbackModalOpen(true)}
-          variant="outline"
-          className="flex items-center gap-2 border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 whitespace-nowrap"
-        >
-          <MessageSquarePlus className="w-4 h-4" />
-          Share Feedback
-        </Button>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-4xl mb-4 gap-1">
@@ -871,77 +831,6 @@ export default function StudentView() {
                         <Loader2 className="w-4 h-4 animate-spin mr-2" />
                       ) : null}
                       {submittingReport ? "Submitting..." : "Submit Report"}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Feedback Modal */}
-      {feedbackModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-            <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-              <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                <MessageSquarePlus className="w-5 h-5 text-indigo-500" />
-                Share Feedback
-              </h3>
-              <button
-                onClick={() => setFeedbackModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-                disabled={submittingFeedback || feedbackSuccess}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="p-4">
-              {feedbackSuccess ? (
-                <div className="text-center py-6">
-                  <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-3 text-xl">
-                    ✓
-                  </div>
-                  <h4 className="text-lg font-medium text-gray-900">
-                    Feedback Submitted!
-                  </h4>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Thank you for sharing your thoughts with us.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={submitAppFeedback} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      How can we improve? What features are you looking for?
-                    </label>
-                    <textarea
-                      required
-                      rows={4}
-                      value={feedbackText}
-                      onChange={(e) => setFeedbackText(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm placeholder:text-gray-400"
-                      placeholder="e.g., I'd love to see a dark mode..."
-                    />
-                  </div>
-                  <div className="flex justify-end gap-3 pt-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setFeedbackModalOpen(false)}
-                      disabled={submittingFeedback}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                      disabled={submittingFeedback || !feedbackText.trim()}
-                    >
-                      {submittingFeedback ? (
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      ) : null}
-                      Submit
                     </Button>
                   </div>
                 </form>

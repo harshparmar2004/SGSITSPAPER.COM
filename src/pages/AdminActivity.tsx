@@ -93,11 +93,6 @@ export default function AdminActivity() {
             superadminEmails.has(p.uploadedBy.toLowerCase())
           )
             return true;
-          if (
-            p.uploaderEmail &&
-            superadminEmails.has(p.uploaderEmail.toLowerCase())
-          )
-            return true;
           const userEmail = uidToEmail.get(p.uploadedBy);
           if (userEmail && superadminEmails.has(userEmail)) return true;
           return false;
@@ -109,8 +104,6 @@ export default function AdminActivity() {
             staffUids.has(p.uploadedBy) ||
             staffEmails.has(p.uploadedBy.toLowerCase())
           )
-            return true;
-          if (p.uploaderEmail && staffEmails.has(p.uploaderEmail.toLowerCase()))
             return true;
           const userEmail = uidToEmail.get(p.uploadedBy);
           if (userEmail && staffEmails.has(userEmail)) return true;
@@ -205,13 +198,10 @@ export default function AdminActivity() {
           (a) =>
             a.email?.toLowerCase() === p.uploadedBy?.toLowerCase() ||
             a.id === p.uploadedBy ||
-            a.email?.toLowerCase() === p.uploaderEmail?.toLowerCase() ||
             a.email?.toLowerCase() === usersInfo.get(p.uploadedBy || "")?.email,
         );
         if (staffMatch) {
           uploader = staffMatch.email;
-        } else if (p.uploaderEmail) {
-          uploader = p.uploaderEmail;
         } else {
           const userMeta = usersInfo.get(p.uploadedBy || "");
           if (userMeta) uploader = userMeta.email;
@@ -451,8 +441,6 @@ export default function AdminActivity() {
                           pyq.uploadedBy?.toLowerCase() ||
                         a.id === pyq.uploadedBy ||
                         a.email?.toLowerCase() ===
-                          pyq.uploaderEmail?.toLowerCase() ||
-                        a.email?.toLowerCase() ===
                           usersInfo.get(pyq.uploadedBy || "")?.email,
                     );
                     const userMeta = usersInfo.get(pyq.uploadedBy || "");
@@ -460,7 +448,6 @@ export default function AdminActivity() {
                       adminMatch?.name || userMeta?.name || "Unknown User";
                     let displayEmail =
                       adminMatch?.email ||
-                      pyq.uploaderEmail ||
                       userMeta?.email ||
                       pyq.uploadedBy;
 
@@ -584,8 +571,6 @@ export default function AdminActivity() {
                           pyq.uploadedBy?.toLowerCase() ||
                         a.id === pyq.uploadedBy ||
                         a.email?.toLowerCase() ===
-                          pyq.uploaderEmail?.toLowerCase() ||
-                        a.email?.toLowerCase() ===
                           usersInfo.get(pyq.uploadedBy || "")?.email,
                     );
                     const userMeta = usersInfo.get(pyq.uploadedBy || "");
@@ -593,7 +578,6 @@ export default function AdminActivity() {
                       staffMatch?.name || userMeta?.name || "Unknown User";
                     let displayEmail =
                       staffMatch?.email ||
-                      pyq.uploaderEmail ||
                       userMeta?.email ||
                       pyq.uploadedBy;
 

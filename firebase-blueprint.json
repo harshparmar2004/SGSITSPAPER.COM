@@ -102,20 +102,6 @@
         "status",
         "reportedAt"
       ]
-    },
-    "Feedback": {
-      "title": "Feedback",
-      "description": "General feedback or suggestions from users.",
-      "type": "object",
-      "properties": {
-        "message": { "type": "string" },
-        "category": { "type": "string" },
-        "submittedAt": { "type": "string" },
-        "submittedBy": { "type": "string" },
-        "userName": { "type": "string" },
-        "platform": { "type": "string" }
-      },
-      "required": ["message", "category", "submittedAt", "submittedBy", "userName"]
     }
   },
   "firestore": {
@@ -134,10 +120,6 @@
     "/reports/{reportId}": {
       "schema": { "$ref": "#/entities/Report" },
       "description": "Store issue reports and feedbacks."
-    },
-    "/feedbacks/{feedbackId}": {
-      "schema": { "$ref": "#/entities/Feedback" },
-      "description": "Store general app feedback."
     }
   }
 }
