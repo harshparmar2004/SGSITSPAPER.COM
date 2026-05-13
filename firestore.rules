@@ -109,6 +109,18 @@ service cloud.firestore {
       // Removed exists(/databases/$(database)/documents/pyqs/$(data.pyqId)) for performance/resilience since pyqId might be missing occasionally. (actually wait, let's keep it safe. But wait, in the create method the error could be thrown if user has no read access to pyqs. But students have read access to PYQs).
     }
 
+    function isValidFeedback(data) {
+      return data.keys().hasAll([
+        "message", "category", "submittedAt", "submittedBy", "userName"
+      ]) &&
+      data.message is string && data.message.size() > 0 && data.message.size() <= 2000 &&
+      data.category is string && data.category.size() > 0 && data.category.size() <= 100 &&
+      data.userName is string && data.userName.size() > 0 && data.userName.size() <= 100 &&
+      data.submittedAt == request.time &&
+      (data.submittedBy == request.auth.uid || data.submittedBy == request.auth.token.email) &&
+      (data.get('platform', '') is string);
+    }
+
     match /admins/{adminId} {
       allow read: if request.auth.uid == adminId || (request.auth.token != null && request.auth.token.email != null && request.auth.token.email == adminId) || isAdmin();
       allow create: if isSuperAdmin();
@@ -150,6 +162,12 @@ service cloud.firestore {
                     incoming().diff(existing()).affectedKeys().hasOnly(['status']) &&
                     incoming().status == 'resolved';
       allow delete: if isAdmin();
+    }
+
+    match /feedbacks/{feedbackId} {
+      allow read: if isAdmin() || isSuperAdmin();
+      allow create: if isSignedIn() && isValidFeedback(incoming());
+      allow update, delete: if isAdmin() || isSuperAdmin();
     }
 
     match /settings/{docId} {

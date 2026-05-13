@@ -5,6 +5,7 @@ import {
   Clock,
   Trash2,
   ShieldAlert,
+  MessageSquare,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -23,6 +24,7 @@ import { Report } from "../types";
 export default function AdminReports() {
   const { adminRole, assignedDepartments } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
+  const [appFeedback, setAppFeedback] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -31,30 +33,48 @@ export default function AdminReports() {
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     step: 1 | 2;
-    type: "single" | "all";
+    type: "single" | "all" | "feedback";
     targetId?: string;
   }>({ isOpen: false, step: 1, type: "single" });
 
   useEffect(() => {
-    const fetchReports = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const q = query(
+        const qReports = query(
           collection(db, "reports"),
           orderBy("reportedAt", "desc"),
         );
-        const pyqSnap = await getDocs(q);
+        const pyqSnap = await getDocs(qReports);
         const allReports = pyqSnap.docs.map(
           (d) => ({ id: d.id, ...d.data() }) as Report,
         );
         setReports(allReports);
+
+        if (adminRole === "superadmin") {
+          const qFeedback = query(
+            collection(db, "feedbacks"),
+            orderBy("submittedAt", "desc"),
+          );
+          const fbSnap = await getDocs(qFeedback);
+          const allFeedback = fbSnap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }));
+          setAppFeedback(allFeedback);
+        }
       } catch (err) {
-        console.error("Error fetching reports", err);
+        console.error("Error fetching admin data", err);
+        if (err instanceof Error) {
+          setErrorMsg(err.message);
+        } else {
+          setErrorMsg("Failed to load records. Check console.");
+        }
       }
       setLoading(false);
     };
-    fetchReports();
-  }, []);
+    fetchData();
+  }, [adminRole]);
 
   const handleMarkResolved = async (reportId: string) => {
     try {
@@ -99,6 +119,9 @@ export default function AdminReports() {
       if (type === "single" && targetId) {
         await deleteDoc(doc(db, "reports", targetId));
         setReports((prev) => prev.filter((r) => r.id !== targetId));
+      } else if (type === "feedback" && targetId) {
+        await deleteDoc(doc(db, "feedbacks", targetId));
+        setAppFeedback((prev) => prev.filter((f) => f.id !== targetId));
       } else if (type === "all") {
         const resolvedReports = reports.filter(
           (r) =>
@@ -475,6 +498,115 @@ export default function AdminReports() {
           </table>
         </div>
       </div>
+
+      {adminRole === "superadmin" && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-6">
+          <div className="bg-indigo-50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+                <MessageSquare className="w-4 h-4 text-indigo-700" />
+              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                General App Feedback
+              </h2>
+            </div>
+            <span className="text-xs font-semibold bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-full">
+              {appFeedback.length} Message(s)
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left whitespace-nowrap">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Date
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Message
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    User
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                  >
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-100">
+                {appFeedback.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-6 py-12 text-center text-gray-500"
+                    >
+                      No feedback submitted yet.
+                    </td>
+                  </tr>
+                ) : (
+                  appFeedback.map((fb) => (
+                    <tr
+                      key={fb.id}
+                      className="hover:bg-gray-50/50 transition-colors"
+                    >
+                      <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-500">
+                        {fb.submittedAt && typeof fb.submittedAt !== "string"
+                          ? new Date(
+                              fb.submittedAt.seconds * 1000,
+                            ).toLocaleString()
+                          : "Unknown"}
+                      </td>
+                      <td className="px-3 py-2 max-w-sm whitespace-normal">
+                        <p className="text-sm text-gray-900 break-words">
+                          {fb.message}
+                        </p>
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-xs">
+                        <span className="font-semibold text-gray-900 block">
+                          {fb.userName}
+                        </span>
+                        {fb.submittedBy && (
+                          <span className="text-gray-400 text-[10px] break-all">
+                            {fb.submittedBy}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 whitespace-nowrap text-right">
+                        <button
+                          onClick={() =>
+                            setConfirmModal({
+                              isOpen: true,
+                              step: 1,
+                              type: "feedback",
+                              targetId: fb.id,
+                            })
+                          }
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                          title="Delete Feedback"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

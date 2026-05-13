@@ -71,6 +71,52 @@
         "subjectCode", "subjectName", "examType", "downloadedAt"
       ]
     }
+    "Report": {
+      "title": "Report",
+      "description": "User feedback or issue report for a specific PYQ.",
+      "type": "object",
+      "properties": {
+        "pyqId": { "type": "string" },
+        "subjectCode": { "type": "string" },
+        "department": { "type": "string" },
+        "issue": { "type": "string" },
+        "issueCategory": { "type": "string" },
+        "reporterName": { "type": "string" },
+        "reporterBranch": { "type": "string" },
+        "reporterId": { "type": "string" },
+        "status": { "type": "string" },
+        "reportedAt": { "type": "string" },
+        "reportedBy": { "type": "string" },
+        "pyqDetails": { "type": "string" },
+        "fileUrl": { "type": "string" }
+      },
+      "required": [
+        "pyqId",
+        "subjectCode",
+        "department",
+        "issue",
+        "issueCategory",
+        "reporterName",
+        "reporterBranch",
+        "reporterId",
+        "status",
+        "reportedAt"
+      ]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "General feedback or suggestions from users.",
+      "type": "object",
+      "properties": {
+        "message": { "type": "string" },
+        "category": { "type": "string" },
+        "submittedAt": { "type": "string" },
+        "submittedBy": { "type": "string" },
+        "userName": { "type": "string" },
+        "platform": { "type": "string" }
+      },
+      "required": ["message", "category", "submittedAt", "submittedBy", "userName"]
+    }
   },
   "firestore": {
     "/admins/{adminUid}": {
@@ -84,6 +130,14 @@
     "/downloads/{downloadId}": {
       "schema": { "$ref": "#/entities/Download" },
       "description": "Store all download analytics."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/Report" },
+      "description": "Store issue reports and feedbacks."
+    },
+    "/feedbacks/{feedbackId}": {
+      "schema": { "$ref": "#/entities/Feedback" },
+      "description": "Store general app feedback."
     }
   }
 }
