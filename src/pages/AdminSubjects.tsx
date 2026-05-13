@@ -299,7 +299,7 @@ export default function AdminSubjects() {
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={exportSubjectsCsv} disabled={configLoading || displayedSubjects.length === 0} className="w-full sm:w-auto text-xs whitespace-nowrap">
-          <Download className="w-4 h-4 mr-2" /> Export Subjects
+          <Download className="w-4 h-4 mr-2" /> Export Subjects to CSV
         </Button>
       </div>
 
