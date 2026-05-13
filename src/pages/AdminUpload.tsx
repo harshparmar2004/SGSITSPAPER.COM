@@ -373,18 +373,22 @@ export default function AdminUpload() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-3">
-      <div className="mb-4">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold tracking-tight text-gray-900">
-            Upload Study Material
-          </h1>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100 mb-4 sm:mb-6">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <UploadCloud className="w-4 h-4 text-indigo-700" />
+             </div>
+             <div>
+               <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Upload Study Material</h2>
+               <p className="mt-0.5 text-[11px] text-indigo-500/80 font-medium">
+                 Fill in the metadata and upload a PDF. Max size 700KB.
+               </p>
+             </div>
+          </div>
         </div>
-        <p className="mt-1 text-[11px] text-gray-500">
-          Fill in the metadata and upload a PDF. Max size 700KB.
-        </p>
-      </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+        <div className="p-4 sm:p-6 pt-0 sm:pt-0">
         {error && (
           <div className="mb-3 p-2 bg-red-50 text-red-700 rounded-md border border-red-200 text-xs">
             {error}
@@ -836,6 +840,7 @@ export default function AdminUpload() {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

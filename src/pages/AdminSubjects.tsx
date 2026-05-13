@@ -304,14 +304,16 @@ export default function AdminSubjects() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {editingSubjectCode ? <Edit className="w-5 h-5 text-indigo-600" /> : <BookOpen className="w-5 h-5 text-indigo-600" />}
-            <h3 className="font-semibold text-gray-900">{editingSubjectCode ? 'Edit Subject' : 'Add New Subject'}</h3>
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               {editingSubjectCode ? <Edit className="w-4 h-4 text-indigo-700" /> : <BookOpen className="w-4 h-4 text-indigo-700" />}
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">{editingSubjectCode ? 'Edit Subject' : 'Add New Subject'}</h2>
           </div>
           {editingSubjectCode && (
-            <Button variant="ghost" size="sm" onClick={resetForm} className="text-gray-500 hover:text-gray-900">
-              <X className="w-4 h-4 mr-1" /> Cancel Edit
+            <Button variant="ghost" size="sm" onClick={resetForm} className="text-gray-500 hover:text-gray-900 border border-gray-300 bg-white shadow-sm h-8 mt-1">
+              <X className="w-4 h-4 mr-1" /> Cancel
             </Button>
           )}
         </div>
@@ -406,10 +408,15 @@ export default function AdminSubjects() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h3 className="font-semibold text-gray-900">Existing Subjects ({displayedSubjects.length})</h3>
+        <div className="bg-indigo-50 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <BookOpen className="w-4 h-4 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Existing Subjects ({displayedSubjects.length})</h2>
+          </div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-gray-500 whitespace-nowrap">Filter by Department:</span>
+            <span className="text-[11px] text-indigo-500/80 font-medium whitespace-nowrap">Filter by Department:</span>
             <Select 
               value={departmentFilter} 
               onChange={(e) => setDepartmentFilter(e.target.value)}

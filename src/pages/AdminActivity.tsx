@@ -221,12 +221,14 @@ export default function AdminActivity() {
 
       {activeTab === 'your' && adminRole === 'superadmin' && (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-             <UserCheck className="w-5 h-5 text-indigo-500" />
-             Your Upload History
-           </h3>
-           <span className="text-[11px] text-gray-500 font-medium">Your Last 50 Actions</span>
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <UserCheck className="w-4 h-4 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Your Upload History</h2>
+          </div>
+          <span className="text-[11px] text-indigo-500/80 font-medium whitespace-nowrap">Your Last 50 Actions</span>
         </div>
         
         {loading ? (
@@ -288,12 +290,14 @@ export default function AdminActivity() {
 
       {activeTab === 'superadmin' && adminRole === 'superadmin' && (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-             <UserCheck className="w-5 h-5 text-indigo-500" />
-             Super Admin History
-           </h3>
-           <span className="text-[11px] text-gray-500 font-medium">All Time</span>
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <UserCheck className="w-4 h-4 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Super Admin History</h2>
+          </div>
+          <span className="text-[11px] text-indigo-500/80 font-medium whitespace-nowrap">All Time</span>
         </div>
         
         {loading ? (
@@ -366,12 +370,14 @@ export default function AdminActivity() {
 
       {activeTab === 'staff' && (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-             <Activity className="w-5 h-5 text-indigo-500" />
-             Staff & Teacher Upload History
-           </h3>
-           <span className="text-[11px] text-gray-500 font-medium">All Time</span>
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <Activity className="w-4 h-4 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Staff & Teacher Upload History</h2>
+          </div>
+          <span className="text-[11px] text-indigo-500/80 font-medium whitespace-nowrap">All Time</span>
         </div>
         
         {loading ? (
@@ -442,12 +448,14 @@ export default function AdminActivity() {
 
       {activeTab === 'student' && adminRole === 'superadmin' && (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-           <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-             <Users className="w-5 h-5 text-indigo-500" />
-             Student Upload History
-           </h3>
-           <span className="text-[11px] text-gray-500 font-medium">Last 50 Actions</span>
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <Users className="w-4 h-4 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Student Upload History</h2>
+          </div>
+          <span className="text-[11px] text-indigo-500/80 font-medium whitespace-nowrap">Last 50 Actions</span>
         </div>
         
         {loading ? (

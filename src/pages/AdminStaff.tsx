@@ -388,11 +388,13 @@ export default function AdminStaff() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-4">
-        <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-gray-500" />
-            Current Staff Members
-          </h3>
+        <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-2.5">
+             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+               <Shield className="w-4 h-4 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Current Staff Members</h2>
+          </div>
         </div>
 
         {loading ? (
