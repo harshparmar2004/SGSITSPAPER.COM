@@ -80,8 +80,9 @@ export default function AdminStaff() {
 
     try {
       await setDoc(doc(db, "admins", editModal.id), {
-        email: editModal.email || (editModal.id.includes('@') ? editModal.id : ''),
-        name: editName ? editName.trim() : '',
+        email:
+          editModal.email || (editModal.id.includes("@") ? editModal.id : ""),
+        name: editName ? editName.trim() : "",
         role: editRole,
         departments: editRole === "department" ? editDepartments : [],
       });
@@ -134,7 +135,9 @@ export default function AdminStaff() {
       );
       const snap = await getDocs(q);
 
-      const adminId = snap.empty ? newEmail.trim().toLowerCase() : snap.docs[0].id;
+      const adminId = snap.empty
+        ? newEmail.trim().toLowerCase()
+        : snap.docs[0].id;
 
       // 2. Add to admins collection
       await setDoc(doc(db, "admins", adminId), {
@@ -390,10 +393,12 @@ export default function AdminStaff() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-4">
         <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
           <div className="flex items-center gap-2.5">
-             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
-               <Shield className="w-4 h-4 text-indigo-700" />
-             </div>
-             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Current Staff Members</h2>
+            <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+              <Shield className="w-4 h-4 text-indigo-700" />
+            </div>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+              Current Staff Members
+            </h2>
           </div>
         </div>
 

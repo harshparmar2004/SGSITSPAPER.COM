@@ -699,7 +699,10 @@ export default function AdminAllPYQs() {
                           </span>
                         ) : null}
                         {pyq.description && (
-                          <span className="text-[10px] text-gray-500 line-clamp-2" title={pyq.description}>
+                          <span
+                            className="text-[10px] text-gray-500 line-clamp-2"
+                            title={pyq.description}
+                          >
                             {pyq.description}
                           </span>
                         )}

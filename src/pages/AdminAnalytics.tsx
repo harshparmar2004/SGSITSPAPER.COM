@@ -199,11 +199,18 @@ export default function AdminAnalytics() {
       {/* Graphical Section */}
       <div className="flex flex-col gap-5">
         {/* Download Activity Area Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4">
-            Student Download Trends (Last 30 Days)
-          </h2>
-          <div className="h-72 w-full">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+                <TrendingUp className="w-4 h-4 text-indigo-700" />
+              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                Student Download Trends (Last 30 Days)
+              </h2>
+            </div>
+          </div>
+          <div className="h-72 w-full p-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={downloadTrends}
@@ -254,11 +261,18 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Exam Type Bar Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4">
-            Downloads by Exam Type
-          </h2>
-          <div className="h-64 w-full">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+                <FileText className="w-4 h-4 text-indigo-700" />
+              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                Downloads by Exam Type
+              </h2>
+            </div>
+          </div>
+          <div className="h-64 w-full p-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={examTypeData}
@@ -302,14 +316,21 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Distribution Pie Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700 mb-4 text-center sm:text-left">
-            {adminRole === "department"
-              ? "Downloads by Subject"
-              : "Downloads by Department"}
-          </h2>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+                <FolderOpen className="w-4 h-4 text-indigo-700" />
+              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                {adminRole === "department"
+                  ? "Downloads by Subject"
+                  : "Downloads by Department"}
+              </h2>
+            </div>
+          </div>
           <div
-            className={`flex w-full min-h-[300px] gap-6 ${
+            className={`flex w-full min-h-[300px] gap-6 p-4 ${
               adminRole === "department"
                 ? "flex-col items-center justify-center"
                 : "flex-col sm:flex-row"
@@ -392,10 +413,15 @@ export default function AdminAnalytics() {
 
         {/* Extracted Leaderboard Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-3 py-2 border-b border-gray-100 bg-gray-50/50">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">
-              Highest Engagement Papers
-            </h2>
+          <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+                <Activity className="w-4 h-4 text-indigo-700" />
+              </div>
+              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                Highest Engagement Papers
+              </h2>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs whitespace-nowrap">

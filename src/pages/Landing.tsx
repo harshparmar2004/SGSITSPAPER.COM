@@ -360,7 +360,8 @@ export default function Landing() {
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
             <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
               © {new Date().getFullYear()}{" "}
-              <span className="text-sky-300 font-extrabold">SGSITSPAPER</span>. All rights reserved.
+              <span className="text-sky-300 font-extrabold">SGSITSPAPER</span>.
+              All rights reserved.
             </p>
             <p className="text-[10px] sm:text-xs text-slate-600 font-bold uppercase tracking-[0.1em]">
               Engineered for Excellence at SGSITS Indore
@@ -380,9 +381,9 @@ export default function Landing() {
                 </a>
               ))}
             </div>
-            
+
             <div className="w-px h-4 bg-white/10 hidden sm:block"></div>
-            
+
             <a
               aria-label="LinkedIn"
               className="flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-sky-300 hover:border-sky-300/40 transition-all duration-300 shrink-0 mt-2 sm:mt-0"
