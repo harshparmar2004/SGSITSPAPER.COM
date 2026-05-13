@@ -10,6 +10,15 @@ export default function AdminReports() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
+  // Custom Confirmation Modal State
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    step: 1 | 2;
+    type: 'single' | 'all';
+    targetId?: string;
+  }>({ isOpen: false, step: 1, type: 'single' });
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -35,53 +44,53 @@ export default function AdminReports() {
        setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: 'resolved' } : r));
      } catch (err) {
         console.error("Error marking as resolved", err);
-        alert("Failed to mark report as resolved.");
+        setErrorMsg("Failed to mark report as resolved.");
      }
   };
 
-  const handleDeleteReport = async (reportId: string) => {
-      const firstConfirm = window.confirm("Are you sure you want to delete this report?");
-      if (!firstConfirm) return;
-      const secondConfirm = window.confirm("WARNING: This action is irreversible. Are you REALLY sure you want to permanently delete this report?");
-      if (!secondConfirm) return;
-
-      try {
-          await deleteDoc(doc(db, "reports", reportId));
-          setReports(prev => prev.filter(r => r.id !== reportId));
-      } catch (err) {
-          console.error("Error deleting report", err);
-          alert("Failed to delete report.");
-      }
+  const initDeleteReport = (reportId: string) => {
+      setConfirmModal({ isOpen: true, step: 1, type: 'single', targetId: reportId });
   };
 
-  const handleDeleteAllResolved = async (filteredReports: Report[]) => {
-      const resolvedReports = filteredReports.filter(r => r.status === 'resolved');
+  const initDeleteAllResolved = (filteredReportsList: Report[]) => {
+      const resolvedReports = filteredReportsList.filter(r => r.status === 'resolved');
       if (resolvedReports.length === 0) {
-          alert("No resolved reports to delete.");
+          setErrorMsg("No resolved reports to delete.");
           return;
       }
-      
-      const firstConfirm = window.confirm(`Are you sure you want to delete all ${resolvedReports.length} resolved report(s)?`);
-      if (!firstConfirm) return;
-      const secondConfirm = window.confirm("WARNING: This action is irreversible. Are you REALLY sure you want to permanently delete all resolved reports?");
-      if (!secondConfirm) return;
-      
+      setConfirmModal({ isOpen: true, step: 1, type: 'all' });
+  };
+
+  const executeDelete = async () => {
+      const { type, targetId } = confirmModal;
+      setConfirmModal({ isOpen: false, step: 1, type: 'single' });
       setIsDeleting(true);
-      try {
-          const batch = writeBatch(db);
-          resolvedReports.forEach(report => {
-              if (report.id) {
-                  batch.delete(doc(db, "reports", report.id));
-              }
-          });
-          await batch.commit();
-          setReports(prev => prev.filter(r => !resolvedReports.find(rr => rr.id === r.id)));
-      } catch (err) {
-          console.error("Error batch deleting reports", err);
-          alert("Failed to delete all resolved reports.");
-      } finally {
-          setIsDeleting(false);
+
+      if (type === 'single' && targetId) {
+          try {
+              await deleteDoc(doc(db, "reports", targetId));
+              setReports(prev => prev.filter(r => r.id !== targetId));
+          } catch (err) {
+              console.error("Error deleting report", err);
+              setErrorMsg("Failed to delete report.");
+          }
+      } else if (type === 'all') {
+          const resolvedReports = reports.filter(r => r.status === 'resolved' && (adminRole === 'superadmin' || assignedDepartments.some(d => d.includes(r.department))));
+          try {
+              const batch = writeBatch(db);
+              resolvedReports.forEach(report => {
+                  if (report.id) {
+                      batch.delete(doc(db, "reports", report.id));
+                  }
+              });
+              await batch.commit();
+              setReports(prev => prev.filter(r => !resolvedReports.find(rr => rr.id === r.id)));
+          } catch (err) {
+              console.error("Error batch deleting reports", err);
+              setErrorMsg("Failed to delete all resolved reports.");
+          }
       }
+      setIsDeleting(false);
   };
 
   const filteredReports = reports.filter(r => {
@@ -112,6 +121,61 @@ export default function AdminReports() {
 
   return (
     <div className="space-y-3 max-w-full px-4 sm:px-6 mx-auto pb-8">
+      {errorMsg && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg flex items-center justify-between shadow-sm border border-red-100 mb-4">
+           <span className="text-sm font-medium">{errorMsg}</span>
+           <button onClick={() => setErrorMsg(null)} className="text-red-400 hover:text-red-600 font-bold px-2 py-1">&times;</button>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex justify-center mb-4">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center \${confirmModal.step === 2 ? 'bg-red-100' : 'bg-amber-100'}`}>
+                  <ShieldAlert className={`w-6 h-6 \${confirmModal.step === 2 ? 'text-red-600' : 'text-amber-600'}`} />
+                </div>
+              </div>
+              <h3 className="text-lg font-bold text-center text-gray-900 mb-2">
+                {confirmModal.step === 1 ? 'Are you sure?' : 'Final Warning'}
+              </h3>
+              <p className="text-center text-sm text-gray-600 mb-6">
+                {confirmModal.step === 1 
+                  ? (confirmModal.type === 'single' ? "Do you really want to delete this report?" : `Are you sure you want to delete ${reports.filter(r => r.status === 'resolved').length} resolved report(s)?`)
+                  : "This action is irreversible. All selected data will be permanently deleted. Do you want to proceed?"
+                }
+              </p>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setConfirmModal({ isOpen: false, step: 1, type: 'single' })}
+                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium rounded-lg transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+                {confirmModal.step === 1 ? (
+                  <button
+                    onClick={() => setConfirmModal(prev => ({ ...prev, step: 2 }))}
+                    className="flex-1 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors text-sm"
+                  >
+                    Yes, Proceed
+                  </button>
+                ) : (
+                  <button
+                    onClick={executeDelete}
+                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors text-sm"
+                  >
+                    Permanently Delete
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div>
         <h1 className="text-xl font-bold tracking-tight text-gray-900">Flagged Content</h1>
         <p className="mt-2 text-[11px] text-gray-500">Review and resolve issues reported by students for your assigned departments.</p>
@@ -157,7 +221,7 @@ export default function AdminReports() {
           <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">All Reports Log</h2>
           {filteredReports.filter(r => r.status === 'resolved').length > 0 && adminRole === 'superadmin' && (
              <button 
-                 onClick={() => handleDeleteAllResolved(filteredReports)}
+                 onClick={() => initDeleteAllResolved(filteredReports)}
                  disabled={isDeleting}
                  className="flex items-center gap-2 text-xs font-semibold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 border border-red-100 px-3 py-1.5 rounded transition-colors disabled:opacity-50"
              >
@@ -237,7 +301,7 @@ export default function AdminReports() {
                        )}
                        {adminRole === 'superadmin' && (
                          <button 
-                           onClick={() => handleDeleteReport(report.id!)}
+                           onClick={() => initDeleteReport(report.id!)}
                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                            title="Delete Report"
                          >
