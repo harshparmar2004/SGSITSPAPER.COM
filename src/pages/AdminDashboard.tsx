@@ -354,10 +354,10 @@ export default function AdminDashboard() {
       <div className="flex flex-col gap-6">
          {/* Upload Activity Chart */}
          <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full overflow-hidden">
-            <div className="bg-indigo-100 px-5 py-4 flex items-center justify-between border-b border-indigo-200">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
-                    <Activity className="w-4 h-4 text-indigo-700" />
+            <div className="bg-indigo-50 px-5 py-4 flex items-center justify-between border-b border-indigo-100">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-white shadow-sm border border-indigo-100">
+                    <Activity className="w-5 h-5 text-indigo-700" />
                   </div>
                   <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Upload Activity (Last 30 Days)</h2>
                 </div>
@@ -387,10 +387,10 @@ export default function AdminDashboard() {
 
          {/* Subject Distribution */}
          <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full overflow-hidden">
-            <div className="bg-indigo-100 px-5 py-4 flex items-center justify-between border-b border-indigo-200">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
-                    <FileText className="w-4 h-4 text-indigo-700" />
+            <div className="bg-indigo-50 px-5 py-4 flex items-center justify-between border-b border-indigo-100">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-white shadow-sm border border-indigo-100">
+                    <FileText className="w-5 h-5 text-indigo-700" />
                   </div>
                   <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Papers by Department</h2>
                 </div>
@@ -415,8 +415,13 @@ export default function AdminDashboard() {
 
       {/* Recent Uploads (Full Width) */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
-        <div className="bg-indigo-100 px-5 py-4 flex items-center justify-between border-b border-indigo-200">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Recent Uploads & Moderation</h2>
+        <div className="bg-indigo-50 px-5 py-4 flex items-center justify-between border-b border-indigo-100">
+          <div className="flex items-center gap-3">
+             <div className="p-2 rounded-lg bg-white shadow-sm border border-indigo-100">
+               <Layers className="w-5 h-5 text-indigo-700" />
+             </div>
+             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">Recent Uploads & Moderation</h2>
+          </div>
         </div>
         {loading ? (
           <div className="flex items-center justify-center p-8">
