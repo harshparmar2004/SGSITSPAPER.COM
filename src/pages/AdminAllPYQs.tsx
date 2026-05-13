@@ -497,11 +497,11 @@ export default function AdminAllPYQs() {
       )}
 
       {/* Main UI */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-6 pb-5 rounded-xl shadow-sm border mb-4 ${selectedDept ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-gray-200'}`}>
         <div>
           <div className="flex items-center gap-3">
             {!selectedDept ? (
-              <h1 className="text-xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-2xl font-bold tracking-tight text-gray-900">
                 Manage Documents
               </h1>
             ) : (
@@ -512,41 +512,41 @@ export default function AdminAllPYQs() {
                     setSearch("");
                     setSelectedDocType("All");
                   }}
-                  className="flex items-center gap-1.5 text-xs text-indigo-600 font-medium hover:text-indigo-700 mb-1"
+                  className="flex items-center gap-1.5 text-sm text-indigo-700 font-bold hover:text-indigo-800 mb-2 transition-colors cursor-pointer w-fit"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" /> Back to Departments
+                  <ArrowLeft className="w-4 h-4" /> Back to Departments
                 </button>
-                <h1 className="text-xl font-bold tracking-tight text-gray-900">
+                <h1 className="text-3xl font-black tracking-tight text-indigo-900">
                   {selectedDept}
                 </h1>
               </div>
             )}
           </div>
-          <p className="mt-2 text-[11px] text-gray-500 max-w-sm">
+          <p className={`mt-2 text-sm font-medium ${selectedDept ? 'text-indigo-800/80' : 'text-gray-500'} max-w-lg`}>
             {!selectedDept
               ? "Select a department to view and manage all its documents, including PYQs, Notes, and Syllabus."
               : "View, search, replace, and delete uploaded papers for this department."}
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto mt-4 sm:mt-0">
           {!selectedDept && (
             <Button
               variant="outline"
               size="sm"
               onClick={exportToCsv}
-              className="w-full sm:w-auto text-[11px] whitespace-nowrap h-8"
+              className="w-full sm:w-auto text-sm whitespace-nowrap h-10 border-indigo-200 bg-white"
             >
-              <Download className="w-3.5 h-3.5 mr-1.5" /> Export All CSV
+              <Download className="w-4 h-4 mr-1.5" /> Export All CSV
             </Button>
           )}
           {selectedDept && (
-            <div className="relative max-w-sm w-full">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <div className="relative max-w-md w-full">
+              <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400" />
               <Input
-                placeholder="Search by Subject Code..."
+                placeholder="Search by Subject Code or Name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-8 w-full bg-white border-gray-300 focus:border-indigo-500 shadow-sm font-medium text-[11px]"
+                className="pl-10 h-11 w-full bg-white border-indigo-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm font-medium text-sm text-indigo-900 placeholder:text-indigo-300"
               />
             </div>
           )}
@@ -579,12 +579,12 @@ export default function AdminAllPYQs() {
                     <FolderOpen className="w-5 h-5 text-indigo-500" />
                   </div>
                   <h3
-                    className="text-xs font-bold text-gray-800 line-clamp-2 leading-tight"
+                    className="text-sm font-bold text-gray-900 line-clamp-2 leading-tight"
                     title={dept}
                   >
                     {dept}
                   </h3>
-                  <span className="mt-2 text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">
+                  <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
                     {pyqsByDept[dept].length} Docs
                   </span>
                 </div>
@@ -604,10 +604,10 @@ export default function AdminAllPYQs() {
                 <button
                   key={type}
                   onClick={() => setSelectedDocType(type)}
-                  className={`px-4 py-2 text-[11px] font-bold whitespace-nowrap transition-colors border-b-2 ${
+                  className={`px-5 py-3 text-sm font-bold whitespace-nowrap transition-colors border-b-2 ${
                     selectedDocType === type
-                      ? "border-indigo-600 text-indigo-700"
-                      : "border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-100/50"
+                      ? "border-indigo-600 text-indigo-700 bg-indigo-50/30"
+                      : "border-transparent text-gray-500 hover:text-gray-900 hover:bg-gray-100/50"
                   } rounded-t-lg`}
                 >
                   {type}
@@ -616,15 +616,15 @@ export default function AdminAllPYQs() {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs whitespace-nowrap">
-              <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-[10px] uppercase tracking-wider">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead className="bg-white text-gray-500 font-bold border-b border-gray-200 text-xs uppercase tracking-wider">
                 <tr>
-                  <th className="px-4 py-3 text-center w-12">S.No.</th>
-                  <th className="px-4 py-3">Title / Code</th>
-                  <th className="px-4 py-3">Course Info</th>
-                  <th className="px-4 py-3">Type Details</th>
-                  <th className="px-4 py-3">Status & Info</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-6 py-4 text-center w-16">S.No.</th>
+                  <th className="px-6 py-4">Title / Code</th>
+                  <th className="px-6 py-4">Course Info</th>
+                  <th className="px-6 py-4">Type Details</th>
+                  <th className="px-6 py-4">Status & Info</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -633,74 +633,74 @@ export default function AdminAllPYQs() {
                     key={pyq.id}
                     className="hover:bg-gray-50/80 transition-colors"
                   >
-                    <td className="px-4 py-3 text-center text-gray-400 font-medium">
+                    <td className="px-6 py-4 text-center text-gray-400 font-medium">
                       {index + 1}
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-indigo-700 font-mono text-[11px]">
+                    <td className="px-6 py-4">
+                      <div className="font-bold text-indigo-700 font-mono text-sm max-w-[200px] truncate">
                         {pyq.subjectCode === "ALL_SUBJECTS"
                           ? "All Subjects"
                           : pyq.subjectCode}
                       </div>
                       <div
-                        className="text-gray-600 font-medium text-[10px] mt-1 truncate max-w-[200px]"
+                        className="text-gray-700 font-medium text-xs mt-1 truncate max-w-[250px]"
                         title={pyq.subjectName}
                       >
                         {pyq.subjectName}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="text-gray-800 font-medium text-[11px]">
+                    <td className="px-6 py-4">
+                      <div className="text-gray-900 font-bold text-sm">
                         {pyq.course}
                       </div>
-                      <div className="text-gray-500 text-[10px] mt-1">
+                      <div className="text-gray-500 text-xs mt-1 font-medium">
                         {pyq.semester} • {pyq.year}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <div className="text-gray-900 font-medium">
                         {pyq.documentType === "Notes" ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
                             Notes
                           </span>
                         ) : pyq.documentType === "Syllabus" ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                             Syllabus
                           </span>
                         ) : pyq.documentType === "Lab Manual" ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-100 text-cyan-800 border border-cyan-200">
                             Lab Manual
                           </span>
                         ) : pyq.documentType === "Books & Resources" ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-fuchsia-100 text-fuchsia-800 border border-fuchsia-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-fuchsia-100 text-fuchsia-800 border border-fuchsia-200">
                             Books & Resources
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 uppercase tracking-widest">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 uppercase tracking-widest">
                             PYQ
                           </span>
                         )}
                       </div>
                       {(pyq.documentType === "PYQ" || !pyq.documentType) && (
-                        <div className="text-gray-500 text-[10px] mt-1 font-medium">
+                        <div className="text-gray-600 text-xs mt-1.5 font-medium">
                           {pyq.examType || "N/A"} • {pyq.examYear || "N/A"}
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3 whitespace-normal max-w-[150px]">
-                      <div className="flex flex-col gap-1 items-start">
+                    <td className="px-6 py-4 whitespace-normal max-w-[200px]">
+                      <div className="flex flex-col gap-1.5 items-start">
                         {pyq.status === "Verified" ? (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800 border border-green-200">
                             Verified
                           </span>
                         ) : pyq.status === "Unverified" ? (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">
                             Unverified
                           </span>
                         ) : null}
                         {pyq.description && (
                           <span
-                            className="text-[10px] text-gray-500 line-clamp-2"
+                            className="text-xs text-gray-600 line-clamp-2 font-medium bg-gray-50 p-1.5 rounded border border-gray-100"
                             title={pyq.description}
                           >
                             {pyq.description}
@@ -708,16 +708,16 @@ export default function AdminAllPYQs() {
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2.5">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setReplacingPyq(pyq)}
-                          className="h-7 px-2 text-[10px] shadow-sm flex items-center justify-center gap-1 border-gray-200 hover:bg-gray-50 hover:text-gray-900"
+                          className="h-8 px-3 text-xs shadow-sm flex items-center justify-center gap-1.5 border-gray-300 hover:bg-gray-50 hover:text-gray-900 font-semibold"
                           title="Replace PDF"
                         >
-                          <Edit className="w-3 h-3" />
+                          <Edit className="w-3.5 h-3.5" />
                           <span className="sr-only sm:not-sr-only">
                             Replace
                           </span>
@@ -726,9 +726,10 @@ export default function AdminAllPYQs() {
                           variant="primary"
                           size="sm"
                           onClick={() => handleDeleteClick(pyq)}
-                          className="h-7 px-2 shadow-sm bg-red-50 text-red-700 hover:bg-red-100 border-red-200 disabled:opacity-50"
+                          className="h-8 w-8 p-0 shadow-sm bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border border-red-200 disabled:opacity-50 flex items-center justify-center rounded-md transition-colors"
+                          title="Delete PDF"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </td>
