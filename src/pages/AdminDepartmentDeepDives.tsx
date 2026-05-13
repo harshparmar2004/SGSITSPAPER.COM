@@ -180,34 +180,27 @@ export default function AdminDepartmentDeepDive() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="space-y-4 max-w-7xl mx-auto pb-8">
       {selectedDeptInsight ? (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+         <>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2 animate-in fade-in duration-200">
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSelectedDeptInsight(null)}
-                className="p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
-                title="Back to Departments"
-              >
-                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-              </button>
-              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center border border-indigo-100 shadow-sm">
-                <Activity className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 tracking-tight">
+              <div className="flex flex-col">
+                <button
+                  onClick={() => setSelectedDeptInsight(null)}
+                  className="flex items-center gap-1.5 text-xs text-indigo-600 font-medium hover:text-indigo-700 mb-1"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg> 
+                  Back to Departments
+                </button>
+                <h1 className="text-xl font-bold tracking-tight text-gray-900">
                   {selectedDeptInsight.name}
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Activity History & Files
-                </p>
+                </h1>
               </div>
             </div>
           </div>
-
-          {/* Stats Grid */}
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
               <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 block">
@@ -441,7 +434,8 @@ export default function AdminDepartmentDeepDive() {
               </table>
             </div>
           </div>
-        </div>
+         </div>
+         </>
       ) : (
         <>
           <div className="flex items-center justify-between mb-4">

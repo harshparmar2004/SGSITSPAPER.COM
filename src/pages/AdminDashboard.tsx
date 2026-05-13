@@ -255,17 +255,15 @@ export default function AdminDashboard() {
       </div>
 
       {/* Top Stats Row */}
-      <div className={`grid grid-cols-1 md:grid-cols-3 ${adminRole === 'superadmin' ? 'lg:grid-cols-4' : ''} gap-3`}>
+      <div className={`grid grid-cols-1 md:grid-cols-3 ${adminRole === 'superadmin' ? 'lg:grid-cols-4' : ''} gap-4`}>
         <Link to="/admin/subject-pyqs" className="block outline-none group">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total PYQs</span>
-              <div className="bg-indigo-50 border border-indigo-100 p-2 rounded-lg shadow-sm">
-                <FileText className="w-4 h-4 text-indigo-600" />
-              </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
+            <div className="bg-indigo-500 px-3 py-2.5 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-white">Total PYQs</span>
+              <FileText className="w-4 h-4 text-white opacity-90" />
             </div>
-            <div className="mt-3 flex items-baseline justify-between w-full">
-              <span className="text-xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalPyqs}</span>
+            <div className="p-4 flex items-baseline justify-between w-full">
+              <span className="text-3xl font-black text-gray-900 tracking-tight">{loading ? '-' : totalPyqs}</span>
               <span className="text-xs text-indigo-600 font-medium group-hover:underline">View All →</span>
             </div>
           </div>
@@ -273,18 +271,16 @@ export default function AdminDashboard() {
 
         {adminRole === 'superadmin' && (
           <Link to="/admin/students" className="block outline-none group">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-green-500 ring-offset-2 h-full overflow-hidden">
+              <div className="bg-emerald-500 px-3 py-2.5 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-white">
                   Student Logins
                 </span>
-                <div className="bg-green-50 border border-green-100 p-2 rounded-lg shadow-sm">
-                  <Users className="w-4 h-4 text-green-600" />
-                </div>
+                <Users className="w-4 h-4 text-white opacity-90" />
               </div>
-              <div className="mt-3 flex items-baseline justify-between w-full">
-                <span className="text-xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalUsers}</span>
-                <span className="text-xs text-indigo-600 font-medium group-hover:underline">View All →</span>
+              <div className="p-4 flex items-baseline justify-between w-full">
+                <span className="text-3xl font-black text-gray-900 tracking-tight">{loading ? '-' : totalUsers}</span>
+                <span className="text-xs text-emerald-600 font-medium group-hover:underline">View All →</span>
               </div>
             </div>
           </Link>
@@ -292,15 +288,13 @@ export default function AdminDashboard() {
 
         {adminRole === 'superadmin' && (
           <Link to="/admin/staff" className="block outline-none group">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-purple-500 ring-offset-2 h-full">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Active Staff</span>
-                <div className="bg-purple-50 border border-purple-100 p-2 rounded-lg shadow-sm">
-                  <Activity className="w-4 h-4 text-purple-600" />
-                </div>
+             <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-purple-500 ring-offset-2 h-full overflow-hidden">
+              <div className="bg-purple-500 px-3 py-2.5 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-white">Active Staff</span>
+                <Activity className="w-4 h-4 text-white opacity-90" />
               </div>
-              <div className="mt-3 flex items-baseline justify-between w-full">
-                <span className="text-xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalStaff}</span>
+              <div className="p-4 flex items-baseline justify-between w-full">
+                <span className="text-3xl font-black text-gray-900 tracking-tight">{loading ? '-' : totalStaff}</span>
                 <span className="text-xs text-purple-600 font-medium group-hover:underline">View All →</span>
               </div>
             </div>
@@ -308,20 +302,18 @@ export default function AdminDashboard() {
         )}
         
         {adminRole === 'superadmin' && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-3 flex flex-col justify-between transition-shadow hover:shadow-md">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Drive Storage</span>
-              <div className="bg-blue-50 border border-blue-100 p-2 rounded-lg shadow-sm">
-                 <HardDrive className="w-4 h-4 text-blue-600" />
-              </div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col transition-shadow hover:shadow-md h-full overflow-hidden">
+            <div className="bg-blue-500 px-3 py-2.5 flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-white">Drive Storage</span>
+              <HardDrive className="w-4 h-4 text-white opacity-90" />
             </div>
-            <div className="mt-1">
-               <div className="flex justify-between text-xs text-gray-600 mb-1.5 font-medium">
+            <div className="p-4 mt-auto flex flex-col justify-center w-full">
+               <div className="flex justify-between text-[11px] text-gray-600 mb-1.5 font-bold uppercase tracking-wider">
                   <span>{storageUsed > 1024 * 1024 * 1024 ? (storageUsed / (1024 * 1024 * 1024)).toFixed(2) + ' GB' : (storageUsed / (1024 * 1024)).toFixed(2) + ' MB'} Used</span>
                   <span>5.0 GB Total</span>
                </div>
                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.min((storageUsed / STORAGE_LIMIT) * 100, 100)}%` }}></div>
+                  <div className={`h-2 rounded-full ${storageUsed / STORAGE_LIMIT > 0.8 ? 'bg-red-500' : 'bg-blue-500'}`} style={{ width: `${Math.min((storageUsed / STORAGE_LIMIT) * 100, 100)}%` }}></div>
                </div>
             </div>
           </div>
@@ -330,30 +322,26 @@ export default function AdminDashboard() {
         {adminRole === 'department' && (
           <>
             <Link to="/admin/subjects" className="block outline-none group">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-emerald-500 ring-offset-2 h-full">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Subjects</span>
-                  <div className="bg-emerald-50 border border-emerald-100 p-2 rounded-lg shadow-sm">
-                    <BookOpen className="w-4 h-4 text-emerald-600" />
-                  </div>
+               <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-emerald-500 ring-offset-2 h-full overflow-hidden">
+                <div className="bg-emerald-500 px-3 py-2.5 flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-white">Total Subjects</span>
+                  <BookOpen className="w-4 h-4 text-white opacity-90" />
                 </div>
-                <div className="mt-3 flex items-baseline justify-between w-full">
-                  <span className="text-xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalSubjects}</span>
+                <div className="p-4 flex items-baseline justify-between w-full">
+                  <span className="text-3xl font-black text-gray-900 tracking-tight">{loading ? '-' : totalSubjects}</span>
                   <span className="text-xs text-emerald-600 font-medium group-hover:underline">View All →</span>
                 </div>
               </div>
             </Link>
 
             <Link to="/admin/pyqs" className="block outline-none group">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-3 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-amber-500 ring-offset-2 h-full">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Total PDFs Uploaded</span>
-                  <div className="bg-amber-50 border border-amber-100 p-2 rounded-lg shadow-sm">
-                    <Layers className="w-4 h-4 text-amber-600" />
-                  </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-amber-500 ring-offset-2 h-full overflow-hidden">
+                <div className="bg-amber-500 px-3 py-2.5 flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-white">Total PDFs Uploaded</span>
+                  <Layers className="w-4 h-4 text-white opacity-90" />
                 </div>
-                <div className="mt-3 flex items-baseline justify-between w-full">
-                  <span className="text-xl font-extrabold text-gray-900 tracking-tight">{loading ? '-' : totalPdfs}</span>
+                <div className="p-4 flex items-baseline justify-between w-full">
+                  <span className="text-3xl font-black text-gray-900 tracking-tight">{loading ? '-' : totalPdfs}</span>
                   <span className="text-xs text-amber-600 font-medium group-hover:underline">View All →</span>
                 </div>
               </div>
@@ -363,14 +351,18 @@ export default function AdminDashboard() {
       </div>
 
       {/* Charts Row */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-6">
          {/* Upload Activity Chart */}
-         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 w-full">
-            <div className="flex items-center gap-2 mb-4">
-                <Activity className="w-4 h-4 text-gray-400" />
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">Upload Activity (Last 30 Days)</h2>
+         <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full overflow-hidden">
+            <div className="bg-sky-50 px-5 py-4 flex items-center justify-between border-b border-sky-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1 rounded-md bg-white shadow-sm border border-sky-100">
+                    <Activity className="w-4 h-4 text-sky-600" />
+                  </div>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-sky-900">Upload Activity (Last 30 Days)</h2>
+                </div>
             </div>
-            <div className="h-72 w-full">
+            <div className="h-[280px] w-full p-4">
                {loading ? (
                   <div className="flex h-full items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
                ) : (
@@ -394,12 +386,16 @@ export default function AdminDashboard() {
          </div>
 
          {/* Subject Distribution */}
-         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 w-full">
-            <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-4 h-4 text-gray-400" />
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">Papers by Department</h2>
+         <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full overflow-hidden">
+            <div className="bg-sky-50 px-5 py-4 flex items-center justify-between border-b border-sky-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1 rounded-md bg-white shadow-sm border border-sky-100">
+                    <FileText className="w-4 h-4 text-sky-600" />
+                  </div>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-sky-900">Papers by Department</h2>
+                </div>
             </div>
-            <div className="h-72 w-full">
+            <div className="h-[280px] w-full p-4">
                 {loading ? (
                   <div className="flex h-full items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-indigo-600" /></div>
                ) : (
@@ -418,9 +414,9 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Uploads (Full Width) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col">
-        <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-xl">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-700">Recent Uploads & Moderation</h2>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+        <div className="bg-sky-50 px-5 py-4 flex items-center justify-between border-b border-sky-100">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-sky-900">Recent Uploads & Moderation</h2>
         </div>
         {loading ? (
           <div className="flex items-center justify-center p-8">

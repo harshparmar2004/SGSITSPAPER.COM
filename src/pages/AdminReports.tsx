@@ -63,20 +63,15 @@ export default function AdminReports() {
 
   const executeDelete = async () => {
       const { type, targetId } = confirmModal;
-      setConfirmModal({ isOpen: false, step: 1, type: 'single' });
       setIsDeleting(true);
+      setErrorMsg(null);
 
-      if (type === 'single' && targetId) {
-          try {
+      try {
+          if (type === 'single' && targetId) {
               await deleteDoc(doc(db, "reports", targetId));
               setReports(prev => prev.filter(r => r.id !== targetId));
-          } catch (err) {
-              console.error("Error deleting report", err);
-              setErrorMsg("Failed to delete report.");
-          }
-      } else if (type === 'all') {
-          const resolvedReports = reports.filter(r => r.status === 'resolved' && (adminRole === 'superadmin' || assignedDepartments.some(d => d.includes(r.department))));
-          try {
+          } else if (type === 'all') {
+              const resolvedReports = reports.filter(r => r.status === 'resolved' && (adminRole === 'superadmin' || assignedDepartments.some(d => d.includes(r.department))));
               const batch = writeBatch(db);
               resolvedReports.forEach(report => {
                   if (report.id) {
@@ -85,12 +80,15 @@ export default function AdminReports() {
               });
               await batch.commit();
               setReports(prev => prev.filter(r => !resolvedReports.find(rr => rr.id === r.id)));
-          } catch (err) {
-              console.error("Error batch deleting reports", err);
-              setErrorMsg("Failed to delete all resolved reports.");
           }
+          setConfirmModal({ isOpen: false, step: 1, type: 'single' });
+      } catch (err) {
+          console.error("Error deleting report", err);
+          setErrorMsg("Failed to delete report.");
+          setConfirmModal({ isOpen: false, step: 1, type: 'single' });
+      } finally {
+          setIsDeleting(false);
       }
-      setIsDeleting(false);
   };
 
   const filteredReports = reports.filter(r => {
