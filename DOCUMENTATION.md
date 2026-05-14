@@ -1,117 +1,151 @@
-# SGSITS PYQ Resource Hub Documentation
+# SGSITS PYQ Resource Hub - Technical & User Documentation
 
-## 1. Overview & Problem Statement
-
-**Problem**
-Students at SGSITS (Shri Govindram Seksaria Institute of Technology and Science) often struggle to find authentic, organized, and reliable Previous Year Question Papers (PYQs), handwritten notes, syllabi, and lab manuals. These academic resources are typically scattered across WhatsApp groups, individual drive links, or hard drives, making access difficult during exam preparation. Furthermore, administrators lack a structured platform to efficiently collect, moderate, and track the usage of these academic resources.
-
-**Solution**
-The **SGSITS PYQ Resource Hub** is a centralized, cloud-based platform designed to solve this exact problem. It provides students with a single, highly searchable repository to fetch academic resources securely, while empowering college administrators to manage users, track downloads, review reported issues, and maintain high-quality academic documents through a role-based CMS (Content Management System).
+Welcome to the comprehensive, deep-technical documentation for the **SGSITS PYQ Resource Hub**. This document serves as the absolute source of truth for the platform's architecture, data schema, security models, and step-by-step user workflows. It is intended for both end-users, administrators, and future engineering maintainers.
 
 ---
 
-## 2. Platform Architecture
+## 1. Executive Summary & Problem Engineering
 
-The platform is designed around a modern web architecture, utilizing high-performance serverless tools for global scale and fast data retrieval.
+### The Problem Scope
+Information fragmentation is a critical bottleneck in university ecosystems. At SGSITS, academic assets—Previous Year Questions (PYQs), handwritten notes, and official lab manuals—are historically siloed. Students rely on ephemeral links shared via peer-to-peer networks. This leads to:
+1. **High Discovery Latency:** Precious time lost hunting for valid links before exams.
+2. **Quality Degradation:** Unverified or incomplete files circulated without a feedback loop.
+3. **Loss of Legacy Knowledge:** Links expire, and senior batches graduate, taking resources overhead with them.
 
-*   **Frontend**: React (v18+) and Vite for fast client-side rendering.
-*   **Styling**: Tailwind CSS for responsive and consistent design, paired with component-driven architecture.
-*   **Database**: Firebase Cloud Firestore (NoSQL), strictly governed by Attribute-Based Access Control (ABAC) Rules.
-*   **Storage**: Firebase Cloud Storage for secure document (PDF) hosting.
-*   **Authentication**: Firebase Authentication using Google Sign-In with strict domain configurations.
-
----
-
-## 3. Getting Started & Authentication
-
-The platform utilizes a Role-Based Access Control (RBAC) model. All access begins with Google Authentication.
-
-### How to Log In
-1. Navigate to the landing page.
-2. Click **"Student / Admin Login"** in the top navigation bar or **"Enter Student Hub"** on the hero banner.
-3. Authenticate using your valid Google Account.
-4. **Role Assignment:**
-   * **Students:** By default, all authenticated users are granted `Student` access and routed to the PYQ Hub.
-   * **Admins:** If your email matches an administrator list in the database, the system elevates your privileges and unlocks the `Admin Area`.
+### The Systemic Solution
+This platform addresses these pain points sequentially by engineering a **Centralized Cloud-Native Hub**:
+*   A powerful, multi-faceted filtering engine (Course > Dept > Semester > Subject) designed for extremely low time-to-discovery.
+*   A strict Role-Based Access Control (RBAC) Content Management System (CMS) that curates all materials.
+*   An integrated Issue Reporting system that provides a direct feedback loop between the consumers (Students) and the curators (Admins).
 
 ---
 
-## 4. Student Guide: Using the PYQ Hub
+## 2. Core Architecture & Tech Stack
 
-The PYQ Hub is the primary interface for students to access study materials.
+The application uses a serverless, decoupled architecture prioritizing extreme read-performance and high availability.
 
-### Navigating Resource Categories
-At the top of the interface, you can quickly toggle between resource categories:
-*   **Previous Year Questions:** Historical exam papers.
-*   **Handwritten Notes:** Verified student and faculty notes.
-*   **Course Syllabus:** Official curriculum documents.
-*   **Lab Manuals:** Practical session guides.
-*   **Books & Resources:** Textbooks and additional reference material.
+### Frontend Layer (Client Application)
+*   **Framework:** React 18+ bootstrapped with Vite. React provides a reactive virtual DOM for immediate UI updates when filtering large sets of academic data.
+*   **Routing:** `react-router-dom` for declarative routing and Protected Route guarding.
+*   **Layout & Styling:** Tailwind CSS enables a heavily customized, utility-first design system. Standardized responsive breakpoints ensure parity across mobile and desktop viewports.
+*   **UI Components:** Isolated UI atoms (Buttons, Inputs, Selects) heavily inspired by functional design paradigms. Icons provided by `lucide-react`.
+*   **Client-side Archiving:** `jszip` and `file-saver` are utilized to compile ZIP archives recursively within the client's memory, reducing server compute costs while providing bulk-download features.
 
-### Search and Filters
-The system is built to minimize time-to-discovery:
-1. **Search by Subject Code:** The quickest way to find a resource is to type the official subject code (e.g., *CS101*). 
-2. **Contextual Filters:**
-   * Select your **Course** (e.g., B.Tech, M.Tech) to narrow down the context.
-   * Based on the course, select the corresponding **Department**.
-   * Use **Year** and **Semester** filters for precise querying.
-   * Depending on the category (e.g., PYQ), select the **Exam Type** (Mid Sem, End Sem).
-
-### Downloading Resources
-*   **Single Download:** Click the "Download" button next to any resource to fetch the PDF.
-*   **Bulk ZIP Download:** When multiple items match your search filter, a "Download X Result(s) as ZIP" button appears. Clicking this will fetch all relevant PDFs, package them into a `.zip` file on your browser, and save them in one click.
-
-### Reporting Issues
-If a file has missing pages, incorrect information, or a broken link:
-1. Click the **Report (Alert Icon)** next to the specific file.
-2. Provide your Name, College ID, Branch, and select an Issue Category (e.g., Missing Pages).
-3. Detail the problem in the description box and submit. Admins will review and rectify the file.
+### Backend Infrastructure (Firebase Suite)
+*   **Database:** Cloud Firestore (NoSQL Document Database). Optimized for rapid querying using composite indexes.
+*   **Blob Storage:** Firebase Cloud Storage for housing raw PDF binary data.
+*   **Identity Provider:** Firebase Authentication (OAuth 2.0 via Google Identity).
 
 ---
 
-## 5. Administrator Guide: The Admin Dashboard
+## 3. Data Schema & Relationship Modeling (Firestore)
 
-Administrators, depending on their tier (Super Admin, Staff, Department Admin), have access to powerful moderation tools via `/admin`.
+The NoSQL database relies on flattened data hierarchies to guarantee `O(1)` or shallow `O(N)` read times.
 
-### Dashboard Analytics
-*   **Overview Map:** Visualize Total Uploads, Total Students, Downloads, and actively Reported Issues.
-*   **Recent Activity:** Real-time stream of what documents were uploaded and by whom.
+### 3.1 `pyqs` (The Master Asset Collection)
+Stores references to all academic assets.
+*   **Fields:** `subjectCode`, `subjectName`, `department`, `examType`, `examYear`, `semester`, `documentType` ("PYQ", "Notes", etc.), `fileUrl`, `fileSize`, `uploadedBy` (UID), `uploadedAt` (Timestamp), `downloads` (Integer).
 
-### Uploading Documents (`/admin/upload`)
-The fastest way to contribute to the platform.
-1. Assign basic metadata (Course, Department, Subject Code, Subject Name).
-2. Select Document Type (PYQ, Notes, Syllabus, etc.).
-3. Choose the *Upload Method*:
-   * **File Upload:** Upload a PDF directly to the Cloud Storage. The system automatically normalizes the file name.
-   * **Google Drive Link:** Provide a public viewing URL to save storage bandwidth.
-4. Click **Upload to Hub**.
+### 3.2 `subjects` (The Academic Registry)
+A constrained registry to ensure referential integrity. Uploaders must select a predefined subject to prevent typos (e.g., `CS-201` vs `CS201`).
+*   **Fields:** `code`, `name`, `department`, `semester`, `course`, `createdAt`.
 
-### Managing Content (`/admin/manage-pyqs` and `/admin/subject-pyqs`)
-*   **Subject Configuration:** Admins can define the syllabus curriculum globally to ensure all uploads align with official subject codes.
-*   **Replace Files:** If a document is out of date, admins can execute a hot-replace to overwrite the old PDF file pointer with a new URL or file without discarding the document's historical tracking.
-*   **Delete Entries:** Safely remove invalid entries and clean up Cloud Storage references automatically.
+### 3.3 `admins` (The RBAC Registry)
+Determines elevated privileges system-wide.
+*   **Fields:** `email` (Primary Key), `role` (`"superadmin"`, `"department_admin"`, `"staff"`), `departments` (Array of Strings - enforces scoping), `addedAt`, `name`.
 
-### User Management (`/admin/students` & `/admin/staff`)
-*   **Staff Insights:** Super Admins can track how effectively individual staff members and contributors are uploading materials.
-*   **Manage Access:** Elevate specific Google Accounts to Admin status and restrict their rights to specific departments.
+### 3.4 `reports` (Telemetry & Moderation)
+End-user issue flags connected to specific assets.
+*   **Fields:** `pyqId`, `issueCategory` (ex: "Missing Pages", "Blurry"), `description`, `studentName`, `studentId`, `branch`, `status` ("Pending", "Resolved").
 
-### Moderation via Reports (`/admin/reports`)
-When students submit error reports on files:
-1. Navigate to the **Reports** section.
-2. Review the claim (e.g., "Page 3 is blurry").
-3. Use the document quick-link to inspect the file.
-4. Once the file is replaced via `Manage`, mark the report as **Resolved** or discard it.
+### 3.5 `analytics` (Aggregated Telemetry)
+*   Aggregates total system operations centrally to populate the Admin Dashboard without querying thousands of PYQ documents.
 
 ---
 
-## 6. Security and Compliance
+## 4. Deep-Dive Workflows: Student Experience
 
-The SGSITS PYQ Hub employs strict Firebase Security Rules directly on the database to ensure zero-trust interactions:
+The Student UI (`/pages/StudentView.tsx`) is designed for read-heavy operations, effectively acting as an intelligent search engine.
 
-*   **Read Access:** Only authenticated users (`isSignedIn()`) can query and read academic documents.
-*   **Write Access:** Strict Role-Based validation (`isAdmin()`). Students are mathematically barred from modifying `pyqs`, `subjects`, or `analytics`.
-*   **Sanitization:** All uploaded filenames are stripped of special characters using regex to prevent path traversal attacks.
-*   **Immutable Telemetry:** Analytics tracking (such as student download hits and contributor upload counts) are executed server-side via atomic increments (`FieldValue.increment()`) to prevent client-side manipulation.
+### Phase 1: Authentication & Context Hydration
+1. A user approaches the `/` route.
+2. Clicking **Login** triggers the Google OAuth popup.
+3. Upon success, Firebase issues a signed JWT.
+4. The React context (`AuthProvider`) hydrates. If the user's email is not in the `admins` collection, they are routed to the standard Student Interface.
+
+### Phase 2: Querying the Engine
+1. State constraints are applied in a strict hierarchy: `Course -> Department -> Year -> Semester`.
+2. The UI listens to these changes and applies client-side filtering on the cached `pyqs` payload.
+3. **Fuzzy Search:** The text input evaluates against both `subjectCode` and `subjectName` using `.toLowerCase().includes()`. 
+
+### Phase 3: The Bulk Download Pipeline
+When a student selects multiple criteria, the system offers **Batch Downloads**:
+1. The student clicks "Download X Result(s)".
+2. The UI triggers asynchronous HTTP `fetch` requests to all associated Firebase Storage bucket URLs explicitly converting them to `Blob` objects.
+3. The `JSZip` library constructs a virtual directory tree containing these binary blobs.
+4. `FileSaver.js` is triggered to prompt the browser's native OS file save dialog, pushing down a packaged `.zip` file.
+*Edge Case Handled:* Cross-Origin Resource Sharing (CORS) exceptions are mitigated by ensuring the Firebase Storage bucket retains the correct CORS policy.
+
+### Phase 4: Constructive Reporting
+1. If an asset is flawed, the student engages the "Alert" icon.
+2. A modal collects structured metadata (what is wrong, who is reporting).
+3. The payload is written to the `reports` collection, immediately notifying admins.
 
 ---
-*End of Documentation. Property of SGSITS PYQ Hub. Designed for secure and equitable access to academic material.*
+
+## 5. Deep-Dive Workflows: Administrative Operations (CMS)
+
+The Administrative UI revolves around heavy-duty writes, updates, and oversight capability. Operations are protected under `/admin/*` routes.
+
+### 5.1 Role-Based Limitations
+*   **Super Admin:** Unrestricted access. Can grant Admin privileges to other users via `/admin/staff`. Has visibility over all departments.
+*   **Department Admin / Staff:** Hard-scoped to specific departments. E.g., An admin scoped to 'Computer Science' cannot edit 'Mechanical Engineering' templates.
+
+### 5.2 The Upload Lifecycle (`/admin/upload`)
+The ingestion pipeline is highly fault-tolerant.
+1. The Admin selects predefined metadata (locking the asset structurally).
+2. **Path Resolution:** If uploading a raw file, the client constructs a deterministic deterministic storage path: `/pyqs/{department}/{semester}/{sanitized_filename}`.
+3. **Execution:** The file is streamed to Firebase Storage. 
+4. **Pointer Genesis:** Upon 100% upload completion, Storage yields a public `DownloadURL`.
+5. **Atomic Commit:** A document containing all metadata *plus* the `DownloadURL` is created in Firestore. The system runs an atomic `FieldValue.increment(1)` on the global `analytics` tracker to update total uploads.
+
+### 5.3 The Hot-Replace Procedure (`/admin/all-pyqs`)
+To fix erroneous files without losing download statistics or associated IDs:
+1. Admin triggers "Replace".
+2. Admin uploads a clean PDF file.
+3. The system captures the existing Firestore `pyqId`.
+4. It patches the `fileUrl` pointer in the specific Firestore document to the new file, maintaining all history.
+5. The UI pushes a temporary toast notification referencing the exact success state: `"Successfully updated document for {SubjectCode}"`.
+
+### 5.4 Subject Curriculum Management
+Located at `/admin/subjects`, admins actively mirror university curriculum changes. When subjects are added here, they immediately propagate to the multi-select dropdowns in both the Upload menu and the Student search parameters.
+
+---
+
+## 6. Advanced Security Posture & ABAC Rules
+
+The system does not trust the React client. All rules are established via strictly-typed Firebase Security Rules (`firestore.rules`).
+
+### The Fortress Pattern
+The rules employ a default-deny policy. All document accesses must pass rigorous checks.
+1. **Validation Blueprints:** Write operations must pass structural schemas. E.g., `isValidPYQ(data)`. Ensures no malicious properties can be injected.
+2. **Type Identity:** Enforces strict limitations: e.g., sizes for user-inputs must not exceed predefined character counts preventing Denial of Wallet (recursive insertion) attacks.
+3. **Ownership Parity:** The database asserts that any file marked as `uploadedBy: 'userId'` truly matches the `request.auth.uid` making the request.
+4. **Atomic Invariants:** Admin verifications occur dynamically. The rule queries `exists(/databases/$(database)/documents/admins/$(request.auth.email))` to dynamically approve privileged `write` statements safely on the backend.
+
+---
+
+## 7. Operational Guidelines for Maintainers
+
+### Troubleshooting Common Faults
+*   **"Quota Exceeded" Errors:** Instruct users to wait. Signifies Firebase free-tier spark plan limitations (50k reads/day) have been met.
+*   **Zip Download Failing on Specific Files:** Typically caused by external Drive links replacing physical storage files. The JSZip implementation correctly ignores HTTP cross-origin links to prevent script failure and alerts the user on partial zips.
+*   **Admin Dashboard Loading Infinity:** Occurs if you drop administrative permissions mid-session. Fix: Sign out and sign back in to refresh JWT claims and context.
+
+### The UI Component Hierarchy
+If extending UI functionality, trace the imports backwards:
+`Main App View` <- `Protected Layouts` <- `Page Components` <- `Widget Collections` <- `Base UI Atoms`.
+All new additions must adhere to the semantic variables defined in `/src/index.css`.
+
+---
+*Generated by the Engineering Team. Strictly Private & Confidential. To be stored alongside the main repository root.*
