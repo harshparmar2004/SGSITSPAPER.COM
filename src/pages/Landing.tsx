@@ -482,86 +482,89 @@ export default function Landing() {
             viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
-            <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-16 lg:items-center">
-              <motion.div variants={FADE_UP} className="lg:w-1/3 shrink-0">
-                <div className="w-12 h-1 bg-gradient-to-r from-emerald-400 to-sky-400 mb-6 rounded-full"></div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-5 tracking-tight">Branches & <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
-                <p className="text-base text-slate-400 font-light leading-relaxed mb-8">
+            <div className="flex flex-col md:items-center text-center gap-6 mb-16 border-b border-white/5 pb-10">
+              <motion.div variants={FADE_UP} className="max-w-2xl mx-auto">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-400 mb-6 mt-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  {allDepartments.length} Branches • {subjects.length} Subjects
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-5 tracking-tight">Branches & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
+                <p className="text-base text-slate-400 font-light leading-relaxed mx-auto max-w-lg">
                   Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, navigate effortlessly through your targeted curriculum.
                 </p>
               </motion.div>
+            </div>
               
-              <div className="lg:w-2/3 flex flex-col gap-4">
-                {allDepartments.map((dept, i) => {
-                  const deptSubjects = subjects.filter(s => s.departments?.includes(dept));
-                  const isExpanded = expandedDept === dept;
-                  
-                  return (
-                    <motion.div key={dept} variants={FADE_UP} className="group relative">
-                      <div className="absolute inset-0 bg-sky-500/0 hover:bg-sky-500/5 transition-colors rounded-xl"></div>
-                      <div 
-                        onClick={() => setExpandedDept(isExpanded ? null : dept)}
-                        className={`flex flex-col border border-white/5 rounded-xl transition-all cursor-pointer ${isExpanded ? 'bg-white/[0.03] border-sky-500/30' : 'bg-white/[0.01] hover:bg-white/[0.03] hover:border-sky-500/20'}`}
-                      >
-                        <div className="flex items-center justify-between p-4 relative z-10">
-                          <div className="flex items-center gap-4">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white group-hover:bg-sky-500/10 group-hover:text-sky-400'}`}>
-                              <Layers className="w-5 h-5 flex-shrink-0" />
-                            </div>
-                            <div>
-                              <h3 className={`font-bold text-base transition-colors ${isExpanded ? 'text-sky-400' : 'text-white group-hover:text-sky-300'}`}>{dept}</h3>
-                              <p className="text-xs text-slate-500 mt-1">
-                                {deptSubjects.length} Subject{deptSubjects.length !== 1 ? 's' : ''} available
-                              </p>
-                            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 items-start">
+              {allDepartments.map((dept, i) => {
+                const deptSubjects = subjects.filter(s => s.departments?.includes(dept));
+                const isExpanded = expandedDept === dept;
+                
+                return (
+                  <motion.div key={dept} variants={FADE_UP} className="group relative">
+                    <div className="absolute inset-0 bg-sky-500/0 hover:bg-sky-500/5 transition-colors rounded-xl"></div>
+                    <div 
+                      onClick={() => setExpandedDept(isExpanded ? null : dept)}
+                      className={`flex flex-col border border-white/5 rounded-xl transition-all cursor-pointer ${isExpanded ? 'bg-white/[0.03] border-sky-500/30 shadow-lg' : 'bg-white/[0.01] hover:bg-white/[0.03] hover:border-sky-500/20'}`}
+                    >
+                      <div className="flex items-center justify-between p-4 relative z-10">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white group-hover:bg-sky-500/10 group-hover:text-sky-400'}`}>
+                            <Layers className="w-4 h-4 flex-shrink-0" />
                           </div>
-                          <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-sky-400' : ''}`} />
+                          <div>
+                            <h3 className={`font-bold text-sm transition-colors ${isExpanded ? 'text-sky-400' : 'text-white group-hover:text-sky-300'} line-clamp-1`}>{dept}</h3>
+                            <p className="text-[10px] text-slate-500 mt-0.5">
+                              {deptSubjects.length} Subject{deptSubjects.length !== 1 ? 's' : ''} available
+                            </p>
+                          </div>
                         </div>
-                        
-                        <AnimatePresence>
-                          {isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="overflow-hidden relative z-10"
-                            >
-                              <div className="p-4 pt-0 border-t border-white/5 mt-2">
-                                {deptSubjects.length > 0 ? (
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-                                    {deptSubjects.map((sub) => (
-                                      <div key={sub.code} className="p-3 bg-[#0a0f1a] rounded-lg border border-white/5 flex flex-col gap-1">
-                                        <div className="text-xs font-mono text-sky-400 font-bold bg-sky-500/10 self-start px-2 py-0.5 rounded uppercase tracking-wider">{sub.code}</div>
-                                        <div className="text-sm font-semibold text-slate-200 line-clamp-1">{sub.name}</div>
-                                        <div className="text-xs text-slate-500 flex justify-between mt-1 items-center">
-                                          <span>{sub.semester ? `Semester ${sub.semester}` : 'All Semesters'}</span>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <div className="text-sm text-slate-500 py-4 text-center">
-                                    No subjects available yet for this department.
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                        <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-300 flex-shrink-0 ${isExpanded ? 'rotate-180 text-sky-400' : ''}`} />
                       </div>
-                    </motion.div>
-                  );
-                })}
-                {allDepartments.length === 0 && (
-                  <div className="text-center py-12 px-6 border border-white/5 rounded-2xl bg-white/[0.01]">
-                    <div className="w-16 h-16 bg-white/5 flex items-center justify-center rounded-full mx-auto mb-4 text-slate-400">
-                      <Layers className="w-8 h-8" />
+                      
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden relative z-10"
+                          >
+                            <div className="p-4 pt-0 border-t border-white/5 mt-1">
+                              {deptSubjects.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-2 mt-3">
+                                  {deptSubjects.map((sub) => (
+                                    <div key={sub.code} className="px-3 py-2 bg-[#0a0f1a] rounded flex flex-col gap-1 hover:bg-[#0f1725] transition-colors border border-transparent hover:border-white/5">
+                                      <div className="flex items-center justify-between gap-2">
+                                        <div className="text-[10px] font-mono text-sky-400 font-bold bg-sky-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider">{sub.code}</div>
+                                        <div className="text-[10px] text-slate-500">{sub.semester ? `Sem ${sub.semester}` : 'All'}</div>
+                                      </div>
+                                      <div className="text-xs font-semibold text-slate-300 line-clamp-1" title={sub.name}>{sub.name}</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-slate-500 py-3 text-center">
+                                  No subjects available yet for this department.
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">No Departments Yet</h3>
-                    <p className="text-slate-400 text-sm">Admins are currently setting up the structure.</p>
+                  </motion.div>
+                );
+              })}
+              {allDepartments.length === 0 && (
+                <div className="col-span-full text-center py-12 px-6 border border-white/5 rounded-2xl bg-white/[0.01]">
+                  <div className="w-16 h-16 bg-white/5 flex items-center justify-center rounded-full mx-auto mb-4 text-slate-400">
+                    <Layers className="w-8 h-8" />
                   </div>
-                )}
-              </div>
+                  <h3 className="text-xl font-bold text-white mb-2">No Departments Yet</h3>
+                  <p className="text-slate-400 text-sm">Admins are currently setting up the structure.</p>
+                </div>
+              )}
             </div>
           </motion.div>
         </section>
