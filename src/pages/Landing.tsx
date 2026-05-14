@@ -482,16 +482,28 @@ export default function Landing() {
             viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
-            <div className="flex flex-col md:items-center text-center gap-6 mb-16 border-b border-white/5 pb-10">
-              <motion.div variants={FADE_UP} className="max-w-2xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-400 mb-6 mt-2">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-white/5 pb-12">
+              <motion.div variants={FADE_UP} className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-emerald-400 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                  {allDepartments.length} Branches • {subjects.length} Subjects
+                  Comprehensive Curriculum
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-5 tracking-tight">Branches & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
-                <p className="text-base text-slate-400 font-light leading-relaxed mx-auto max-w-lg">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">Branches & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
+                <p className="text-base md:text-lg text-slate-400 font-light leading-relaxed">
                   Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, navigate effortlessly through your targeted curriculum.
                 </p>
+              </motion.div>
+              
+              <motion.div variants={FADE_UP} className="flex gap-6 items-center shrink-0">
+                <div className="text-right">
+                  <div className="text-3xl font-black text-white">{allDepartments.length}</div>
+                  <div className="text-sm font-medium text-emerald-400 uppercase tracking-widest mt-1">Branches</div>
+                </div>
+                <div className="w-px h-12 bg-white/10"></div>
+                <div className="text-left">
+                  <div className="text-3xl font-black text-white">{subjects.length}</div>
+                  <div className="text-sm font-medium text-sky-400 uppercase tracking-widest mt-1">Subjects</div>
+                </div>
               </motion.div>
             </div>
               
