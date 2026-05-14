@@ -14,6 +14,14 @@ import {
   Menu,
   Linkedin,
   X,
+  Cpu,
+  Zap,
+  Settings,
+  Building,
+  TerminalSquare,
+  Network,
+  HeartPulse,
+  Factory
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -440,13 +448,25 @@ export default function Landing() {
             </p>
           </motion.div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {['Computer Science', 'Information Tech.', 'Electronics & TC', 'Electrical Engg.', 'Mechanical Engg.', 'Civil Engineering', 'Biomedical Engg.', 'Industrial Prod.'].map((dept, i) => (
-              <motion.div key={dept} variants={FADE_UP} className="bg-[#121927] border border-white/5 p-6 rounded-xl hover:bg-[#1a2333] hover:border-sky-500/30 transition-all cursor-pointer group shadow-lg hover:shadow-sky-500/10">
-                <div className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-2">Department</div>
-                <h3 className="text-white font-bold text-lg mb-4 group-hover:text-sky-300 transition-colors">{dept}</h3>
-                <div className="flex items-center gap-2 text-sm text-sky-400/80 font-medium opacity-80 group-hover:opacity-100">
-                  <span>Explore Subjects</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { name: 'Computer Science', icon: <TerminalSquare className="w-6 h-6" /> },
+              { name: 'Information Tech.', icon: <Network className="w-6 h-6" /> },
+              { name: 'Electronics & TC', icon: <Cpu className="w-6 h-6" /> },
+              { name: 'Electrical Engg.', icon: <Zap className="w-6 h-6" /> },
+              { name: 'Mechanical Engg.', icon: <Settings className="w-6 h-6" /> },
+              { name: 'Civil Engineering', icon: <Building className="w-6 h-6" /> },
+              { name: 'Biomedical Engg.', icon: <HeartPulse className="w-6 h-6" /> },
+              { name: 'Industrial Prod.', icon: <Factory className="w-6 h-6" /> }
+            ].map((dept, i) => (
+              <motion.div key={dept.name} variants={FADE_UP} className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 rounded-2xl hover:bg-white/[0.04] hover:border-sky-500/30 transition-all cursor-pointer group shadow-lg">
+                <div className="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(14,165,233,0.1)]">
+                  {dept.icon}
+                </div>
+                <h3 className="text-white font-bold text-xl mb-2 group-hover:text-sky-300 transition-colors">{dept.name}</h3>
+                <p className="text-xs text-slate-500 mb-6 line-clamp-2">Access core subjects, electives, and department-specific materials.</p>
+                <div className="flex items-center gap-2 text-sm text-sky-400 font-bold uppercase tracking-widest opacity-80 group-hover:opacity-100">
+                  <span>Explore</span>
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </motion.div>
@@ -463,70 +483,70 @@ export default function Landing() {
           viewport={{ once: true, margin: "-50px" }}
           variants={STAGGER_CONTAINER}
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-sky-500/5 blur-[120px] rounded-[100%] pointer-events-none"></div>
-
-          <motion.div variants={FADE_UP} className="relative z-10 max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6 mx-auto">
-              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-              Notes Guide
-            </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Study Notes</span></h2>
-            <p className="text-lg text-slate-400 mb-12 leading-relaxed font-light">
-              Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms. Curated to cover all important concepts efficiently.
-            </p>
+          <div className="bg-[#121927]/50 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 lg:p-16 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center gap-12">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/5 blur-[100px] rounded-full pointer-events-none"></div>
             
-            <div className="grid md:grid-cols-2 gap-6 text-left max-w-3xl mx-auto mb-12">
-              <ul className="space-y-4 text-slate-300">
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>High-yield summary sheets for last-minute revisions</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>Unit-wise detailed explanations with diagrams</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>Organized logically by syllabus unit progression</span>
-                </li>
-              </ul>
-              <ul className="space-y-4 text-slate-300">
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>Important formulas and algorithmic breakdowns</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>Step-by-step solutions to commonly asked numericals</span>
-                </li>
-              </ul>
-            </div>
+            <div className="flex-1 relative z-10 w-full">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6">
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                Notes Guide
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Study Notes</span></h2>
+              <p className="text-lg text-slate-400 mb-10 leading-relaxed font-light">
+                Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms. Curated to cover all important concepts efficiently.
+              </p>
               
-            <button onClick={loginWithGoogle} className="px-8 py-4 bg-sky-500/10 text-sky-300 font-bold tracking-widest uppercase rounded-xl border border-sky-500/20 hover:bg-sky-500/20 hover:border-sky-500/40 hover:shadow-[0_0_30px_rgba(14,165,233,0.15)] transition-all mx-auto inline-flex group relative overflow-hidden">
-               <span className="relative z-10">Login to Access Notes</span>
-            </button>
-          </motion.div>
+              <button onClick={loginWithGoogle} className="px-8 py-4 bg-sky-500/10 text-sky-300 font-bold tracking-widest uppercase rounded-xl border border-sky-500/20 hover:bg-sky-500/20 hover:border-sky-500/40 hover:shadow-[0_0_30px_rgba(14,165,233,0.15)] transition-all inline-flex group relative overflow-hidden w-full sm:w-auto justify-center">
+                 <span className="relative z-10">Login to Access Notes</span>
+              </button>
+            </div>
+
+            <div className="flex-1 w-full space-y-4 relative z-10">
+              {[
+                { title: "High-yield summary sheets", desc: "For last-minute revisions and quick recaps." },
+                { title: "Unit-wise detailed explanations", desc: "Comprehensive notes with necessary diagrams." },
+                { title: "Important formulas", desc: "Algorithmic breakdowns for quick solving." },
+                { title: "Step-by-step solutions", desc: "Detailed steps to commonly asked numericals." }
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-sky-500/20 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0 font-bold">
+                    {idx + 1}
+                  </div>
+                  <div>
+                    <h4 className="text-white font-bold">{item.title}</h4>
+                    <p className="text-sm text-slate-400">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.section>
 
-        {/* Community Section */}
+        {/* Community & Documentation Section */}
         <motion.section 
           id="community" 
-          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24 text-center"
+          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
           variants={STAGGER_CONTAINER}
         >
-          <motion.div variants={FADE_UP} className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Join the <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">Community</span></h2>
-            <p className="text-lg text-slate-400 mb-12 font-light">
-              SGSITS PYQ Hub is built by the students, for the students. Whether you want to explore the features, understand the workflows, or see how to utilize the platform to its maximum potential, everything you need is right here. Join us in shaping a better academic experience.
-            </p>
+          <motion.div variants={FADE_UP} className="bg-gradient-to-br from-[#0c1322] to-[#050810] border border-white/5 rounded-3xl p-10 md:p-16 text-center relative overflow-hidden shadow-2xl">
+            {/* Subtle tech pattern background layer */}
+            <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
             
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-              <Link to="/docs" className="flex items-center gap-3 px-10 py-5 bg-sky-500 border border-sky-400 hover:bg-sky-400 text-[#020617] font-extrabold rounded-xl transition-all w-full sm:w-auto justify-center uppercase tracking-wider shadow-[0_0_20px_rgba(14,165,233,0.3)] hover:shadow-[0_0_30px_rgba(14,165,233,0.5)] scale-100 hover:scale-105 duration-200">
-                <span>Explore the Platform Documentation</span>
-              </Link>
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Platform <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-400">Documentation</span></h2>
+              <p className="text-lg text-slate-400 mb-10 font-light">
+                Get the most out of the hub. Learn how to navigate resources, effectively use advanced filters, and understand our curation standards. A complete guide designed to streamline your academic workflow.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <Link to="/docs" className="flex items-center gap-3 px-10 py-5 bg-white text-slate-900 font-extrabold rounded-xl transition-all w-full sm:w-auto justify-center uppercase tracking-wider hover:bg-slate-200 shadow-xl scale-100 hover:scale-105 duration-200 group">
+                  <BookOpen className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <span>Read the Documentation</span>
+                </Link>
+              </div>
             </div>
           </motion.div>
         </motion.section>
