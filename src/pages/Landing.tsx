@@ -193,6 +193,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen flex flex-col text-slate-50 selection:bg-sky-300/20 relative overflow-x-hidden bg-[radial-gradient(circle_at_50%_0%,#0f172a_0%,#020617_100%)]">
       {/* Background Decor */}
+      <div className="fixed inset-0 z-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-[size:32px_32px] opacity-[0.02] pointer-events-none"></div>
       <div className="fixed top-[-10%] right-[-10%] w-[600px] h-[600px] bg-sky-300/10 blur-[140px] rounded-full pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-sky-500/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
@@ -213,7 +214,7 @@ export default function Landing() {
           >
             <motion.h1
               variants={FADE_UP}
-              className="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-[1.1] tracking-tight"
+              className="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-white mb-4 leading-[1.15] tracking-tight"
             >
               Empowering{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-sky-300 to-sky-500">
@@ -224,7 +225,7 @@ export default function Landing() {
 
             <motion.p
               variants={FADE_UP}
-              className="text-lg text-slate-400 mb-12 leading-relaxed max-w-xl font-light"
+              className="text-base md:text-lg text-slate-400 mb-10 leading-relaxed max-w-xl font-light"
             >
               The SGSITS PYQ Hub is a comprehensive digital repository designed
               to streamline academic preparation. We host an extensive
@@ -391,7 +392,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, amount: 0.1 }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-white/5 pb-12">
@@ -471,7 +472,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, amount: 0.1 }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-16 lg:items-center">
@@ -518,7 +519,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, amount: 0.1 }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
@@ -568,13 +569,17 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, amount: 0.1 }}
             variants={STAGGER_CONTAINER}
           >
-            <motion.div variants={FADE_UP} className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
+            <motion.div variants={FADE_UP} className="bg-gradient-to-br from-sky-900/40 via-indigo-900/20 to-sky-900/10 border border-sky-500/20 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-2xl backdrop-blur-sm">
+              <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none"></div>
+              <div className="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/20 blur-[60px] rounded-full pointer-events-none"></div>
+              <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 blur-[60px] rounded-full pointer-events-none"></div>
+              
               <div className="relative z-10 max-w-3xl mx-auto">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight">Platform Documentation</h2>
-                <p className="text-base lg:text-lg text-slate-400 mb-8 font-light leading-relaxed">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight drop-shadow-sm">Platform Documentation</h2>
+                <p className="text-base text-slate-300 mb-8 font-light leading-relaxed max-w-2xl mx-auto">
                   Get the most out of the hub. Learn how to navigate resources, effectively use advanced filters, and understand our curation standards. A complete guide designed to streamline your academic workflow.
                 </p>
                 
@@ -592,7 +597,7 @@ export default function Landing() {
 
       {/* Footer Area */}
       <footer className="w-full py-12 bg-[#050810] border-t border-white/5 relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-center gap-10 max-w-[1400px] px-6 lg:px-12 mx-auto">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-10 max-w-[1200px] px-6 lg:px-8 mx-auto">
           {/* Left Side */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
             <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
