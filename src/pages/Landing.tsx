@@ -433,13 +433,11 @@ export default function Landing() {
           viewport={{ once: true, margin: "-50px" }}
           variants={STAGGER_CONTAINER}
         >
-          <motion.div variants={FADE_UP} className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">Departments & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
-              <p className="text-lg text-slate-400 max-w-2xl font-light">
-                Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, easily navigate through subjects cataloged specifically for each semester and department.
-              </p>
-            </div>
+          <motion.div variants={FADE_UP} className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Departments & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-light">
+              Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, easily navigate through subjects cataloged specifically for each semester and department.
+            </p>
           </motion.div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -459,54 +457,54 @@ export default function Landing() {
         {/* Notes Guide Section */}
         <motion.section 
           id="notes" 
-          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24"
+          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24 relative"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
           variants={STAGGER_CONTAINER}
         >
-          <motion.div variants={FADE_UP} className="bg-gradient-to-br from-[#121927] to-[#0A0F1C] border border-white/10 rounded-3xl p-8 md:p-12 lg:p-16 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/10 blur-[100px] rounded-full pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-sky-500/5 blur-[120px] rounded-[100%] pointer-events-none"></div>
+
+          <motion.div variants={FADE_UP} className="relative z-10 max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6 mx-auto">
+              <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+              Notes Guide
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Study Notes</span></h2>
+            <p className="text-lg text-slate-400 mb-12 leading-relaxed font-light">
+              Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms. Curated to cover all important concepts efficiently.
+            </p>
             
-            <div className="relative z-10 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6">
-                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-                Notes Guide
-              </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Study Notes</span></h2>
-              <p className="text-lg text-slate-400 mb-10 leading-relaxed font-light">
-                Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms. Curated to cover all important concepts efficiently.
-              </p>
-              
-              <ul className="space-y-4 text-slate-300 mb-10">
+            <div className="grid md:grid-cols-2 gap-6 text-left max-w-3xl mx-auto mb-12">
+              <ul className="space-y-4 text-slate-300">
                 <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
                   <span>High-yield summary sheets for last-minute revisions</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
                   <span>Unit-wise detailed explanations with diagrams</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>Important formulas and algorithmic breakdowns</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
-                  <span>Step-by-step solutions to commonly asked numericals</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
                   <span>Organized logically by syllabus unit progression</span>
                 </li>
               </ul>
-              
-              <button onClick={loginWithGoogle} className="px-8 py-4 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 font-bold tracking-widest uppercase rounded-xl transition-colors border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.15)] group relative overflow-hidden">
-                <div className="absolute inset-0 bg-sky-300/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <span className="relative z-10">Login to Access Notes</span>
-              </button>
+              <ul className="space-y-4 text-slate-300">
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <span>Important formulas and algorithmic breakdowns</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <span>Step-by-step solutions to commonly asked numericals</span>
+                </li>
+              </ul>
             </div>
+              
+            <button onClick={loginWithGoogle} className="px-8 py-4 bg-sky-500/10 text-sky-300 font-bold tracking-widest uppercase rounded-xl border border-sky-500/20 hover:bg-sky-500/20 hover:border-sky-500/40 hover:shadow-[0_0_30px_rgba(14,165,233,0.15)] transition-all mx-auto inline-flex group relative overflow-hidden">
+               <span className="relative z-10">Login to Access Notes</span>
+            </button>
           </motion.div>
         </motion.section>
 
