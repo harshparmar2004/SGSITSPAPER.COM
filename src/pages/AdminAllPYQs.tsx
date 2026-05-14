@@ -554,8 +554,8 @@ export default function AdminAllPYQs() {
       </div>
 
       {successMsg && (
-        <div className="p-3 bg-green-50 text-green-800 rounded-lg border border-green-200 text-sm flex items-center gap-2 animate-in fade-in duration-300">
-          <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+        <div className="fixed bottom-4 right-4 z-50 p-4 bg-white text-green-800 rounded-lg shadow-xl border-l-4 border-green-500 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
           <span className="font-medium">{successMsg}</span>
         </div>
       )}
