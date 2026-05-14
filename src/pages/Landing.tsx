@@ -52,7 +52,7 @@ function LandingNavbar() {
               (item) => (
                 <a
                   key={item}
-                  href="#"
+                  href={`#${item.toLowerCase()}`}
                   className="relative text-slate-400 hover:text-sky-300 transition-colors duration-200 font-medium text-xs tracking-widest uppercase py-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] auto after:bg-sky-300 after:transition-all after:duration-300"
                 >
                   {item}
@@ -117,7 +117,7 @@ function LandingNavbar() {
                 (item) => (
                   <a
                     key={item}
-                    href="#"
+                    href={`#${item.toLowerCase()}`}
                     className="text-2xl font-semibold text-slate-300 hover:text-sky-300 tracking-wide uppercase transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -184,7 +184,8 @@ export default function Landing() {
 
       {/* Main Content Area */}
       <main className="flex-grow pt-32 pb-8 px-6 relative z-10 font-sans">
-        <div className="max-w-full px-4 sm:px-6 mx-auto flex flex-col lg:flex-row items-center justify-between gap-3 min-h-[calc(100vh-250px)]">
+        {/* Home Section */}
+        <section id="home" className="max-w-7xl px-4 sm:px-6 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-3 min-h-[calc(100vh-250px)] mb-32 pt-10 scroll-mt-32">
           {/* Information Section */}
           <motion.div
             initial="hidden"
@@ -363,7 +364,130 @@ export default function Landing() {
               </p>
             </div>
           </motion.div>
-        </div>
+        </section>
+
+        {/* Resources Section */}
+        <section id="resources" className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Resources</span></h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-light">
+              A highly curated repository of the most critical academic materials you need to ace your examinations, available instantly.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-2xl hover:border-sky-300/30 transition-colors group">
+              <div className="w-14 h-14 bg-sky-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <BookOpen className="text-sky-400 w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Previous Year Papers</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Access over 5,000+ verified PYQs across all departments. Filter intuitively by year, semester, and specific subject codes.
+              </p>
+            </div>
+            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-2xl hover:border-indigo-400/30 transition-colors group">
+              <div className="w-14 h-14 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <LayoutGrid className="text-indigo-400 w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Syllabus & Curriculum</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Stay aligned with the official university tracking. Always find the exact chapters and modules required for your current semester.
+              </p>
+            </div>
+            <div className="bg-white/[0.02] border border-white/10 p-8 rounded-2xl hover:border-amber-400/30 transition-colors group">
+              <div className="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <BadgeCheck className="text-amber-400 w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Practical Manuals</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Download verified lab manuals, programming assignments, and experiment readings trusted by senior students and faculty.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Subjects Section */}
+        <section id="subjects" className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">Departments & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
+              <p className="text-lg text-slate-400 max-w-xl font-light">
+                Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives.
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {['Computer Science', 'Information Tech.', 'Electronics & TC', 'Electrical Engg.', 'Mechanical Engg.', 'Civil Engineering', 'Biomedical Engg.', 'Industrial Prod.'].map((dept, i) => (
+              <div key={dept} className="bg-[#121927] border border-white/5 p-6 rounded-xl hover:bg-white/[0.03] hover:border-sky-500/30 transition-all cursor-pointer group">
+                <div className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-2">Department</div>
+                <h3 className="text-white font-bold text-lg mb-4 group-hover:text-sky-300 transition-colors">{dept}</h3>
+                <div className="flex items-center gap-2 text-sm text-sky-400/80 font-medium">
+                  <span>Explore Subjects</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Notes Guide Section */}
+        <section id="notes" className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24">
+          <div className="bg-gradient-to-br from-[#121927] to-[#0A0F1C] border border-white/10 rounded-3xl p-8 md:p-12 lg:p-16 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+            
+            <div className="relative z-10 max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6">
+                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+                Notes Guide
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Study Notes</span></h2>
+              <p className="text-lg text-slate-400 mb-10 leading-relaxed font-light">
+                Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms.
+              </p>
+              
+              <ul className="space-y-4 text-slate-300 mb-10">
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <span>High-yield summary sheets for last-minute revisions</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <span>Unit-wise detailed explanations with diagrams</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">✓</div>
+                  <span>Important formulas and algorithmic breakdowns</span>
+                </li>
+              </ul>
+              
+              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="px-8 py-4 bg-white/10 hover:bg-white/15 text-white font-bold tracking-widest uppercase rounded-xl transition-colors border border-white/5">
+                Login to Access Notes
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Community Section */}
+        <section id="community" className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Join the <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-orange-400">Community</span></h2>
+            <p className="text-lg text-slate-400 mb-12 font-light">
+              SGSITS PYQ Hub is built by the students, for the students. Whether you want to contribute papers, report issues, or just connect with peers, our community is the core of this platform.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
+              <a href="https://github.com/SGSITS" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-8 py-4 bg-[#161D2B] border border-white/10 hover:border-slate-500 text-white font-bold rounded-xl transition-all w-full sm:w-auto justify-center">
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path></svg>
+                <span>Contribute on GitHub</span>
+              </a>
+              <Link to="/docs" className="flex items-center gap-3 px-8 py-4 bg-sky-500 border border-sky-400 hover:bg-sky-400 text-[#020617] font-extrabold rounded-xl transition-all w-full sm:w-auto justify-center uppercase tracking-wider">
+                <span>Read the Docs</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       {/* Footer Area */}
