@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { useAcademicConfig } from "../hooks/useAcademicConfig";
 import { loginWithGoogle } from "../lib/firebase";
 import {
   Loader2,
@@ -21,7 +22,9 @@ import {
   TerminalSquare,
   Network,
   HeartPulse,
-  Factory
+  Factory,
+  ChevronDown,
+  Layers
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -171,6 +174,10 @@ function LandingNavbar() {
 export default function Landing() {
   const { user, isAdmin, loginLoading } = useAuth();
   const navigate = useNavigate();
+  const { programs, subjects } = useAcademicConfig();
+  const [expandedDept, setExpandedDept] = useState<string | null>(null);
+
+  const allDepartments = Array.from(new Set(programs.flatMap(p => p.departments)));
 
   useEffect(() => {
     if (!loginLoading && user) {
@@ -392,7 +399,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-white/5 pb-12">
@@ -472,7 +479,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-16 lg:items-center">
@@ -484,30 +491,76 @@ export default function Landing() {
                 </p>
               </motion.div>
               
-              <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { name: 'Computer Science', icon: <TerminalSquare className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Information Tech.', icon: <Network className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Electronics & TC', icon: <Cpu className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Electrical Engg.', icon: <Zap className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Mechanical Engg.', icon: <Settings className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Civil Engineering', icon: <Building className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Biomedical Engg.', icon: <HeartPulse className="w-5 h-5 flex-shrink-0" /> },
-                  { name: 'Industrial Prod.', icon: <Factory className="w-5 h-5 flex-shrink-0" /> }
-                ].map((dept, i) => (
-                  <motion.div key={dept.name} variants={FADE_UP} className="group relative">
-                    <div className="absolute inset-0 bg-sky-500/0 hover:bg-sky-500/5 transition-colors rounded-2xl"></div>
-                    <div className="flex items-center gap-4 p-4 border border-white/5 hover:border-sky-500/20 rounded-xl transition-all cursor-pointer bg-white/[0.01] hover:bg-white/[0.03]">
-                      <div className="w-10 h-10 bg-white/5 text-white rounded-lg flex items-center justify-center group-hover:bg-sky-500/10 group-hover:text-sky-400 transition-all">
-                        {dept.icon}
+              <div className="lg:w-2/3 flex flex-col gap-4">
+                {allDepartments.map((dept, i) => {
+                  const deptSubjects = subjects.filter(s => s.departments?.includes(dept));
+                  const isExpanded = expandedDept === dept;
+                  
+                  return (
+                    <motion.div key={dept} variants={FADE_UP} className="group relative">
+                      <div className="absolute inset-0 bg-sky-500/0 hover:bg-sky-500/5 transition-colors rounded-xl"></div>
+                      <div 
+                        onClick={() => setExpandedDept(isExpanded ? null : dept)}
+                        className={`flex flex-col border border-white/5 rounded-xl transition-all cursor-pointer ${isExpanded ? 'bg-white/[0.03] border-sky-500/30' : 'bg-white/[0.01] hover:bg-white/[0.03] hover:border-sky-500/20'}`}
+                      >
+                        <div className="flex items-center justify-between p-4 relative z-10">
+                          <div className="flex items-center gap-4">
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${isExpanded ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white group-hover:bg-sky-500/10 group-hover:text-sky-400'}`}>
+                              <Layers className="w-5 h-5 flex-shrink-0" />
+                            </div>
+                            <div>
+                              <h3 className={`font-bold text-base transition-colors ${isExpanded ? 'text-sky-400' : 'text-white group-hover:text-sky-300'}`}>{dept}</h3>
+                              <p className="text-xs text-slate-500 mt-1">
+                                {deptSubjects.length} Subject{deptSubjects.length !== 1 ? 's' : ''} available
+                              </p>
+                            </div>
+                          </div>
+                          <ChevronDown className={`w-5 h-5 text-slate-500 transition-transform duration-300 ${isExpanded ? 'rotate-180 text-sky-400' : ''}`} />
+                        </div>
+                        
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden relative z-10"
+                            >
+                              <div className="p-4 pt-0 border-t border-white/5 mt-2">
+                                {deptSubjects.length > 0 ? (
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                                    {deptSubjects.map((sub) => (
+                                      <div key={sub.code} className="p-3 bg-[#0a0f1a] rounded-lg border border-white/5 flex flex-col gap-1">
+                                        <div className="text-xs font-mono text-sky-400 font-bold bg-sky-500/10 self-start px-2 py-0.5 rounded uppercase tracking-wider">{sub.code}</div>
+                                        <div className="text-sm font-semibold text-slate-200 line-clamp-1">{sub.name}</div>
+                                        <div className="text-xs text-slate-500 flex justify-between mt-1 items-center">
+                                          <span>{sub.semester ? `Semester ${sub.semester}` : 'All Semesters'}</span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="text-sm text-slate-500 py-4 text-center">
+                                    No subjects available yet for this department.
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                      <div>
-                        <h3 className="text-white font-bold text-base group-hover:text-sky-300 transition-colors">{dept.name}</h3>
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">Explore all branch subjects &rarr;</p>
-                      </div>
+                    </motion.div>
+                  );
+                })}
+                {allDepartments.length === 0 && (
+                  <div className="text-center py-12 px-6 border border-white/5 rounded-2xl bg-white/[0.01]">
+                    <div className="w-16 h-16 bg-white/5 flex items-center justify-center rounded-full mx-auto mb-4 text-slate-400">
+                      <Layers className="w-8 h-8" />
                     </div>
-                  </motion.div>
-                ))}
+                    <h3 className="text-xl font-bold text-white mb-2">No Departments Yet</h3>
+                    <p className="text-slate-400 text-sm">Admins are currently setting up the structure.</p>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
@@ -519,7 +572,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
@@ -569,7 +622,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
             <motion.div variants={FADE_UP} className="bg-gradient-to-br from-sky-900/40 via-indigo-900/20 to-sky-900/10 border border-sky-500/20 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-2xl backdrop-blur-sm">
