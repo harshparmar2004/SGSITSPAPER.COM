@@ -19,6 +19,7 @@ import AdminLayout from "./components/AdminLayout";
 import AdminStaff from "./pages/AdminStaff";
 import AdminStaffInsights from "./pages/AdminStaffInsights";
 import AdminActivity from "./pages/AdminActivity";
+import Documentation from "./pages/Documentation";
 
 import AdminSubjects from "./pages/AdminSubjects";
 
@@ -170,6 +171,7 @@ export default function App() {
               </main>
             }
           />
+          <Route path="/docs" element={<Documentation />} />
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />

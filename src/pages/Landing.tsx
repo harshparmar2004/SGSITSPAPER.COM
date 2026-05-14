@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { loginWithGoogle } from "../lib/firebase";
 import {
@@ -59,6 +59,12 @@ function LandingNavbar() {
                 </a>
               ),
             )}
+            <Link
+              to="/docs"
+              className="relative text-sky-400 hover:text-sky-300 transition-colors duration-200 font-medium text-xs tracking-widest uppercase py-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 hover:after:w-full after:h-[1px] auto after:bg-sky-300 after:transition-all after:duration-300"
+            >
+              Documentation
+            </Link>
           </nav>
 
           <div className="flex items-center gap-4">
@@ -119,6 +125,13 @@ function LandingNavbar() {
                   </a>
                 ),
               )}
+              <Link
+                to="/docs"
+                className="text-2xl font-semibold text-sky-400 hover:text-sky-300 tracking-wide uppercase transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Documentation
+              </Link>
             </div>
 
             <div className="flex flex-col gap-4 mt-auto pb-4">
