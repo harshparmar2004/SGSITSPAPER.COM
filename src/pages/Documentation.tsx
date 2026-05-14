@@ -7,21 +7,29 @@ export default function Documentation() {
   const [activeSection, setActiveSection] = useState("overview");
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const sections = document.querySelectorAll("section[id]");
-      let currentSection = "overview";
-      
-      sections.forEach((section) => {
-        const sectionTop = (section as HTMLElement).offsetTop;
-        if (window.scrollY >= sectionTop - 150) {
-          currentSection = section.getAttribute("id") || "overview";
-        }
-      });
-      
-      setActiveSection(currentSection);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const sections = document.querySelectorAll("section[id]");
+          let currentSection = "overview";
+          
+          sections.forEach((section) => {
+            const sectionTop = (section as HTMLElement).offsetTop;
+            if (window.scrollY >= sectionTop - 150) {
+              currentSection = section.getAttribute("id") || "overview";
+            }
+          });
+          
+          setActiveSection(currentSection);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -176,23 +184,31 @@ export default function Documentation() {
               
               <div>
                 <h3 className="font-semibold text-slate-200 mb-3 px-2">
-                  System Architecture
+                  How To Use
                 </h3>
                 <ul className="space-y-1">
                   <li>
                     <button 
-                      onClick={() => scrollTo('architecture')}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === 'architecture' ? 'bg-indigo-500/10 text-indigo-400 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}
+                      onClick={() => scrollTo('student-usage')}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === 'student-usage' ? 'bg-indigo-500/10 text-indigo-400 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}
                     >
-                      Platform Architecture
+                      For Students
                     </button>
                   </li>
                   <li>
                     <button 
-                      onClick={() => scrollTo('security')}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === 'security' ? 'bg-indigo-500/10 text-indigo-400 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}
+                      onClick={() => scrollTo('dept-admin-usage')}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === 'dept-admin-usage' ? 'bg-sky-500/10 text-sky-400 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}
                     >
-                      Security & ABAC Rules
+                      For Department Admins
+                    </button>
+                  </li>
+                  <li>
+                    <button 
+                      onClick={() => scrollTo('super-admin-usage')}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === 'super-admin-usage' ? 'bg-amber-500/10 text-amber-400 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}
+                    >
+                      For Super Admins
                     </button>
                   </li>
                 </ul>
@@ -477,47 +493,142 @@ export default function Documentation() {
             </div>
           </section>
 
-          <section id="architecture" className="mb-20 scroll-mt-24">
+          <section id="student-usage" className="mb-20 scroll-mt-24">
             <h2 className="text-2xl font-bold text-white mb-6 pb-2 border-b border-white/10">
-              Platform Architecture
+              How to Use: For Students
             </h2>
             <div className="prose prose-invert max-w-none text-slate-300">
               <p className="mb-6">
-                The application uses a serverless, decoupled architecture prioritizing extreme read-performance and high availability.
+                Students are the primary consumers of the application. You can seamlessly browse and access materials required for your courses without needing advanced permissions.
               </p>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center">1</span>
-                    Frontend Layer
-                  </h4>
-                  <p className="text-sm">Built with React 18+ and Vite. React provides a reactive virtual DOM for immediate UI updates when filtering large sets of academic data, utilizing Tailwind CSS for utility-first styling.</p>
-                </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                  <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded bg-rose-500/20 text-rose-400 flex items-center justify-center">2</span>
-                    Backend Layer
-                  </h4>
-                  <p className="text-sm">Firebase Cloud Firestore stores flat documents optimized for querying. Blob storage handles raw PDFs. Authentication issues signed JWTs via Google Identity.</p>
-                </div>
+              <div className="bg-[#121927] border border-indigo-500/20 rounded-xl p-6">
+                <h4 className="font-semibold text-indigo-400 mb-4 mt-0 border-b border-indigo-500/20 pb-2">Student Workflow</h4>
+                <ol className="space-y-4 m-0 text-slate-300">
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 font-bold text-sm shrink-0">1</span>
+                    <div>
+                      <strong>Login</strong>
+                      <p className="text-sm text-slate-400 mt-1">Open the application link and sign in securely with your Google account. You will land directly on the Student Dashboard.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 font-bold text-sm shrink-0">2</span>
+                    <div>
+                      <strong>Filter & Search</strong>
+                      <p className="text-sm text-slate-400 mt-1">Use the dropdown filters at the top of the page (Department, Course, Year) to narrow down resources, or instantly search by Subject Code/Name.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 font-bold text-sm shrink-0">3</span>
+                    <div>
+                      <strong>Download Resources</strong>
+                      <p className="text-sm text-slate-400 mt-1">Click the "Download" button on any resource card (PYQ, Notes, Syllabus) to quickly save the file to your device.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-indigo-500/20 text-indigo-400 font-bold text-sm shrink-0">4</span>
+                    <div>
+                      <strong>Batch Downloads</strong>
+                      <p className="text-sm text-slate-400 mt-1">Select multiple files and download them all at once as a `.zip` archive.</p>
+                    </div>
+                  </li>
+                </ol>
               </div>
             </div>
           </section>
 
-          <section id="security" className="mb-20 scroll-mt-24">
-            <h2 className="text-2xl font-bold text-white mb-6 pb-2 border-b border-white/10">
-              Security & ABAC Rules
+          <section id="dept-admin-usage" className="mb-20 scroll-mt-24">
+            <h2 className="text-2xl font-bold text-sky-400 mb-6 pb-2 border-b border-white/10">
+              How to Use: For Department Admins
             </h2>
             <div className="prose prose-invert max-w-none text-slate-300">
               <p className="mb-6">
-                The system does not trust the React client. All rules are established via strictly-typed Firebase Security Rules (<code className="bg-white/10 px-1 py-0.5 rounded text-sm">firestore.rules</code>) using the Fortress Pattern.
+                Teachers and Staff members are responsible for populating the platform with relevant academic resources for their respective departments.
               </p>
-              <ul className="space-y-4 marker:text-slate-600 pl-4">
-                <li><strong className="text-white">Default-Deny Policy:</strong> All access requests are rejected unless explicitly allowed.</li>
-                <li><strong className="text-white">Validation Blueprints:</strong> Write operations must pass structural schemas such as <code className="bg-black/30 px-1.5 py-0.5 rounded text-sm text-sky-300">isValidPYQ(data)</code> to ensure no malicious properties are injected.</li>
-                <li><strong className="text-white">Action-Based Updates:</strong> Modifying a document requires specific action allowances (e.g. <code className="bg-black/30 px-1.5 py-0.5 rounded text-sm text-sky-300">affectedKeys().hasOnly(['fileUrl'])</code>) controlling state mutations.</li>
-                <li><strong className="text-white">Authenticity Guaranty:</strong> The rule dynamically queries <code className="bg-black/30 px-1.5 py-0.5 rounded text-sm text-sky-300">exists(/databases/$(database)/documents/admins/$(request.auth.email))</code> to approve privileged statements securely on backend execution.</li>
-              </ul>
+              <div className="bg-[#121927] border border-sky-500/20 rounded-xl p-6">
+                <h4 className="font-semibold text-sky-400 mb-4 mt-0 border-b border-sky-500/20 pb-2">Department Admin Workflow</h4>
+                <ol className="space-y-4 m-0 text-slate-300">
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-sky-500/20 text-sky-400 font-bold text-sm shrink-0">1</span>
+                    <div>
+                      <strong>Access the Admin Panel</strong>
+                      <p className="text-sm text-slate-400 mt-1">Log in with your authorized Google account. Navigate to the Admin Panel from the top menu.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-sky-500/20 text-sky-400 font-bold text-sm shrink-0">2</span>
+                    <div>
+                      <strong>Upload Materials</strong>
+                      <p className="text-sm text-slate-400 mt-1">Navigate to "Upload Material" to add new PDFs, syllabuses, or notes. Fill in the subject details. Your access is restricted to your assigned departments to prevent clutter.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-sky-500/20 text-sky-400 font-bold text-sm shrink-0">3</span>
+                    <div>
+                      <strong>Manage Your Uploads & Reports</strong>
+                      <p className="text-sm text-slate-400 mt-1">View, edit metadata, or "Hot-Replace" materials you've uploaded. Monitor the Dashboard for any Issue Reports submitted by students regarding your documents.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-sky-500/20 text-sky-400 font-bold text-sm shrink-0">4</span>
+                    <div>
+                      <strong>Personal Activity Tracking</strong>
+                      <p className="text-sm text-slate-400 mt-1">View a personal log of all historical uploads to track your contributions over time.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </section>
+
+          <section id="super-admin-usage" className="mb-20 scroll-mt-24">
+            <h2 className="text-2xl font-bold text-amber-500 mb-6 pb-2 border-b border-white/10">
+              How to Use: For Super Admins
+            </h2>
+            <div className="prose prose-invert max-w-none text-slate-300">
+              <p className="mb-6">
+                Super Admins have complete oversight, configuration control, and auditing capabilities over the entire platform. This guides you on how to handle the system.
+              </p>
+              <div className="bg-[#121927] border border-amber-500/20 rounded-xl p-6">
+                <h4 className="font-semibold text-amber-500 mb-4 mt-0 border-b border-amber-500/20 pb-2">Super Admin Workflow</h4>
+                <ol className="space-y-4 m-0 text-slate-300">
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">1</span>
+                    <div>
+                      <strong>Initialize University Structure</strong>
+                      <p className="text-sm text-slate-400 mt-1">Navigate to "Academic Config" (Settings). Dynamically add your Departments, Courses, Years, and Semesters instead of relying on hard-coded values.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">2</span>
+                    <div>
+                      <strong>Bulk Populate Subjects</strong>
+                      <p className="text-sm text-slate-400 mt-1">Go to "Subjects" and use the Bulk CSV Upload feature to quickly populate the master list of all academic subjects without hours of manual data entry.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">3</span>
+                    <div>
+                      <strong>Onboard Staff (Role Management)</strong>
+                      <p className="text-sm text-slate-400 mt-1">Navigate to "Staff Admin" to add new teachers and assign them their respective departments. You can revoke access here if necessary.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">4</span>
+                    <div>
+                      <strong>Monitor & Audit</strong>
+                      <p className="text-sm text-slate-400 mt-1">Periodically check the Global Dashboard for system-wide statistics. Use the "Activity Log" to monitor exactly who uploaded what and when. Export logs to CSV if required.</p>
+                    </div>
+                  </li>
+                  <li className="flex gap-3 items-start">
+                    <span className="flex items-center justify-center w-6 h-6 rounded bg-amber-500/20 text-amber-400 font-bold text-sm shrink-0">5</span>
+                    <div>
+                      <strong>Master Resource Management</strong>
+                      <p className="text-sm text-slate-400 mt-1">Use the "All Resources" tab to view, search, edit, or delete ANY file or resolve issue reports globally, correcting erroneous uploads by staff if necessary.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
             </div>
           </section>
 
