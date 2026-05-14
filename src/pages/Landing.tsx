@@ -383,179 +383,216 @@ export default function Landing() {
         </section>
 
         {/* Resources Section */}
-        <motion.section 
-          id="resources" 
-          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={STAGGER_CONTAINER}
-        >
-          <motion.div variants={FADE_UP} className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Resources</span></h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-light">
-              A highly curated repository of the most critical academic materials you need to ace your examinations, available instantly.
-            </p>
-          </motion.div>
-          
-          <div className="grid md:grid-cols-3 gap-6">
-            <motion.div variants={FADE_UP} className="bg-white/[0.02] border border-white/10 p-8 rounded-2xl hover:border-sky-300/30 transition-colors group relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="w-14 h-14 bg-sky-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform relative z-10 shadow-[0_0_15px_rgba(14,165,233,0.15)]">
-                <BookOpen className="text-sky-400 w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3 tracking-tight relative z-10">Previous Year Papers</h3>
-              <p className="text-sm text-slate-400 leading-relaxed relative z-10">
-                Access over 5,000+ verified PYQs across all departments. Filter intuitively by year, semester, and specific subject codes. Analyze past trends to gain an edge in your upcoming examinations.
-              </p>
-            </motion.div>
-            <motion.div variants={FADE_UP} className="bg-white/[0.02] border border-white/10 p-8 rounded-2xl hover:border-indigo-400/30 transition-colors group relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="w-14 h-14 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform relative z-10 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-                <LayoutGrid className="text-indigo-400 w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3 tracking-tight relative z-10">Syllabus & Curriculum</h3>
-              <p className="text-sm text-slate-400 leading-relaxed relative z-10">
-                Stay aligned with the official university curriculum. Always find the exact chapters, units, and modules required for your current semester to avoid studying outdated topics.
-              </p>
-            </motion.div>
-            <motion.div variants={FADE_UP} className="bg-white/[0.02] border border-white/10 p-8 rounded-2xl hover:border-amber-400/30 transition-colors group relative overflow-hidden">
-               <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform relative z-10 shadow-[0_0_15px_rgba(245,158,11,0.15)]">
-                <BadgeCheck className="text-amber-400 w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3 tracking-tight relative z-10">Practical Manuals</h3>
-              <p className="text-sm text-slate-400 leading-relaxed relative z-10">
-                Download verified lab manuals, programming assignments, and detailed experiment readings trusted by senior students and faculty to streamline your practical submissions.
-              </p>
-            </motion.div>
-          </div>
-        </motion.section>
+        <section id="resources" className="relative w-full py-16 md:py-24 scroll-mt-24 border-y border-white/5">
+          <div className="absolute top-0 right-0 w-[40vh] h-[40vh] bg-sky-500/5 blur-[80px] rounded-full pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[30vh] h-[30vh] bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none"></div>
 
-        {/* Subjects Section */}
-        <motion.section 
-          id="subjects" 
-          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={STAGGER_CONTAINER}
-        >
-          <motion.div variants={FADE_UP} className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Departments & <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto font-light">
-              Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, easily navigate through subjects cataloged specifically for each semester and department.
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { name: 'Computer Science', icon: <TerminalSquare className="w-6 h-6" /> },
-              { name: 'Information Tech.', icon: <Network className="w-6 h-6" /> },
-              { name: 'Electronics & TC', icon: <Cpu className="w-6 h-6" /> },
-              { name: 'Electrical Engg.', icon: <Zap className="w-6 h-6" /> },
-              { name: 'Mechanical Engg.', icon: <Settings className="w-6 h-6" /> },
-              { name: 'Civil Engineering', icon: <Building className="w-6 h-6" /> },
-              { name: 'Biomedical Engg.', icon: <HeartPulse className="w-6 h-6" /> },
-              { name: 'Industrial Prod.', icon: <Factory className="w-6 h-6" /> }
-            ].map((dept, i) => (
-              <motion.div key={dept.name} variants={FADE_UP} className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-6 rounded-2xl hover:bg-white/[0.04] hover:border-sky-500/30 transition-all cursor-pointer group shadow-lg">
-                <div className="w-12 h-12 bg-sky-500/10 text-sky-400 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-[0_0_15px_rgba(14,165,233,0.1)]">
-                  {dept.icon}
+          <motion.div 
+            className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={STAGGER_CONTAINER}
+          >
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-white/5 pb-12">
+              <motion.div variants={FADE_UP} className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+                  Extensive Library
                 </div>
-                <h3 className="text-white font-bold text-xl mb-2 group-hover:text-sky-300 transition-colors">{dept.name}</h3>
-                <p className="text-xs text-slate-500 mb-6 line-clamp-2">Access core subjects, electives, and department-specific materials.</p>
-                <div className="flex items-center gap-2 text-sm text-sky-400 font-bold uppercase tracking-widest opacity-80 group-hover:opacity-100">
-                  <span>Explore</span>
-                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">Academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Resources</span></h2>
+                <p className="text-base md:text-lg text-slate-400 font-light leading-relaxed">
+                  A highly curated repository of the most critical academic materials you need to ace your examinations, available instantly.
+                </p>
+              </motion.div>
+              
+              <motion.div variants={FADE_UP} className="hidden md:flex items-center gap-12 justify-end">
+                <div className="text-left">
+                  <div className="text-4xl font-black text-white mb-1">5k+</div>
+                  <div className="text-xs text-slate-500 uppercase tracking-widest font-bold">Documents</div>
+                </div>
+                <div className="w-[1px] h-16 bg-white/10"></div>
+                <div className="text-left">
+                  <div className="text-4xl font-black text-white mb-1 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-emerald-200">100%</div>
+                  <div className="text-xs text-slate-500 uppercase tracking-widest font-bold">Verified</div>
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Notes Guide Section */}
-        <motion.section 
-          id="notes" 
-          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24 relative"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={STAGGER_CONTAINER}
-        >
-          <div className="bg-[#121927]/50 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 lg:p-16 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center gap-12">
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-500/5 blur-[100px] rounded-full pointer-events-none"></div>
-            
-            <div className="flex-1 relative z-10 w-full">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-500/10 border border-sky-500/20 rounded-full text-xs font-bold uppercase tracking-widest text-sky-400 mb-6">
-                <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-                Notes Guide
-              </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-400">Study Notes</span></h2>
-              <p className="text-lg text-slate-400 mb-10 leading-relaxed font-light">
-                Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms. Curated to cover all important concepts efficiently.
-              </p>
-              
-              <button onClick={loginWithGoogle} className="px-8 py-4 bg-sky-500/10 text-sky-300 font-bold tracking-widest uppercase rounded-xl border border-sky-500/20 hover:bg-sky-500/20 hover:border-sky-500/40 hover:shadow-[0_0_30px_rgba(14,165,233,0.15)] transition-all inline-flex group relative overflow-hidden w-full sm:w-auto justify-center">
-                 <span className="relative z-10">Login to Access Notes</span>
-              </button>
             </div>
-
-            <div className="flex-1 w-full space-y-4 relative z-10">
-              {[
-                { title: "High-yield summary sheets", desc: "For last-minute revisions and quick recaps." },
-                { title: "Unit-wise detailed explanations", desc: "Comprehensive notes with necessary diagrams." },
-                { title: "Important formulas", desc: "Algorithmic breakdowns for quick solving." },
-                { title: "Step-by-step solutions", desc: "Detailed steps to commonly asked numericals." }
-              ].map((item, idx) => (
-                <div key={idx} className="flex gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-sky-500/20 transition-colors">
-                  <div className="w-10 h-10 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0 font-bold">
-                    {idx + 1}
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold">{item.title}</h4>
-                    <p className="text-sm text-slate-400">{item.desc}</p>
-                  </div>
+            
+            <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-6 lg:gap-8">
+              <motion.div variants={FADE_UP} className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 rounded-2xl hover:border-sky-400/30 hover:bg-white/[0.04] transition-all duration-300 group overflow-hidden relative">
+                <div className="w-12 h-12 bg-sky-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+                  <BookOpen className="text-sky-400 w-6 h-6" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </motion.section>
-
-        {/* Community & Documentation Section */}
-        <motion.section 
-          id="community" 
-          className="max-w-7xl px-4 sm:px-6 mx-auto mb-32 pt-24 scroll-mt-24"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={STAGGER_CONTAINER}
-        >
-          <motion.div variants={FADE_UP} className="bg-gradient-to-br from-[#0c1322] to-[#050810] border border-white/5 rounded-3xl p-10 md:p-16 text-center relative overflow-hidden shadow-2xl">
-            {/* Subtle tech pattern background layer */}
-            <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
-            
-            <div className="relative z-10 max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight">Platform <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-200 to-slate-400">Documentation</span></h2>
-              <p className="text-lg text-slate-400 mb-10 font-light">
-                Get the most out of the hub. Learn how to navigate resources, effectively use advanced filters, and understand our curation standards. A complete guide designed to streamline your academic workflow.
-              </p>
+                <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Previous Year Papers</h3>
+                <p className="text-sm text-slate-400 leading-relaxed min-h-[80px]">
+                  Access over 5,000+ verified PYQs across all departments. Filter intuitively by year, semester, and specific subject codes to analyze past trends.
+                </p>
+                <div className="mt-6 flex items-center gap-2 text-sky-400 font-bold uppercase text-xs group-hover:text-sky-300 transition-colors cursor-pointer">
+                  <span>Browse PYQs</span>
+                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </div>
+              </motion.div>
               
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-                <Link to="/docs" className="flex items-center gap-3 px-10 py-5 bg-white text-slate-900 font-extrabold rounded-xl transition-all w-full sm:w-auto justify-center uppercase tracking-wider hover:bg-slate-200 shadow-xl scale-100 hover:scale-105 duration-200 group">
-                  <BookOpen className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  <span>Read the Documentation</span>
-                </Link>
+              <motion.div variants={FADE_UP} className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 rounded-2xl hover:border-indigo-400/30 hover:bg-white/[0.04] transition-all duration-300 group overflow-hidden relative">
+                <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+                  <LayoutGrid className="text-indigo-400 w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Syllabus & Curriculum</h3>
+                <p className="text-sm text-slate-400 leading-relaxed min-h-[80px]">
+                  Stay aligned with the official university curriculum. Always find the exact chapters, units, and modules required for your current semester.
+                </p>
+                <div className="mt-6 flex items-center gap-2 text-indigo-400 font-bold uppercase text-xs group-hover:text-indigo-300 transition-colors cursor-pointer">
+                  <span>View Syllabus</span>
+                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </div>
+              </motion.div>
+              
+              <motion.div variants={FADE_UP} className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 rounded-2xl hover:border-amber-400/30 hover:bg-white/[0.04] transition-all duration-300 group overflow-hidden relative">
+                <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
+                  <BadgeCheck className="text-amber-400 w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 tracking-tight">Practical Manuals</h3>
+                <p className="text-sm text-slate-400 leading-relaxed min-h-[80px]">
+                  Download verified lab manuals, programming assignments, and detailed experiment readings trusted by senior students and faculty.
+                </p>
+                <div className="mt-6 flex items-center gap-2 text-amber-400 font-bold uppercase text-xs group-hover:text-amber-300 transition-colors cursor-pointer">
+                  <span>Get Manuals</span>
+                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Subjects Section */}
+        <section id="subjects" className="relative w-full py-16 md:py-24 border-y border-white/5">
+          <motion.div 
+            className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={STAGGER_CONTAINER}
+          >
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-16 lg:items-center">
+              <motion.div variants={FADE_UP} className="lg:w-1/3 shrink-0">
+                <div className="w-12 h-1 bg-gradient-to-r from-emerald-400 to-sky-400 mb-6 rounded-full"></div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-5 tracking-tight">Branches & <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-400">Subjects</span></h2>
+                <p className="text-base text-slate-400 font-light leading-relaxed mb-8">
+                  Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, navigate effortlessly through your targeted curriculum.
+                </p>
+              </motion.div>
+              
+              <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { name: 'Computer Science', icon: <TerminalSquare className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Information Tech.', icon: <Network className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Electronics & TC', icon: <Cpu className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Electrical Engg.', icon: <Zap className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Mechanical Engg.', icon: <Settings className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Civil Engineering', icon: <Building className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Biomedical Engg.', icon: <HeartPulse className="w-5 h-5 flex-shrink-0" /> },
+                  { name: 'Industrial Prod.', icon: <Factory className="w-5 h-5 flex-shrink-0" /> }
+                ].map((dept, i) => (
+                  <motion.div key={dept.name} variants={FADE_UP} className="group relative">
+                    <div className="absolute inset-0 bg-sky-500/0 hover:bg-sky-500/5 transition-colors rounded-2xl"></div>
+                    <div className="flex items-center gap-4 p-4 border border-white/5 hover:border-sky-500/20 rounded-xl transition-all cursor-pointer bg-white/[0.01] hover:bg-white/[0.03]">
+                      <div className="w-10 h-10 bg-white/5 text-white rounded-lg flex items-center justify-center group-hover:bg-sky-500/10 group-hover:text-sky-400 transition-all">
+                        {dept.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-white font-bold text-base group-hover:text-sky-300 transition-colors">{dept.name}</h3>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">Explore all branch subjects &rarr;</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
             </div>
           </motion.div>
-        </motion.section>
+        </section>
 
+        {/* Notes Guide Section */}
+        <section id="notes" className="relative w-full py-16 md:py-24 border-y border-white/5">
+          <motion.div 
+            className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={STAGGER_CONTAINER}
+          >
+            <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+              <motion.div variants={FADE_UP} className="lg:w-1/2 w-full">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-xs font-bold uppercase tracking-widest text-indigo-400 mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                  Notes Guide
+                </div>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-sky-400">Study Notes</span></h2>
+                <p className="text-base md:text-lg text-slate-400 mb-8 leading-relaxed font-light">
+                  Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button onClick={loginWithGoogle} className="px-6 py-3 bg-indigo-600 text-white font-bold tracking-widest uppercase rounded-lg hover:bg-indigo-500 transition-all w-full sm:w-auto inline-flex items-center justify-center gap-2 text-sm">
+                    <span>Login to Access</span>
+                  </button>
+                </div>
+              </motion.div>
+
+              <motion.div variants={FADE_UP} className="lg:w-1/2 w-full">
+                <div className="grid gap-4">
+                  {[
+                    { number: "01", title: "High-yield summary sheets", desc: "For last-minute revisions and quick recaps." },
+                    { number: "02", title: "Unit-wise detailed explanations", desc: "Comprehensive notes with necessary diagrams." },
+                    { number: "03", title: "Important formulas", desc: "Algorithmic breakdowns for quick solving." },
+                    { number: "04", title: "Step-by-step solutions", desc: "Detailed steps to commonly asked numericals." }
+                  ].map((item) => (
+                    <div key={item.number} className="flex gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-indigo-500/20 hover:bg-white/[0.04] transition-all group">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 text-slate-400 group-hover:bg-indigo-500/10 group-hover:text-indigo-400 flex items-center justify-center shrink-0 font-bold text-sm tracking-tighter transition-all">
+                        {item.number}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-white font-bold text-base mb-1">{item.title}</h4>
+                        <p className="text-sm text-slate-400 font-light leading-snug">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Community & Documentation Section */}
+        <section id="community" className="relative w-full py-16 md:py-24 border-y border-white/5">
+          <motion.div 
+            className="max-w-[1200px] px-6 lg:px-8 mx-auto"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={STAGGER_CONTAINER}
+          >
+            <motion.div variants={FADE_UP} className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
+              <div className="relative z-10 max-w-3xl mx-auto">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight">Platform Documentation</h2>
+                <p className="text-base lg:text-lg text-slate-400 mb-8 font-light leading-relaxed">
+                  Get the most out of the hub. Learn how to navigate resources, effectively use advanced filters, and understand our curation standards. A complete guide designed to streamline your academic workflow.
+                </p>
+                
+                <div className="flex justify-center">
+                  <Link to="/docs" className="flex items-center gap-2 px-8 py-4 bg-white text-slate-900 font-bold rounded-xl transition-all w-full sm:w-auto justify-center uppercase tracking-widest hover:bg-slate-200">
+                    <BookOpen className="w-5 h-5" />
+                    <span className="text-sm">Read the Documentation</span>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </section>
       </main>
 
       {/* Footer Area */}
-      <footer className="w-full py-8 sm:py-12 bg-white/[0.02] backdrop-blur-md border-t border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] relative z-10 mt-12">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8 max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
+      <footer className="w-full py-12 bg-[#050810] border-t border-white/5 relative z-10">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-10 max-w-[1400px] px-6 lg:px-12 mx-auto">
           {/* Left Side */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
             <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
