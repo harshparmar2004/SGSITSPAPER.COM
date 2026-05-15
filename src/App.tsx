@@ -20,6 +20,7 @@ import AdminStaff from "./pages/AdminStaff";
 import AdminStaffInsights from "./pages/AdminStaffInsights";
 import AdminActivity from "./pages/AdminActivity";
 import Documentation from "./pages/Documentation";
+import SplashScreen from "./components/SplashScreen";
 
 import AdminSubjects from "./pages/AdminSubjects";
 
@@ -158,6 +159,7 @@ export default function App() {
     <div
       className={`min-h-screen flex flex-col font-sans ${isLanding ? "bg-[#020617] text-slate-50" : "bg-gray-50 text-gray-900"}`}
     >
+      <SplashScreen />
       {!isLanding && <Navbar />}
       <div className="flex-1 w-full flex flex-col">
         <Routes>
