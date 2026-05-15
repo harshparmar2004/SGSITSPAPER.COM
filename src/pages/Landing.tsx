@@ -58,6 +58,25 @@ function LandingNavbar() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const scrollToSection = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    id: string,
+  ) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <>
       <motion.header
@@ -151,7 +170,10 @@ function LandingNavbar() {
                     key={item}
                     href={`#${item.toLowerCase()}`}
                     className="text-2xl font-semibold text-stone-700 hover:text-amber-700 tracking-wide uppercase transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => {
+                      setMobileMenuOpen(false);
+                      scrollToSection(e, item.toLowerCase());
+                    }}
                   >
                     {item}
                   </a>
