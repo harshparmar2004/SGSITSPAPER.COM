@@ -1,39 +1,14 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth";
 
 export default function SplashScreen() {
   const [isVisible, setIsVisible] = useState(true);
-  const { user } = useAuth();
-  const [prevUser, setPrevUser] = useState(user);
-  
-  // Track location and user changes to trigger splash
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    
-    // Check if user transitioned from unauthenticated to authenticated
-    const userLoggedIn = !prevUser && user;
-    
-    // We already show it on initial load. Let's show it on login too.
-    if (userLoggedIn) {
-      setIsVisible(true);
-      timeout = setTimeout(() => {
-        setIsVisible(false);
-      }, 1000);
-    }
-    
-    setPrevUser(user);
-    
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [user, prevUser]);
   
   // Initial load
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsVisible(false);
-    }, 1200);
+    }, 2000);
     return () => clearTimeout(timeout);
   }, []);
 
