@@ -51,7 +51,7 @@ function LandingNavbar() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed top-0 w-full z-50 bg-[#0A0F1C]/80 backdrop-blur-md border-b border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"
+        className="fixed top-0 w-full z-50 bg-[#050505]/80 backdrop-blur-md border-b border-white/5 shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"
       >
         <div className="flex items-center justify-between py-3 max-w-full px-4 sm:px-6 mx-auto">
           <div className="flex items-center gap-2">
@@ -114,7 +114,7 @@ function LandingNavbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-[#0A0F1C] flex flex-col p-6"
+            className="fixed inset-0 z-[60] bg-[#050505] flex flex-col p-6"
           >
             <div className="flex justify-between items-center mb-10">
               <div className="flex items-center gap-2">
@@ -191,18 +191,17 @@ export default function Landing() {
 
   if (loginLoading) {
     return (
-      <div className="min-h-screen bg-[#020617] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-sky-300" />
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-white/50" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-50 selection:bg-sky-300/20 relative overflow-x-hidden bg-[radial-gradient(circle_at_50%_0%,#0f172a_0%,#020617_100%)]">
-      {/* Background Decor */}
-      <div className="fixed inset-0 z-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-[size:32px_32px] opacity-[0.02] pointer-events-none"></div>
-      <div className="fixed top-[-10%] right-[-10%] w-[600px] h-[600px] bg-sky-300/10 blur-[140px] rounded-full pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-sky-500/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+    <div className="min-h-screen flex flex-col text-slate-50 selection:bg-white/20 relative overflow-x-hidden bg-[#050505]">
+      {/* Elegant, clean background without AI glow */}
+      <div className="fixed inset-0 z-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-transparent via-[#050505]/50 to-[#050505] pointer-events-none"></div>
 
       <LandingNavbar />
 
@@ -314,9 +313,9 @@ export default function Landing() {
             className="w-full max-w-md relative group mt-4 lg:mt-0"
           >
             {/* Glowing Orb Behind Card */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-sky-300/20 to-sky-500/20 rounded-[20px] blur-2xl opacity-40 group-hover:opacity-60 transition duration-1000"></div>
+            <div className="absolute -inset-1 bg-white/5 rounded-[20px] blur-2xl opacity-40 group-hover:opacity-60 transition duration-1000"></div>
 
-            <div className="relative bg-white/[0.02] backdrop-blur-xl p-6 sm:p-8 md:p-12 rounded-[20px] border border-white/10 overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
+            <div className="relative bg-white/[0.03] backdrop-blur-xl p-6 sm:p-8 md:p-12 rounded-[20px] border border-white/10 overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]">
               {/* Reflection effect simulated via gradient */}
               <div className="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -skew-x-[25deg] group-hover:left-[150%] transition-all duration-[750ms] pointer-events-none"></div>
 
@@ -392,8 +391,6 @@ export default function Landing() {
 
         {/* Resources Section */}
         <section id="resources" className="relative w-full py-16 md:py-24 scroll-mt-24 border-y border-white/5">
-          <div className="absolute top-0 right-0 w-[40vh] h-[40vh] bg-sky-500/5 blur-[80px] rounded-full pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-[30vh] h-[30vh] bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none"></div>
 
           <motion.div 
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
@@ -592,10 +589,8 @@ export default function Landing() {
             viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
-            <motion.div variants={FADE_UP} className="bg-gradient-to-br from-sky-900/40 via-indigo-900/20 to-sky-900/10 border border-sky-500/20 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-2xl backdrop-blur-sm">
-              <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none"></div>
-              <div className="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/20 blur-[60px] rounded-full pointer-events-none"></div>
-              <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 blur-[60px] rounded-full pointer-events-none"></div>
+            <motion.div variants={FADE_UP} className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-2xl backdrop-blur-sm">
+              <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none"></div>
               
               <div className="relative z-10 max-w-3xl mx-auto">
                 <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight drop-shadow-sm">Platform Documentation</h2>
@@ -616,7 +611,7 @@ export default function Landing() {
       </main>
 
       {/* Footer Area */}
-      <footer className="w-full py-12 bg-[#050810] border-t border-white/5 relative z-10">
+      <footer className="w-full py-12 bg-[#050505] border-t border-white/5 relative z-10">
         <div className="flex flex-col lg:flex-row justify-between items-center gap-10 max-w-[1200px] px-6 lg:px-8 mx-auto">
           {/* Left Side */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
