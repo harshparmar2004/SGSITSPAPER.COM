@@ -58,9 +58,9 @@ function LandingNavbar() {
             <img
               src="/logo.svg"
               alt="SGSITS Logo"
-              className="w-10 h-10 md:w-12 md:h-12 object-contain shrink-0 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]"
+              className="w-8 h-8 md:w-12 md:h-12 object-contain shrink-0 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]"
             />
-            <span className="text-lg font-extrabold text-stone-900 tracking-tighter uppercase">
+            <span className="text-base md:text-lg font-extrabold text-stone-900 tracking-tighter uppercase">
               SGSITS <span className="text-amber-700">PYQ Hub</span>
             </span>
           </div>
@@ -119,7 +119,7 @@ function LandingNavbar() {
             <div className="flex justify-between items-center mb-10">
               <div className="flex items-center gap-2">
                 <Snowflake className="text-amber-700 w-6 h-6 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]" />
-                <span className="text-lg font-extrabold text-stone-900 tracking-tighter uppercase">
+                <span className="text-base md:text-lg font-extrabold text-stone-900 tracking-tighter uppercase">
                   SGSITS <span className="text-amber-700">PYQ Hub</span>
                 </span>
               </div>
@@ -206,9 +206,9 @@ export default function Landing() {
       <LandingNavbar />
 
       {/* Main Content Area */}
-      <main className="flex-grow pt-32 pb-8 px-6 relative z-10 font-sans">
+      <main className="flex-grow pt-24 md:pt-32 pb-8 px-4 sm:px-6 lg:px-8 relative z-10 font-sans">
         {/* Home Section */}
-        <section id="home" className="max-w-7xl px-4 sm:px-6 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-3 min-h-[calc(100vh-250px)] mb-32 pt-10 scroll-mt-32">
+        <section id="home" className="max-w-7xl px-4 sm:px-6 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-3 min-h-[calc(100vh-200px)] lg:min-h-[calc(100vh-250px)] mb-20 lg:mb-32 pt-8 lg:pt-10 scroll-mt-32">
           {/* Information Section */}
           <motion.div
             initial="hidden"
@@ -220,7 +220,7 @@ export default function Landing() {
           >
             <motion.h1
               variants={FADE_UP}
-              className="text-4xl md:text-5xl lg:text-[3.5rem] font-extrabold text-stone-900 mb-4 leading-[1.15] tracking-tight"
+              className="text-[2.5rem] sm:text-5xl lg:text-[4rem] font-extrabold text-stone-900 mb-4 leading-[1.15] tracking-tight"
             >
               Empowering{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-700 to-amber-500">
@@ -231,7 +231,7 @@ export default function Landing() {
 
             <motion.p
               variants={FADE_UP}
-              className="text-base md:text-lg text-stone-600 mb-10 leading-relaxed max-w-xl font-light"
+              className="text-sm sm:text-base md:text-lg text-stone-600 mb-8 md:mb-10 leading-relaxed max-w-xl font-light"
             >
               The SGSITS PYQ Hub is a comprehensive digital repository designed
               to streamline academic preparation. We host an extensive
@@ -242,7 +242,7 @@ export default function Landing() {
             {/* Stats Grid */}
             <motion.div
               variants={FADE_UP}
-              className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-12"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 md:mb-12"
             >
               <div className="p-3 bg-white backdrop-blur-md border border-stone-200/80 shadow-sm rounded-xl group hover:border-amber-700/30 transition-all duration-300">
                 <div className="text-amber-700 mb-2 opacity-80">
@@ -310,33 +310,33 @@ export default function Landing() {
               delay: 0.4,
               ease: [0.21, 0.47, 0.32, 0.98],
             }}
-            className="w-full max-w-md relative group mt-4 lg:mt-0"
+            className="w-full max-w-[22rem] sm:max-w-md mx-auto relative group mt-8 lg:mt-0"
           >
             {/* Glowing Orb Behind Card */}
             <div className="absolute -inset-1 bg-amber-400/20 rounded-[20px] blur-2xl opacity-40 group-hover:opacity-60 transition duration-1000"></div>
 
-            <div className="relative bg-white backdrop-blur-xl p-6 sm:p-8 md:p-12 rounded-[20px] border border-stone-200/80 overflow-hidden shadow-sm">
+            <div className="relative bg-white backdrop-blur-xl p-8 sm:p-10 md:px-12 md:py-16 rounded-[24px] border border-stone-200/80 overflow-hidden shadow-sm">
               {/* Reflection effect simulated via gradient */}
               <div className="absolute top-0 -left-[100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -skew-x-[25deg] group-hover:left-[150%] transition-all duration-[750ms] pointer-events-none"></div>
 
               {/* Logo & Header */}
-              <div className="text-center mb-4">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white backdrop-blur-md mb-4 border border-amber-700/10 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white backdrop-blur-md mb-6 border border-amber-700/10 rotate-3 group-hover:rotate-0 transition-transform duration-500">
                   <UserCog className="text-amber-700 w-8 h-8 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]" />
                 </div>
                 <h2 className="text-xl font-bold text-stone-900 tracking-tight">
                   Secure Login
                 </h2>
-                <p className="text-[8px] sm:text-[10px] text-stone-9000 uppercase tracking-[0.15em] mt-2 leading-relaxed">
+                <p className="text-[8px] sm:text-[10px] text-stone-9000 uppercase tracking-[0.15em] mt-3 leading-relaxed">
                   Access portal with your Gmail ID
                 </p>
               </div>
 
               {/* Login Action */}
-              <div className="space-y-3">
+              <div className="space-y-3 mt-4">
                 <button
                   onClick={loginWithGoogle}
-                  className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-white hover:bg-stone-100 text-stone-900 border border-stone-200/80 hover:border-amber-700/40 py-3 sm:py-4 px-4 sm:px-6 rounded-lg transition-all duration-300 group/btn relative overflow-hidden"
+                  className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-white hover:bg-stone-100 text-stone-900 border border-stone-200/80 hover:border-amber-700/40 py-4 px-4 sm:px-6 rounded-xl transition-all duration-300 group/btn relative overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-amber-700/5 opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
                   <svg
@@ -368,7 +368,7 @@ export default function Landing() {
               </div>
 
               {/* Security Alert */}
-              <div className="mt-4 pt-4 sm:pt-6 border-t border-stone-200 text-center">
+              <div className="mt-8 pt-6 sm:pt-8 border-t border-stone-200 text-center">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 text-stone-9000 mb-2">
                   <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-snug text-center">
@@ -390,7 +390,7 @@ export default function Landing() {
         </section>
 
         {/* Resources Section */}
-        <section id="resources" className="relative w-full py-16 md:py-24 scroll-mt-24 border-y border-stone-200">
+        <section id="resources" className="relative w-full py-12 md:py-24 scroll-mt-24 border-y border-stone-200">
 
           <motion.div 
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
@@ -399,14 +399,14 @@ export default function Landing() {
             viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-stone-200 pb-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 md:mb-16 border-b border-stone-200 pb-8 md:pb-12">
               <motion.div variants={FADE_UP} className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200/80 rounded-full text-xs font-bold uppercase tracking-widest text-amber-600 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
                   Extensive Library
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">Academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-stone-500">Resources</span></h2>
-                <p className="text-base md:text-lg text-stone-600 font-light leading-relaxed">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">Academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-stone-500">Resources</span></h2>
+                <p className="text-sm sm:text-base md:text-lg text-stone-600 font-light leading-relaxed">
                   A highly curated repository of the most critical academic materials you need to ace your examinations, available instantly.
                 </p>
               </motion.div>
@@ -425,7 +425,7 @@ export default function Landing() {
             </div>
             
             <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-6 lg:gap-8">
-              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-8 rounded-2xl hover:border-amber-600/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
+              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-amber-600/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
                 <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
                   <BookOpen className="text-amber-600 w-6 h-6" />
                 </div>
@@ -439,7 +439,7 @@ export default function Landing() {
                 </div>
               </motion.div>
               
-              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-8 rounded-2xl hover:border-stone-500/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
+              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-stone-500/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
                 <div className="w-12 h-12 bg-stone-400/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
                   <LayoutGrid className="text-stone-500 w-6 h-6" />
                 </div>
@@ -453,7 +453,7 @@ export default function Landing() {
                 </div>
               </motion.div>
               
-              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-8 rounded-2xl hover:border-amber-400/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
+              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-amber-400/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
                 <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
                   <BadgeCheck className="text-amber-400 w-6 h-6" />
                 </div>
@@ -471,7 +471,7 @@ export default function Landing() {
         </section>
 
         {/* Subjects Section */}
-        <section id="subjects" className="relative w-full py-16 md:py-24 border-y border-stone-200">
+        <section id="subjects" className="relative w-full py-12 md:py-24 border-y border-stone-200">
           <motion.div 
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
@@ -479,14 +479,14 @@ export default function Landing() {
             viewport={{ once: true, margin: "-50px" }}
             variants={STAGGER_CONTAINER}
           >
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-stone-200 pb-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 md:mb-16 border-b border-stone-200 pb-8 md:pb-12">
               <motion.div variants={FADE_UP} className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200/80 rounded-full text-xs font-bold uppercase tracking-widest text-teal-700 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
                   Comprehensive Curriculum
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">Branches & <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-amber-600">Subjects</span></h2>
-                <p className="text-base md:text-lg text-stone-600 font-light leading-relaxed">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">Branches & <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-amber-600">Subjects</span></h2>
+                <p className="text-sm sm:text-base md:text-lg text-stone-600 font-light leading-relaxed">
                   Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, navigate effortlessly through your targeted curriculum.
                 </p>
               </motion.div>
@@ -531,7 +531,7 @@ export default function Landing() {
         </section>
 
         {/* Notes Guide Section */}
-        <section id="notes" className="relative w-full py-16 md:py-24 border-y border-stone-200">
+        <section id="notes" className="relative w-full py-12 md:py-24 border-y border-stone-200">
           <motion.div 
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
@@ -545,7 +545,7 @@ export default function Landing() {
                   <span className="w-1.5 h-1.5 rounded-full bg-stone-500"></span>
                   Notes Guide
                 </div>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-stone-900 mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-600 to-amber-600">Study Notes</span></h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-stone-900 mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-600 to-amber-600">Study Notes</span></h2>
                 <p className="text-base md:text-lg text-stone-600 mb-8 leading-relaxed font-light">
                   Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms.
                 </p>
@@ -581,7 +581,7 @@ export default function Landing() {
         </section>
 
         {/* Community & Documentation Section */}
-        <section id="community" className="relative w-full py-16 md:py-24 border-y border-stone-200">
+        <section id="community" className="relative w-full py-12 md:py-24 border-y border-stone-200">
           <motion.div 
             className="max-w-[1200px] px-6 lg:px-8 mx-auto"
             initial="hidden"
@@ -593,7 +593,7 @@ export default function Landing() {
               <div className="absolute inset-0 bg-[radial-gradient(#000000_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none"></div>
               
               <div className="relative z-10 max-w-3xl mx-auto">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight drop-shadow-sm">Platform Documentation</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight drop-shadow-sm">Platform Documentation</h2>
                 <p className="text-base text-stone-700 mb-8 font-light leading-relaxed max-w-2xl mx-auto">
                   Get the most out of the hub. Learn how to navigate resources, effectively use advanced filters, and understand our curation standards. A complete guide designed to streamline your academic workflow.
                 </p>
