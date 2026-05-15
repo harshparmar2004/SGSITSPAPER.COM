@@ -507,22 +507,15 @@ export default function Landing() {
               </motion.div>
             </div>
               
-            <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-6 lg:gap-8 items-start">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
               {allDepartments.map((dept, i) => {
-                const deptSubjectsCount = subjects.filter(s => s.departments?.includes(dept)).length;
-                
                 return (
-                  <motion.div key={dept} variants={FADE_UP} className="bg-white/[0.02] backdrop-blur-sm border border-white/5 p-8 rounded-2xl hover:border-emerald-400/30 hover:bg-white/[0.04] transition-all duration-300 group overflow-hidden relative">
-                    <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
-                      <Layers className="text-emerald-400 w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                  <motion.div key={dept} variants={FADE_UP} className="flex items-center gap-4 p-4 border border-white/5 hover:border-emerald-500/20 rounded-xl transition-all bg-white/[0.01] hover:bg-white/[0.03] group cursor-pointer animate-in fade-in zoom-in-95 duration-300">
+                    <div className="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors flex-shrink-0">
+                      <Layers className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-3 tracking-tight">{dept}</h3>
-                    <p className="text-sm text-slate-400 leading-relaxed min-h-[40px]">
-                      {deptSubjectsCount} Subject{deptSubjectsCount !== 1 ? 's' : ''} available in this curriculum
-                    </p>
-                    <div className="mt-6 flex items-center gap-2 text-emerald-400 font-bold uppercase text-xs group-hover:text-emerald-300 transition-colors cursor-pointer">
-                      <span>View Subjects</span>
-                      <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                    <div className="overflow-hidden min-w-0">
+                      <h3 className="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors truncate">{dept}</h3>
                     </div>
                   </motion.div>
                 );
