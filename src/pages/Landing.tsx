@@ -24,7 +24,7 @@ import {
   HeartPulse,
   Factory,
   ChevronDown,
-  Layers
+  Layers,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -190,7 +190,9 @@ export default function Landing() {
   const { programs, subjects } = useAcademicConfig();
   const [expandedDept, setExpandedDept] = useState<string | null>(null);
 
-  const allDepartments = Array.from(new Set(programs.flatMap(p => p.departments)));
+  const allDepartments = Array.from(
+    new Set(programs.flatMap((p) => p.departments)),
+  );
 
   useEffect(() => {
     if (!loginLoading && user) {
@@ -221,7 +223,10 @@ export default function Landing() {
       {/* Main Content Area */}
       <main className="flex-grow pt-24 md:pt-32 pb-8 px-4 sm:px-6 lg:px-8 relative z-10 font-sans">
         {/* Home Section */}
-        <section id="home" className="max-w-7xl px-4 sm:px-6 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-3 min-h-[calc(100vh-200px)] lg:min-h-[calc(100vh-250px)] mb-20 lg:mb-32 pt-8 lg:pt-10 scroll-mt-32">
+        <section
+          id="home"
+          className="max-w-7xl px-4 sm:px-6 mx-auto flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-3 min-h-[calc(100vh-200px)] lg:min-h-[calc(100vh-250px)] mb-20 lg:mb-32 pt-8 lg:pt-10 scroll-mt-32"
+        >
           {/* Information Section */}
           <motion.div
             initial="hidden"
@@ -403,9 +408,11 @@ export default function Landing() {
         </section>
 
         {/* Resources Section */}
-        <section id="resources" className="relative w-full py-12 md:py-24 scroll-mt-24 border-y border-stone-200">
-
-          <motion.div 
+        <section
+          id="resources"
+          className="relative w-full py-12 md:py-24 scroll-mt-24 border-y border-stone-200"
+        >
+          <motion.div
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
@@ -418,65 +425,110 @@ export default function Landing() {
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
                   Extensive Library
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">Academic <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-stone-500">Resources</span></h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">
+                  Academic{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-700 to-stone-500">
+                    Resources
+                  </span>
+                </h2>
                 <p className="text-sm sm:text-base md:text-lg text-stone-600 font-light leading-relaxed">
-                  A highly curated repository of the most critical academic materials you need to ace your examinations, available instantly.
+                  A highly curated repository of the most critical academic
+                  materials you need to ace your examinations, available
+                  instantly.
                 </p>
               </motion.div>
-              
-              <motion.div variants={FADE_LEFT} className="hidden md:flex items-center gap-12 justify-end">
+
+              <motion.div
+                variants={FADE_LEFT}
+                className="hidden md:flex items-center gap-12 justify-end"
+              >
                 <div className="text-left">
-                  <div className="text-4xl font-black text-stone-900 mb-1">5k+</div>
-                  <div className="text-xs text-stone-9000 uppercase tracking-widest font-bold">Documents</div>
+                  <div className="text-4xl font-black text-stone-900 mb-1">
+                    5k+
+                  </div>
+                  <div className="text-xs text-stone-9000 uppercase tracking-widest font-bold">
+                    Documents
+                  </div>
                 </div>
                 <div className="w-[1px] h-16 bg-stone-200"></div>
                 <div className="text-left">
-                  <div className="text-4xl font-black text-stone-900 mb-1 bg-clip-text text-transparent bg-gradient-to-r from-teal-700 to-teal-500">100%</div>
-                  <div className="text-xs text-stone-9000 uppercase tracking-widest font-bold">Verified</div>
+                  <div className="text-4xl font-black text-stone-900 mb-1 bg-clip-text text-transparent bg-gradient-to-r from-teal-700 to-teal-500">
+                    100%
+                  </div>
+                  <div className="text-xs text-stone-9000 uppercase tracking-widest font-bold">
+                    Verified
+                  </div>
                 </div>
               </motion.div>
             </div>
-            
+
             <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-6 lg:gap-8">
-              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-amber-600/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
+              <motion.div
+                variants={FADE_UP}
+                className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-amber-600/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative"
+              >
                 <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
                   <BookOpen className="text-amber-600 w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-stone-900 mb-3 tracking-tight">Previous Year Papers</h3>
+                <h3 className="text-xl font-bold text-stone-900 mb-3 tracking-tight">
+                  Previous Year Papers
+                </h3>
                 <p className="text-sm text-stone-600 leading-relaxed min-h-[80px]">
-                  Access over 5,000+ verified PYQs across all departments. Filter intuitively by year, semester, and specific subject codes to analyze past trends.
+                  Access over 5,000+ verified PYQs across all departments.
+                  Filter intuitively by year, semester, and specific subject
+                  codes to analyze past trends.
                 </p>
                 <div className="mt-6 flex items-center gap-2 text-amber-600 font-bold uppercase text-xs group-hover:text-amber-700 transition-colors cursor-pointer">
                   <span>Browse PYQs</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  <span className="group-hover:translate-x-1 transition-transform">
+                    &rarr;
+                  </span>
                 </div>
               </motion.div>
-              
-              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-stone-500/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
+
+              <motion.div
+                variants={FADE_UP}
+                className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-stone-500/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative"
+              >
                 <div className="w-12 h-12 bg-stone-400/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
                   <LayoutGrid className="text-stone-500 w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-stone-900 mb-3 tracking-tight">Syllabus & Curriculum</h3>
+                <h3 className="text-xl font-bold text-stone-900 mb-3 tracking-tight">
+                  Syllabus & Curriculum
+                </h3>
                 <p className="text-sm text-stone-600 leading-relaxed min-h-[80px]">
-                  Stay aligned with the official university curriculum. Always find the exact chapters, units, and modules required for your current semester.
+                  Stay aligned with the official university curriculum. Always
+                  find the exact chapters, units, and modules required for your
+                  current semester.
                 </p>
                 <div className="mt-6 flex items-center gap-2 text-stone-500 font-bold uppercase text-xs group-hover:text-stone-600 transition-colors cursor-pointer">
                   <span>View Syllabus</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  <span className="group-hover:translate-x-1 transition-transform">
+                    &rarr;
+                  </span>
                 </div>
               </motion.div>
-              
-              <motion.div variants={FADE_UP} className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-amber-400/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative">
+
+              <motion.div
+                variants={FADE_UP}
+                className="bg-white backdrop-blur-sm border border-stone-200 p-6 sm:p-8 rounded-2xl hover:border-amber-400/30 hover:bg-stone-50 transition-all duration-300 group overflow-hidden relative"
+              >
                 <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center mb-6 shadow-sm">
                   <BadgeCheck className="text-amber-400 w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-stone-900 mb-3 tracking-tight">Practical Manuals</h3>
+                <h3 className="text-xl font-bold text-stone-900 mb-3 tracking-tight">
+                  Practical Manuals
+                </h3>
                 <p className="text-sm text-stone-600 leading-relaxed min-h-[80px]">
-                  Download verified lab manuals, programming assignments, and detailed experiment readings trusted by senior students and faculty.
+                  Download verified lab manuals, programming assignments, and
+                  detailed experiment readings trusted by senior students and
+                  faculty.
                 </p>
                 <div className="mt-6 flex items-center gap-2 text-amber-400 font-bold uppercase text-xs group-hover:text-amber-300 transition-colors cursor-pointer">
                   <span>Get Manuals</span>
-                  <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+                  <span className="group-hover:translate-x-1 transition-transform">
+                    &rarr;
+                  </span>
                 </div>
               </motion.div>
             </div>
@@ -484,8 +536,11 @@ export default function Landing() {
         </section>
 
         {/* Subjects Section */}
-        <section id="subjects" className="relative w-full py-12 md:py-24 border-y border-stone-200">
-          <motion.div 
+        <section
+          id="subjects"
+          className="relative w-full py-12 md:py-24 border-y border-stone-200"
+        >
+          <motion.div
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
@@ -498,34 +553,58 @@ export default function Landing() {
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
                   Comprehensive Curriculum
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">Branches & <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-amber-600">Subjects</span></h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight">
+                  Branches &{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-amber-600">
+                    Subjects
+                  </span>
+                </h2>
                 <p className="text-sm sm:text-base md:text-lg text-stone-600 font-light leading-relaxed">
-                  Comprehensive coverage of all academic branches at SGSITS. From core engineering concepts to specialized electives, navigate effortlessly through your targeted curriculum.
+                  Comprehensive coverage of all academic branches at SGSITS.
+                  From core engineering concepts to specialized electives,
+                  navigate effortlessly through your targeted curriculum.
                 </p>
               </motion.div>
-              
-              <motion.div variants={FADE_LEFT} className="hidden md:flex items-center gap-12 justify-end shrink-0">
+
+              <motion.div
+                variants={FADE_LEFT}
+                className="hidden md:flex items-center gap-12 justify-end shrink-0"
+              >
                 <div className="text-left">
-                  <div className="text-4xl font-black text-stone-900 mb-1">{allDepartments.length}</div>
-                  <div className="text-xs text-teal-700 uppercase tracking-widest font-bold">Branches</div>
+                  <div className="text-4xl font-black text-stone-900 mb-1">
+                    {allDepartments.length}
+                  </div>
+                  <div className="text-xs text-teal-700 uppercase tracking-widest font-bold">
+                    Branches
+                  </div>
                 </div>
                 <div className="w-[1px] h-16 bg-stone-200"></div>
                 <div className="text-left">
-                  <div className="text-4xl font-black text-stone-900 mb-1">{subjects.length}</div>
-                  <div className="text-xs text-amber-600 uppercase tracking-widest font-bold">Subjects</div>
+                  <div className="text-4xl font-black text-stone-900 mb-1">
+                    {subjects.length}
+                  </div>
+                  <div className="text-xs text-amber-600 uppercase tracking-widest font-bold">
+                    Subjects
+                  </div>
                 </div>
               </motion.div>
             </div>
-              
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
               {allDepartments.map((dept, i) => {
                 return (
-                  <motion.div key={dept} variants={FADE_UP} className="flex items-center gap-4 p-4 border border-stone-200 hover:border-teal-800/20 rounded-xl transition-all bg-white hover:bg-white group cursor-pointer animate-in fade-in zoom-in-95 duration-300">
+                  <motion.div
+                    key={dept}
+                    variants={FADE_UP}
+                    className="flex items-center gap-4 p-4 border border-stone-200 hover:border-teal-800/20 rounded-xl transition-all bg-white hover:bg-white group cursor-pointer animate-in fade-in zoom-in-95 duration-300"
+                  >
                     <div className="w-10 h-10 bg-teal-800/10 rounded-lg flex items-center justify-center group-hover:bg-teal-800/20 transition-colors flex-shrink-0">
                       <Layers className="w-5 h-5 text-teal-700 group-hover:scale-110 transition-transform" />
                     </div>
                     <div className="overflow-hidden min-w-0">
-                      <h3 className="font-bold text-sm text-stone-900 group-hover:text-teal-600 transition-colors truncate">{dept}</h3>
+                      <h3 className="font-bold text-sm text-stone-900 group-hover:text-teal-600 transition-colors truncate">
+                        {dept}
+                      </h3>
                     </div>
                   </motion.div>
                 );
@@ -535,8 +614,12 @@ export default function Landing() {
                   <div className="w-16 h-16 bg-stone-100 flex items-center justify-center rounded-full mx-auto mb-4 text-stone-600">
                     <Layers className="w-8 h-8" />
                   </div>
-                  <h3 className="text-xl font-bold text-stone-900 mb-2">No Departments Yet</h3>
-                  <p className="text-stone-600 text-sm">Admins are currently setting up the structure.</p>
+                  <h3 className="text-xl font-bold text-stone-900 mb-2">
+                    No Departments Yet
+                  </h3>
+                  <p className="text-stone-600 text-sm">
+                    Admins are currently setting up the structure.
+                  </p>
                 </div>
               )}
             </div>
@@ -544,8 +627,11 @@ export default function Landing() {
         </section>
 
         {/* Notes Guide Section */}
-        <section id="notes" className="relative w-full py-12 md:py-24 border-y border-stone-200">
-          <motion.div 
+        <section
+          id="notes"
+          className="relative w-full py-12 md:py-24 border-y border-stone-200"
+        >
+          <motion.div
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
@@ -558,12 +644,23 @@ export default function Landing() {
                   <span className="w-1.5 h-1.5 rounded-full bg-stone-500"></span>
                   Notes Guide
                 </div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-stone-900 mb-6 tracking-tight">Curated <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-600 to-amber-600">Study Notes</span></h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-stone-900 mb-6 tracking-tight">
+                  Curated{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-600 to-amber-600">
+                    Study Notes
+                  </span>
+                </h2>
                 <p className="text-base md:text-lg text-stone-600 mb-8 leading-relaxed font-light">
-                  Discover beautifully handwritten and digitally compiled notes from top-tier students. Stop wasting time figuring out what to study, and start learning from the best resources right before your mid-terms.
+                  Discover beautifully handwritten and digitally compiled notes
+                  from top-tier students. Stop wasting time figuring out what to
+                  study, and start learning from the best resources right before
+                  your mid-terms.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button onClick={loginWithGoogle} className="px-6 py-3 bg-stone-900 text-white text-stone-900 font-bold tracking-widest uppercase rounded-lg hover:bg-stone-400 transition-all w-full sm:w-auto inline-flex items-center justify-center gap-2 text-sm">
+                  <button
+                    onClick={loginWithGoogle}
+                    className="px-6 py-3 bg-stone-900 text-white text-stone-900 font-bold tracking-widest uppercase rounded-lg hover:bg-stone-400 transition-all w-full sm:w-auto inline-flex items-center justify-center gap-2 text-sm"
+                  >
                     <span>Login to Access</span>
                   </button>
                 </div>
@@ -572,18 +669,41 @@ export default function Landing() {
               <motion.div variants={FADE_RIGHT} className="lg:w-1/2 w-full">
                 <div className="grid gap-4">
                   {[
-                    { number: "01", title: "High-yield summary sheets", desc: "For last-minute revisions and quick recaps." },
-                    { number: "02", title: "Unit-wise detailed explanations", desc: "Comprehensive notes with necessary diagrams." },
-                    { number: "03", title: "Important formulas", desc: "Algorithmic breakdowns for quick solving." },
-                    { number: "04", title: "Step-by-step solutions", desc: "Detailed steps to commonly asked numericals." }
+                    {
+                      number: "01",
+                      title: "High-yield summary sheets",
+                      desc: "For last-minute revisions and quick recaps.",
+                    },
+                    {
+                      number: "02",
+                      title: "Unit-wise detailed explanations",
+                      desc: "Comprehensive notes with necessary diagrams.",
+                    },
+                    {
+                      number: "03",
+                      title: "Important formulas",
+                      desc: "Algorithmic breakdowns for quick solving.",
+                    },
+                    {
+                      number: "04",
+                      title: "Step-by-step solutions",
+                      desc: "Detailed steps to commonly asked numericals.",
+                    },
                   ].map((item) => (
-                    <div key={item.number} className="flex gap-4 p-4 rounded-xl bg-white border border-stone-200 hover:border-stone-400/20 hover:bg-stone-50 transition-all group">
+                    <div
+                      key={item.number}
+                      className="flex gap-4 p-4 rounded-xl bg-white border border-stone-200 hover:border-stone-400/20 hover:bg-stone-50 transition-all group"
+                    >
                       <div className="w-10 h-10 rounded-lg bg-stone-100 text-stone-600 group-hover:bg-stone-400/10 group-hover:text-stone-500 flex items-center justify-center shrink-0 font-bold text-sm tracking-tighter transition-all">
                         {item.number}
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-stone-900 font-bold text-base mb-1">{item.title}</h4>
-                        <p className="text-sm text-stone-600 font-light leading-snug">{item.desc}</p>
+                        <h4 className="text-stone-900 font-bold text-base mb-1">
+                          {item.title}
+                        </h4>
+                        <p className="text-sm text-stone-600 font-light leading-snug">
+                          {item.desc}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -594,31 +714,83 @@ export default function Landing() {
         </section>
 
         {/* Community & Documentation Section */}
-        <section id="community" className="relative w-full py-12 md:py-24 border-y border-stone-200">
-          <motion.div 
+        <section
+          id="community"
+          className="relative w-full py-12 md:py-24 border-y border-stone-200"
+        >
+          <motion.div
             className="max-w-[1200px] px-6 lg:px-8 mx-auto"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "0px" }}
             variants={STAGGER_CONTAINER}
           >
-            <motion.div variants={FADE_UP} className="bg-white border border-stone-200/50 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-xl">
-              <div className="absolute inset-0 bg-[radial-gradient(#000000_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.05] pointer-events-none"></div>
-              
-              <div className="relative z-10 max-w-3xl mx-auto">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-stone-900 mb-4 tracking-tight drop-shadow-sm">Platform Documentation</h2>
-                <p className="text-base text-stone-700 mb-8 font-light leading-relaxed max-w-2xl mx-auto">
-                  Get the most out of the hub. Learn how to navigate resources, effectively use advanced filters, and understand our curation standards. A complete guide designed to streamline your academic workflow.
+            <div className="flex flex-col gap-12">
+              <motion.div
+                variants={FADE_UP}
+                className="max-w-4xl mx-auto text-center py-8 relative"
+              >
+                <div className="absolute inset-0 bg-[#FAF7F2] blur-[100px] -z-10 rounded-full w-full h-full transform scale-150 opacity-50 pointer-events-none"></div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-stone-200 shadow-sm rounded-full text-xs font-bold uppercase tracking-widest text-stone-600 mb-8">
+                  <span className="w-1.5 h-1.5 rounded-full bg-stone-900"></span>
+                  Knowledge Base
+                </div>
+                <h2 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-stone-900 mb-8 tracking-tight leading-[1.1] drop-shadow-sm">
+                  Master the Platform
+                </h2>
+                <p className="text-stone-600 mb-10 font-light leading-relaxed text-lg sm:text-xl max-w-2xl mx-auto">
+                  A complete guide designed to streamline your academic
+                  workflow. Learn how to navigate resources, effectively use
+                  advanced filters, and understand our curation standards.
                 </p>
-                
-                <div className="flex justify-center">
-                  <Link to="/docs" className="flex items-center gap-2 px-8 py-4 bg-stone-900 text-stone-50 font-bold rounded-xl hover:bg-stone-800 cursor-pointer transition-all w-full sm:w-auto justify-center uppercase tracking-widest hover:bg-slate-200">
-                    <BookOpen className="w-5 h-5" />
-                    <span className="text-sm">Read the Documentation</span>
+
+                <Link
+                  to="/docs"
+                  className="inline-flex items-center gap-3 px-10 py-5 bg-stone-900 text-stone-50 font-bold rounded-2xl hover:bg-stone-800 cursor-pointer transition-all uppercase tracking-widest hover:scale-[1.02] active:scale-95 group shadow-xl shadow-stone-900/10 mx-auto"
+                >
+                  <BookOpen className="w-5 h-5 text-stone-400 group-hover:text-white transition-colors" />
+                  <span className="text-sm">Explore Docs</span>
+                  <span className="group-hover:translate-x-1 transition-all ml-2">
+                    &rarr;
+                  </span>
+                </Link>
+              </motion.div>
+
+              <motion.div
+                variants={FADE_UP}
+                className="bg-white border border-stone-200 rounded-[2.5rem] p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 hover:border-stone-300 transition-all group overflow-hidden relative shadow-sm hover:shadow-md max-w-5xl mx-auto w-full"
+              >
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 z-10 w-full md:w-auto">
+                  <div className="w-16 h-16 bg-stone-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 border border-stone-200/80 shadow-sm">
+                    <Shield className="w-8 h-8 text-stone-700" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-extrabold text-stone-900 mb-2 tracking-tight">
+                      Community Guidelines
+                    </h3>
+                    <p className="text-stone-600 leading-relaxed font-light max-w-2xl text-sm sm:text-base">
+                      Learn about our curation standards, how to contribute
+                      respectfully, and our platform rules ensuring high-quality
+                      academic resources.
+                    </p>
+                  </div>
+                </div>
+                <div className="z-10 shrink-0 self-start md:self-center w-full md:w-auto pt-4 md:pt-0">
+                  <Link
+                    to="/docs/guidelines"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-stone-100 text-stone-900 font-bold rounded-2xl hover:bg-stone-200 transition-all w-full md:w-auto shadow-sm"
+                  >
+                    <span>Read Guidelines</span>
+                    <span className="group-hover:translate-x-1 transition-transform">
+                      &rarr;
+                    </span>
                   </Link>
                 </div>
-              </div>
-            </motion.div>
+                <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none scale-150 -translate-y-1/4 translate-x-1/4">
+                  <Shield className="w-64 h-64" />
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
         </section>
       </main>
@@ -630,8 +802,8 @@ export default function Landing() {
           <div className="flex flex-col items-center md:items-start text-center md:text-left gap-2">
             <p className="text-xs sm:text-sm font-bold text-stone-600 uppercase tracking-widest leading-relaxed">
               © {new Date().getFullYear()}{" "}
-              <span className="text-amber-700 font-extrabold">SGSITSPAPER</span>.
-              All rights reserved.
+              <span className="text-amber-700 font-extrabold">SGSITSPAPER</span>
+              . All rights reserved.
             </p>
             <p className="text-[10px] sm:text-xs text-stone-400 font-bold uppercase tracking-[0.1em]">
               Engineered for Excellence at SGSITS Indore
