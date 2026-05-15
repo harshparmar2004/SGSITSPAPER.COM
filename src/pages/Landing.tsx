@@ -29,15 +29,28 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 
 const FADE_UP = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 60, scale: 0.96 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const FADE_RIGHT = {
+  hidden: { opacity: 0, x: -60, scale: 0.96 },
+  visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const FADE_LEFT = {
+  hidden: { opacity: 0, x: 60, scale: 0.96 },
+  visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const STAGGER_CONTAINER = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15 },
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    },
   },
 };
 
@@ -396,11 +409,11 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: false, margin: "-100px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 md:mb-16 border-b border-stone-200 pb-8 md:pb-12">
-              <motion.div variants={FADE_UP} className="max-w-2xl">
+              <motion.div variants={FADE_RIGHT} className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200/80 rounded-full text-xs font-bold uppercase tracking-widest text-amber-600 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
                   Extensive Library
@@ -411,7 +424,7 @@ export default function Landing() {
                 </p>
               </motion.div>
               
-              <motion.div variants={FADE_UP} className="hidden md:flex items-center gap-12 justify-end">
+              <motion.div variants={FADE_LEFT} className="hidden md:flex items-center gap-12 justify-end">
                 <div className="text-left">
                   <div className="text-4xl font-black text-stone-900 mb-1">5k+</div>
                   <div className="text-xs text-stone-9000 uppercase tracking-widest font-bold">Documents</div>
@@ -476,11 +489,11 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: false, margin: "-100px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 md:mb-16 border-b border-stone-200 pb-8 md:pb-12">
-              <motion.div variants={FADE_UP} className="max-w-2xl">
+              <motion.div variants={FADE_RIGHT} className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200/80 rounded-full text-xs font-bold uppercase tracking-widest text-teal-700 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-700"></span>
                   Comprehensive Curriculum
@@ -491,7 +504,7 @@ export default function Landing() {
                 </p>
               </motion.div>
               
-              <motion.div variants={FADE_UP} className="hidden md:flex items-center gap-12 justify-end shrink-0">
+              <motion.div variants={FADE_LEFT} className="hidden md:flex items-center gap-12 justify-end shrink-0">
                 <div className="text-left">
                   <div className="text-4xl font-black text-stone-900 mb-1">{allDepartments.length}</div>
                   <div className="text-xs text-teal-700 uppercase tracking-widest font-bold">Branches</div>
@@ -536,11 +549,11 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: false, margin: "-100px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
-              <motion.div variants={FADE_UP} className="lg:w-1/2 w-full">
+              <motion.div variants={FADE_LEFT} className="lg:w-1/2 w-full">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-400/10 border border-stone-400/20 rounded-full text-xs font-bold uppercase tracking-widest text-stone-500 mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-stone-500"></span>
                   Notes Guide
@@ -556,7 +569,7 @@ export default function Landing() {
                 </div>
               </motion.div>
 
-              <motion.div variants={FADE_UP} className="lg:w-1/2 w-full">
+              <motion.div variants={FADE_RIGHT} className="lg:w-1/2 w-full">
                 <div className="grid gap-4">
                   {[
                     { number: "01", title: "High-yield summary sheets", desc: "For last-minute revisions and quick recaps." },
@@ -586,7 +599,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: false, margin: "-100px" }}
             variants={STAGGER_CONTAINER}
           >
             <motion.div variants={FADE_UP} className="bg-white border border-stone-200/50 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-xl">
