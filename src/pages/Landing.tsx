@@ -29,18 +29,18 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 
 const FADE_UP = {
-  hidden: { opacity: 0, y: 60, scale: 0.96 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 30, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 const FADE_RIGHT = {
-  hidden: { opacity: 0, x: -60, scale: 0.96 },
-  visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, x: -30, scale: 0.98 },
+  visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 const FADE_LEFT = {
-  hidden: { opacity: 0, x: 60, scale: 0.96 },
-  visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, x: 30, scale: 0.98 },
+  visible: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
 const STAGGER_CONTAINER = {
@@ -48,8 +48,8 @@ const STAGGER_CONTAINER = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.1,
+      staggerChildren: 0.1,
+      delayChildren: 0.05,
     },
   },
 };
@@ -409,7 +409,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-30px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 md:mb-16 border-b border-stone-200 pb-8 md:pb-12">
@@ -489,7 +489,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-30px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mb-10 md:mb-16 border-b border-stone-200 pb-8 md:pb-12">
@@ -549,7 +549,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-30px" }}
             variants={STAGGER_CONTAINER}
           >
             <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
@@ -599,7 +599,7 @@ export default function Landing() {
             className="max-w-[1200px] px-6 lg:px-8 mx-auto"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: false, margin: "-100px" }}
+            viewport={{ once: true, margin: "-30px" }}
             variants={STAGGER_CONTAINER}
           >
             <motion.div variants={FADE_UP} className="bg-white border border-stone-200/50 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-xl">
