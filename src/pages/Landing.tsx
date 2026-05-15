@@ -716,80 +716,77 @@ export default function Landing() {
         {/* Community & Documentation Section */}
         <section
           id="community"
-          className="relative w-full py-12 md:py-24 border-y border-stone-200"
+          className="relative w-full py-20 md:py-32 border-y border-stone-200 overflow-hidden bg-[#FAF7F2]"
         >
+          {/* Background grid pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(#d6d3d1_1px,transparent_1px)] [background-size:32px_32px] opacity-40 pointer-events-none"></div>
+
           <motion.div
-            className="max-w-[1200px] px-6 lg:px-8 mx-auto"
+            className="max-w-[1200px] px-6 lg:px-8 mx-auto relative z-10 flex justify-center"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "0px" }}
             variants={STAGGER_CONTAINER}
           >
-            <div className="flex flex-col gap-12">
+            <div className="relative w-full max-w-4xl flex flex-col items-center text-center">
+              {/* Decorative Stickers/Icons in Background */}
               <motion.div
                 variants={FADE_UP}
-                className="max-w-4xl mx-auto text-center py-8 relative"
+                className="absolute -top-12 -left-4 md:-left-16 bg-white p-4 rounded-2xl shadow-xl shadow-stone-200/50 border border-stone-200 rotate-[-12deg] z-0 pointer-events-none hidden sm:block"
               >
-                <div className="absolute inset-0 bg-[#FAF7F2] blur-[100px] -z-10 rounded-full w-full h-full transform scale-150 opacity-50 pointer-events-none"></div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-stone-200 shadow-sm rounded-full text-xs font-bold uppercase tracking-widest text-stone-600 mb-8">
-                  <span className="w-1.5 h-1.5 rounded-full bg-stone-900"></span>
+                <TerminalSquare className="w-8 h-8 text-amber-500" />
+              </motion.div>
+
+              <motion.div
+                variants={FADE_UP}
+                className="absolute top-20 -right-4 md:-right-24 bg-stone-900 p-5 rounded-3xl shadow-2xl rotate-[15deg] z-0 pointer-events-none hidden sm:block"
+              >
+                <BookOpen className="w-10 h-10 text-white" />
+              </motion.div>
+
+              <motion.div
+                variants={FADE_UP}
+                className="absolute -bottom-8 left-8 md:-left-8 bg-white p-4 rounded-full shadow-lg border border-stone-200 rotate-[8deg] z-0 pointer-events-none hidden sm:block"
+              >
+                <Shield className="w-6 h-6 text-teal-600" />
+              </motion.div>
+
+              <motion.div
+                variants={FADE_UP}
+                className="absolute bottom-16 -right-12 md:-right-16 bg-amber-100 p-3 rounded-xl shadow-sm border border-amber-200 rotate-[-20deg] z-0 pointer-events-none hidden sm:block"
+              >
+                <Settings className="w-6 h-6 text-amber-700" />
+              </motion.div>
+
+              <div className="relative z-10 w-full flex flex-col items-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-stone-200 shadow-sm rounded-full text-xs font-bold uppercase tracking-widest text-stone-600 mb-8 relative">
+                  <span className="w-2 h-2 rounded-full bg-amber-400"></span>
                   Knowledge Base
                 </div>
-                <h2 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-stone-900 mb-8 tracking-tight leading-[1.1] drop-shadow-sm">
+
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-stone-900 mb-6 tracking-tight relative">
                   Master the Platform
                 </h2>
-                <p className="text-stone-600 mb-10 font-light leading-relaxed text-lg sm:text-xl max-w-2xl mx-auto">
-                  A complete guide designed to streamline your academic
-                  workflow. Learn how to navigate resources, effectively use
-                  advanced filters, and understand our curation standards.
+                <p className="text-stone-600 mb-10 font-light leading-relaxed text-base sm:text-lg max-w-3xl mx-auto relative">
+                  A comprehensive guide designed to streamline your academic
+                  workflow. Learn how to navigate resources, effectively utilize
+                  advanced filters to find exact previous year questions,
+                  understand our curation standards, and access the application
+                  programming interfaces. Master everything you need to know to
+                  excel.
                 </p>
 
                 <Link
                   to="/docs"
-                  className="inline-flex items-center gap-3 px-10 py-5 bg-stone-900 text-stone-50 font-bold rounded-2xl hover:bg-stone-800 cursor-pointer transition-all uppercase tracking-widest hover:scale-[1.02] active:scale-95 group shadow-xl shadow-stone-900/10 mx-auto"
+                  className="inline-flex items-center gap-3 px-8 py-4 sm:px-10 sm:py-4 bg-amber-400 text-stone-900 font-bold rounded-2xl hover:bg-amber-500 cursor-pointer transition-all uppercase tracking-widest hover:-translate-y-1 hover:shadow-lg shadow-amber-400/20 active:translate-y-0 relative z-20 group"
                 >
-                  <BookOpen className="w-5 h-5 text-stone-400 group-hover:text-white transition-colors" />
+                  <BookOpen className="w-5 h-5 text-stone-900 transition-colors" />
                   <span className="text-sm">Explore Docs</span>
                   <span className="group-hover:translate-x-1 transition-all ml-2">
                     &rarr;
                   </span>
                 </Link>
-              </motion.div>
-
-              <motion.div
-                variants={FADE_UP}
-                className="bg-white border border-stone-200 rounded-[2.5rem] p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-8 hover:border-stone-300 transition-all group overflow-hidden relative shadow-sm hover:shadow-md max-w-5xl mx-auto w-full"
-              >
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 z-10 w-full md:w-auto">
-                  <div className="w-16 h-16 bg-stone-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 border border-stone-200/80 shadow-sm">
-                    <Shield className="w-8 h-8 text-stone-700" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-extrabold text-stone-900 mb-2 tracking-tight">
-                      Community Guidelines
-                    </h3>
-                    <p className="text-stone-600 leading-relaxed font-light max-w-2xl text-sm sm:text-base">
-                      Learn about our curation standards, how to contribute
-                      respectfully, and our platform rules ensuring high-quality
-                      academic resources.
-                    </p>
-                  </div>
-                </div>
-                <div className="z-10 shrink-0 self-start md:self-center w-full md:w-auto pt-4 md:pt-0">
-                  <Link
-                    to="/docs/guidelines"
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-stone-100 text-stone-900 font-bold rounded-2xl hover:bg-stone-200 transition-all w-full md:w-auto shadow-sm"
-                  >
-                    <span>Read Guidelines</span>
-                    <span className="group-hover:translate-x-1 transition-transform">
-                      &rarr;
-                    </span>
-                  </Link>
-                </div>
-                <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none scale-150 -translate-y-1/4 translate-x-1/4">
-                  <Shield className="w-64 h-64" />
-                </div>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </section>
