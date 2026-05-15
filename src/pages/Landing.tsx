@@ -310,7 +310,7 @@ export default function Landing() {
               delay: 0.4,
               ease: [0.21, 0.47, 0.32, 0.98],
             }}
-            className="w-full max-w-[22rem] sm:max-w-md mx-auto relative group mt-8 lg:mt-0"
+            className="w-full max-w-[22rem] sm:max-w-md mx-auto lg:mx-0 lg:ml-auto relative group mt-8 lg:mt-0"
           >
             {/* Glowing Orb Behind Card */}
             <div className="absolute -inset-1 bg-amber-400/20 rounded-[20px] blur-2xl opacity-40 group-hover:opacity-60 transition duration-1000"></div>
