@@ -43,8 +43,7 @@ export default function AdminSubjectPYQs() {
       if (adminRole === "department") {
         data = data.filter(
           (p) =>
-            assignedDepartments.includes(p.department) ||
-            assignedDepartments.includes(`${p.course}::${p.department}`),
+            assignedDepartments.some((ad) => ad === p.department || ad.endsWith(`::${p.department}`)),
         );
       }
 
@@ -285,6 +284,8 @@ export default function AdminSubjectPYQs() {
                                                               : pyq.documentType ===
                                                                   "Books & Resources"
                                                                 ? "Books & Resources"
+                                                                : pyq.documentType === "Internship Information"
+                                                                ? "Internship"
                                                                 : `${pyq.examYear} ${pyq.examType}`}
                                                       </p>
                                                       <p className="text-[11px] text-gray-500 mt-1">

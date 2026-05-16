@@ -35,6 +35,7 @@ const DOC_TYPES = [
   "Syllabus",
   "Lab Manual",
   "Books & Resources",
+  "Internship Information",
 ];
 
 export default function AdminAllPYQs() {
@@ -77,8 +78,7 @@ export default function AdminAllPYQs() {
       if (adminRole === "department") {
         data = data.filter(
           (p) =>
-            assignedDepartments.includes(p.department) ||
-            assignedDepartments.includes(`${p.course}::${p.department}`),
+            assignedDepartments.some((ad) => ad === p.department || ad.endsWith(`::${p.department}`)),
         );
       }
 
@@ -192,6 +192,18 @@ export default function AdminAllPYQs() {
         } else if (replacingPyq.documentType === "Lab Manual") {
           fileName =
             `${replacingPyq.subjectCode}_Lab_Manual_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else if (replacingPyq.documentType === "Books & Resources") {
+          fileName =
+            `${replacingPyq.subjectCode}_Books_Resources_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else if (replacingPyq.documentType === "Internship Information") {
+          fileName =
+            `${(replacingPyq.department||"").substring(0, 15).toUpperCase()}_Internship_${Date.now()}.pdf`.replace(
               /[^a-zA-Z0-9.\-_]/g,
               "_",
             );
@@ -674,6 +686,10 @@ export default function AdminAllPYQs() {
                         ) : pyq.documentType === "Books & Resources" ? (
                           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-fuchsia-100 text-fuchsia-800 border border-fuchsia-200">
                             Books & Resources
+                          </span>
+                        ) : pyq.documentType === "Internship Information" ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-orange-100 text-orange-800 border border-orange-200">
+                            Internship
                           </span>
                         ) : (
                           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200 uppercase tracking-widest">

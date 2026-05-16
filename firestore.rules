@@ -77,7 +77,8 @@ service cloud.firestore {
         "pyqId", "userId", "userEmail", "department", "course",
         "subjectCode", "subjectName", "examType", "downloadedAt"
       ]) &&
-      data.keys().size() == 9 &&
+      data.keys().size() <= 10 &&
+      (data.get("documentType", "") is string) &&
       data.pyqId is string && data.pyqId.size() > 0 && data.pyqId.size() <= 128 &&
       data.userId == request.auth.uid &&
       data.userEmail == request.auth.token.email &&

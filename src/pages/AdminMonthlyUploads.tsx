@@ -32,6 +32,7 @@ interface UploadRecord {
   uploaderEmail: string;
   uploadedAt: Date;
   monthYear: string; // YYYY-MM format for easy grouping
+  documentType?: string;
 }
 
 export default function AdminMonthlyUploads() {
@@ -64,8 +65,7 @@ export default function AdminMonthlyUploads() {
         if (adminRole === "department") {
           const fullDept = `${data.course}::${data.department}`;
           if (
-            !assignedDepartments.includes(fullDept) &&
-            !assignedDepartments.includes(data.department)
+            !assignedDepartments.some((ad) => ad === data.department || ad.endsWith(`::${data.department}`))
           ) {
             return;
           }
@@ -79,6 +79,7 @@ export default function AdminMonthlyUploads() {
           );
           records.push({
             id: data.id,
+            documentType: data.documentType,
             subjectCode: data.subjectCode || "N/A",
             subjectName: data.subjectName || "Unknown Subject",
             department: data.department || "N/A",
@@ -313,8 +314,9 @@ export default function AdminMonthlyUploads() {
                               <div className="font-semibold text-gray-900">
                                 {record.subjectName}
                               </div>
-                              <div className="text-gray-500 text-xs font-mono mt-0.5">
-                                {record.subjectCode}
+                              <div className="text-gray-500 text-xs font-mono mt-0.5 flex gap-2">
+                                <span>{record.subjectCode}</span>
+                                <span className="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded text-[10px]">{record.documentType === "Internship Information" ? "Internship" : record.documentType === "Books & Resources" ? "Book" : record.documentType === "Lab Manual" ? "Lab" : record.documentType === "Syllabus" ? "Syllabus" : record.documentType === "Notes" ? "Notes" : "PYQ"}</span>
                               </div>
                             </div>
                           </div>

@@ -61,8 +61,7 @@ export default function AdminAnalytics() {
       if (adminRole === "department") {
         docs = docs.filter(
           (d) =>
-            assignedDepartments.includes(d.department) ||
-            assignedDepartments.includes(`${d.course}::${d.department}`),
+            assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
         );
       }
 
@@ -96,8 +95,8 @@ export default function AdminAnalytics() {
           }
         }
 
-        if (doc.examType)
-          typeRaw[doc.examType] = (typeRaw[doc.examType] || 0) + 1;
+        const typeKey = doc.documentType || doc.examType || "Unknown";
+        typeRaw[typeKey] = (typeRaw[typeKey] || 0) + 1;
 
         if (doc.pyqId) {
           if (!papersRaw[doc.pyqId]) {
@@ -105,7 +104,7 @@ export default function AdminAnalytics() {
               name: doc.subjectName || "Unknown",
               code: doc.subjectCode || "UNK",
               dept: doc.department || "-",
-              type: doc.examType || "-",
+              type: doc.documentType || doc.examType || "-",
               downloads: 0,
             };
           }

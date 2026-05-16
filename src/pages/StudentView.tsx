@@ -139,7 +139,8 @@ export default function StudentView() {
           course: pyq.course || "B.Tech",
           subjectCode: pyq.subjectCode,
           subjectName: pyq.subjectName,
-          examType: pyq.examType || pyq.documentType || "Unknown",
+          examType: pyq.examType || "N/A",
+          documentType: pyq.documentType || "PYQ",
           downloadedAt: serverTimestamp(),
         });
       } catch (err) {
@@ -199,7 +200,8 @@ export default function StudentView() {
           course: pyq.course || "B.Tech",
           subjectCode: pyq.subjectCode,
           subjectName: pyq.subjectName,
-          examType: pyq.examType || pyq.documentType || "Unknown",
+          examType: pyq.examType || "N/A",
+          documentType: pyq.documentType || "PYQ",
           downloadedAt: serverTimestamp(),
         }),
       );

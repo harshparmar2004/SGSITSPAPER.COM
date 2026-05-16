@@ -156,6 +156,7 @@ export default function AdminUpload() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -273,23 +274,31 @@ export default function AdminUpload() {
           );
         }
 
-        // Read file as Data URL to bypass the need for Firebase Storage setup
-        const readFileAsDataUrl = (file: File): Promise<string> => {
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
-        };
+        const storageRef = ref(storage, `documents/${fileName}`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
 
-        try {
-          fileUrl = await readFileAsDataUrl(file);
-        } catch (err: any) {
-          throw new Error("Failed to read file: " + err.message);
-        }
+        await new Promise<void>((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setUploadProgress(progress);
+            },
+            (error) => {
+              reject(error);
+            },
+            async () => {
+              try {
+                fileUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve();
+              } catch (e) {
+                reject(e);
+              }
+            }
+          );
+        });
 
-        fileName = file.name;
+        fileName = fileName; // Keep our generated descriptive filename
         fileSize = file.size;
       } else {
         fileUrl = externalLink;
@@ -835,7 +844,7 @@ export default function AdminUpload() {
                 ) : (
                   <UploadCloud className="w-4 h-4 mr-2" />
                 )}
-                {uploading ? "Uploading..." : "Submit Material"}
+                {uploading ? (uploadProgress > 0 && uploadMethod === "storage" ? `Uploading... ${Math.round(uploadProgress)}%` : "Uploading...") : "Submit Material"}
               </Button>
             </div>
           </form>

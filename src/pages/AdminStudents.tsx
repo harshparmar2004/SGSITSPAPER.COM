@@ -55,8 +55,7 @@ export default function AdminStudents() {
         let downDocs: any[] = allDownloads.slice(0, 2000);
         downDocs = downDocs.filter(
           (d) =>
-            assignedDepartments.includes(d.department) ||
-            assignedDepartments.includes(`${d.course}::${d.department}`),
+            assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
         );
 
         const uniqueUserIds = Array.from(

@@ -118,8 +118,7 @@ export default function AdminActivity() {
           staffPyqs = staffPyqs.filter((p) => {
             const fullDept = `${p.course}::${p.department}`;
             return (
-              assignedDepartments.includes(fullDept) ||
-              assignedDepartments.includes(p.department)
+              assignedDepartments.some((ad) => ad === p.department || ad.endsWith(`::${p.department}`))
             );
           });
         }
@@ -376,7 +375,7 @@ export default function AdminActivity() {
                             {pyq.department}
                           </div>
                           <div className="text-gray-500 text-xs mt-1 ml-1">
-                            {pyq.examType} {pyq.examYear} - {pyq.semester}
+                            {pyq.documentType === "Internship Information" ? "Internship" : pyq.documentType === "Books & Resources" ? "Book" : pyq.documentType === "Lab Manual" ? "Lab" : pyq.documentType === "Syllabus" ? "Syllabus" : pyq.documentType === "Notes" ? "Notes" : `${pyq.examType || ""} ${pyq.examYear || ""}`} - {pyq.semester}
                           </div>
                         </td>
                         <td className="px-3 py-2 text-gray-500 font-medium">
@@ -506,7 +505,7 @@ export default function AdminActivity() {
                             {pyq.department}
                           </div>
                           <div className="text-gray-500 text-xs mt-1 ml-1">
-                            {pyq.examType} {pyq.examYear} - {pyq.semester}
+                            {pyq.documentType === "Internship Information" ? "Internship" : pyq.documentType === "Books & Resources" ? "Book" : pyq.documentType === "Lab Manual" ? "Lab" : pyq.documentType === "Syllabus" ? "Syllabus" : pyq.documentType === "Notes" ? "Notes" : `${pyq.examType || ""} ${pyq.examYear || ""}`} - {pyq.semester}
                           </div>
                         </td>
                         <td className="px-3 py-2 text-gray-500 font-medium">
@@ -634,7 +633,7 @@ export default function AdminActivity() {
                             {pyq.department}
                           </div>
                           <div className="text-gray-500 text-xs mt-1 ml-1">
-                            {pyq.examType} {pyq.examYear} - {pyq.semester}
+                            {pyq.documentType === "Internship Information" ? "Internship" : pyq.documentType === "Books & Resources" ? "Book" : pyq.documentType === "Lab Manual" ? "Lab" : pyq.documentType === "Syllabus" ? "Syllabus" : pyq.documentType === "Notes" ? "Notes" : `${pyq.examType || ""} ${pyq.examYear || ""}`} - {pyq.semester}
                           </div>
                         </td>
                         <td className="px-3 py-2 text-gray-500 font-medium">
@@ -739,7 +738,7 @@ export default function AdminActivity() {
                             {pyq.department}
                           </div>
                           <div className="text-gray-500 text-xs mt-1 ml-1">
-                            {pyq.examType} {pyq.examYear} - {pyq.semester}
+                            {pyq.documentType === "Internship Information" ? "Internship" : pyq.documentType === "Books & Resources" ? "Book" : pyq.documentType === "Lab Manual" ? "Lab" : pyq.documentType === "Syllabus" ? "Syllabus" : pyq.documentType === "Notes" ? "Notes" : `${pyq.examType || ""} ${pyq.examYear || ""}`} - {pyq.semester}
                           </div>
                         </td>
                         <td className="px-3 py-2 text-gray-500 font-medium">

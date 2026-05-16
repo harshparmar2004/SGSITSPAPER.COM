@@ -121,8 +121,7 @@ export default function AdminDashboard() {
           let downDocs = allDownloads.slice(0, 1000);
           downDocs = downDocs.filter(
             (d) =>
-              assignedDepartments.includes(d.department) ||
-              assignedDepartments.includes(`${d.course}::${d.department}`),
+              assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
           );
 
           // Count unique students who downloaded
@@ -148,8 +147,7 @@ export default function AdminDashboard() {
       if (adminRole === "department") {
         pyqData = pyqData.filter(
           (p) =>
-            assignedDepartments.includes(p.department) ||
-            assignedDepartments.includes(`${p.course}::${p.department}`),
+            assignedDepartments.some((ad) => ad === p.department || ad.endsWith(`::${p.department}`)),
         );
         setTotalPdfs(pyqData.length);
         setTotalPyqs(
@@ -703,7 +701,7 @@ export default function AdminDashboard() {
                           Public
                         </span>
                         <span className="text-gray-500 text-xs font-mono">
-                          {pyq.examType} {pyq.examYear}
+                          {pyq.documentType === "Internship Information" ? "Internship" : pyq.documentType === "Books & Resources" ? "Book" : pyq.documentType === "Lab Manual" ? "Lab" : pyq.documentType === "Syllabus" ? "Syllabus" : pyq.documentType === "Notes" ? "Notes" : `${pyq.examType || ""} ${pyq.examYear || ""}`}
                         </span>
                       </div>
                     </td>

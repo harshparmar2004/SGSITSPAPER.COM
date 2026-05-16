@@ -44,13 +44,11 @@ export default function AdminDepartmentDeepDive() {
       if (adminRole === "department") {
         docs = docs.filter(
           (d) =>
-            assignedDepartments.includes(d.department) ||
-            assignedDepartments.includes(`${d.course}::${d.department}`),
+            assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
         );
         pyqDocs = pyqDocs.filter(
           (d) =>
-            assignedDepartments.includes(d.department) ||
-            assignedDepartments.includes(`${d.course}::${d.department}`),
+            assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
         );
       }
 
