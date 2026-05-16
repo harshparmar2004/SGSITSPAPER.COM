@@ -52,7 +52,12 @@ export default function StudentView() {
   const [submittingReport, setSubmittingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    "PYQ" | "Notes" | "Syllabus" | "Lab Manual"
+    | "PYQ"
+    | "Notes"
+    | "Syllabus"
+    | "Lab Manual"
+    | "Books & Resources"
+    | "Internship Information"
   >("PYQ");
 
   const { programs, loading: configLoading } = useAcademicConfig();
@@ -63,6 +68,8 @@ export default function StudentView() {
   const availableDepartments = selectedProgramObj
     ? selectedProgramObj.departments
     : [];
+  
+  const allDepartments = Array.from(new Set(programs.flatMap(p => p.departments)));
 
   useEffect(() => {
     if (!user) return;
@@ -155,6 +162,8 @@ export default function StudentView() {
           filename = `${pyq.subjectCode}_${safeSubject}_Lab_Manual_${pyq.id.substring(0, 5)}.pdf`;
         } else if (pyq.documentType === "Books & Resources") {
           filename = `${pyq.subjectCode}_${safeSubject}_Books_Resources_${pyq.id.substring(0, 5)}.pdf`;
+        } else if (pyq.documentType === "Internship Information") {
+          filename = `${pyq.department.substring(0, 15).replace(/[^a-zA-Z0-9]/g, "_")}_Internship_${pyq.id.substring(0, 5)}.pdf`;
         } else {
           filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || "Exam"}_${pyq.examYear || "0000"}_${pyq.id.substring(0, 5)}.pdf`;
         }
@@ -222,6 +231,8 @@ export default function StudentView() {
               filename = `${pyq.subjectCode}_${safeSubject}_Lab_Manual_${pyq.id.substring(0, 5)}.pdf`;
             } else if (pyq.documentType === "Books & Resources") {
               filename = `${pyq.subjectCode}_${safeSubject}_Books_Resources_${pyq.id.substring(0, 5)}.pdf`;
+            } else if (pyq.documentType === "Internship Information") {
+              filename = `${pyq.department.substring(0, 15).replace(/[^a-zA-Z0-9]/g, "_")}_Internship_${pyq.id.substring(0, 5)}.pdf`;
             } else {
               filename = `${pyq.subjectCode}_${safeSubject}_${pyq.examType || "Exam"}_${pyq.examYear || "0000"}_${pyq.id.substring(0, 5)}.pdf`;
             }
@@ -332,7 +343,7 @@ export default function StudentView() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-4xl mb-4 gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-5xl mb-4 gap-1">
         <button
           onClick={() => setActiveTab("PYQ")}
           className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "PYQ" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
@@ -363,6 +374,12 @@ export default function StudentView() {
         >
           Books & Resources
         </button>
+        <button
+          onClick={() => setActiveTab("Internship Information")}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all border-none ${activeTab === "Internship Information" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Internships
+        </button>
       </div>
 
       {/* Advanced Filter Form */}
@@ -373,7 +390,7 @@ export default function StudentView() {
         </h2>
 
         <div className="flex flex-col gap-3">
-          {activeTab !== "Syllabus" && (
+          {activeTab !== "Syllabus" && activeTab !== "Internship Information" && (
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <Input
@@ -386,26 +403,28 @@ export default function StudentView() {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-3 gap-y-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Course / Program
-              </label>
-              <Select
-                value={course}
-                onChange={(e) => {
-                  setCourse(e.target.value);
-                  setDepartment("");
-                }}
-                className="w-full text-xs py-1.5 h-8"
-              >
-                <option value="">All Courses</option>
-                {availableCourses.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </Select>
-            </div>
+            {activeTab !== "Internship Information" && (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Course / Program
+                </label>
+                <Select
+                  value={course}
+                  onChange={(e) => {
+                    setCourse(e.target.value);
+                    setDepartment("");
+                  }}
+                  className="w-full text-xs py-1.5 h-8"
+                >
+                  <option value="">All Courses</option>
+                  {availableCourses.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">
                 Department
@@ -414,36 +433,38 @@ export default function StudentView() {
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
                 className="w-full text-xs py-1.5 h-8"
-                disabled={!course}
+                disabled={activeTab !== "Internship Information" && !course}
               >
                 <option value="">
-                  {course ? "All Depts" : "Select Course"}
+                  {course || activeTab === "Internship Information" ? "All Depts" : "Select Course"}
                 </option>
-                {availableDepartments.map((d) => (
+                {(activeTab === "Internship Information" ? allDepartments : availableDepartments).map((d) => (
                   <option key={d} value={d}>
                     {d}
                   </option>
                 ))}
               </Select>
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Year
-              </label>
-              <Select
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className="w-full text-xs py-1.5 h-8"
-              >
-                <option value="">All Years</option>
-                {YEARS.map((y) => (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            {activeTab !== "Syllabus" && (
+            {activeTab !== "Internship Information" && (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Year
+                </label>
+                <Select
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  className="w-full text-xs py-1.5 h-8"
+                >
+                  <option value="">All Years</option>
+                  {YEARS.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            )}
+            {activeTab !== "Syllabus" && activeTab !== "Internship Information" && (
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Semester
@@ -462,7 +483,7 @@ export default function StudentView() {
                 </Select>
               </div>
             )}
-            {activeTab !== "Syllabus" && (
+            {activeTab !== "Syllabus" && activeTab !== "Internship Information" && (
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Subject Name
@@ -561,7 +582,9 @@ export default function StudentView() {
                 <tr>
                   <th className="px-3 py-2 text-center">S.No.</th>
                   <th className="px-3 py-2">Title / Code</th>
-                  <th className="px-3 py-2">Program / Sem</th>
+                  <th className="px-3 py-2">
+                    {activeTab === "Internship Information" ? "" : "Program / Sem"}
+                  </th>
                   <th className="px-3 py-2">Department</th>
                   <th className="px-3 py-2">
                     {activeTab === "PYQ" ? "Exam Type" : "Type"}
@@ -586,7 +609,9 @@ export default function StudentView() {
                       >
                         {pyq.subjectCode === "ALL_SUBJECTS"
                           ? "All Subjects"
-                          : pyq.subjectCode}
+                          : pyq.subjectCode === "INTERNSHIP"
+                            ? "Internship Info"
+                            : pyq.subjectCode}
                       </div>
                       <div
                         className="text-gray-600 font-medium text-xs mt-0.5 truncate"
@@ -625,6 +650,10 @@ export default function StudentView() {
                         ) : pyq.documentType === "Books & Resources" ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-fuchsia-100 text-fuchsia-800">
                             Books & Resources
+                          </span>
+                        ) : pyq.documentType === "Internship Information" ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            Internship
                           </span>
                         ) : pyq.examType ? (
                           pyq.examType

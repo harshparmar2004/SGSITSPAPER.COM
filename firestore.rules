@@ -43,14 +43,15 @@ service cloud.firestore {
     function isValidPYQ(data) {
       let documentType = data.get('documentType', 'PYQ');
       let isPYQ = documentType == "PYQ";
-      let isValidDocType = documentType == "PYQ" || documentType == "Notes" || documentType == "Syllabus" || documentType == "Lab Manual" || documentType == "Books & Resources";
+      let isInternshipInfo = documentType == "Internship Information";
+      let isValidDocType = documentType == "PYQ" || documentType == "Notes" || documentType == "Syllabus" || documentType == "Lab Manual" || documentType == "Books & Resources" || documentType == "Internship Information";
       
       let baseValid = data.keys().hasAll([
         "department", "course", "year", "semester", "subjectCode",
         "subjectName", "fileUrl", "fileName", "fileSize", "uploadedAt", "uploadedBy"
       ]) &&
       data.department is string && data.department.size() > 0 && data.department.size() <= 100 &&
-      data.course is string && data.course.size() > 0 && data.course.size() <= 100 &&
+      data.course is string && (isInternshipInfo ? true : data.course.size() > 0) && data.course.size() <= 100 &&
       data.year is string && data.year.size() <= 50 &&
       data.semester is string && data.semester.size() <= 50 &&
       data.subjectCode is string && data.subjectCode.size() > 0 && data.subjectCode.size() <= 50 &&

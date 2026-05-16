@@ -43,7 +43,8 @@ export const DOCUMENT_TYPES = [
   "Notes",
   "Syllabus",
   "Lab Manual",
-  "Books & Resources"
+  "Books & Resources",
+  "Internship Information"
 ];
 
 export const DEFAULT_DEPARTMENTS = [

@@ -129,6 +129,16 @@ export default function AdminUpload() {
       )
     : [];
 
+  const allAvailableDepartments = Array.from(new Set(programs.flatMap(p => 
+    p.departments.filter((d) =>
+      adminRole === "superadmin" ||
+      assignedDepartments.includes(d) ||
+      assignedDepartments.includes(`${p.course}::${d}`)
+    )
+  )));
+
+  const isInternship = formData.documentType === "Internship Information";
+
   const handleCourseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCourse = e.target.value;
     setFormData((prev) => ({
@@ -251,6 +261,11 @@ export default function AdminUpload() {
               /[^a-zA-Z0-9.\-_]/g,
               "_",
             );
+        } else if (formData.documentType === "Internship Information") {
+          fileName = `${formData.department.substring(0, 15).toUpperCase()}_Internship_${Date.now()}.pdf`.replace(
+            /[^a-zA-Z0-9.\-_]/g,
+            "_",
+          );
         } else {
           fileName = `${formData.subjectCode}_Notes_${Date.now()}.pdf`.replace(
             /[^a-zA-Z0-9.\-_]/g,
@@ -286,15 +301,17 @@ export default function AdminUpload() {
       const payload: any = {
         documentType: formData.documentType,
         department: formData.department,
-        course: formData.course,
-        year: formData.year,
-        semester: formData.semester,
+        course: formData.documentType === "Internship Information" ? "" : formData.course,
+        year: formData.documentType === "Internship Information" ? "" : formData.year,
+        semester: formData.documentType === "Internship Information" ? "" : formData.semester,
         subjectCode:
           formData.subjectCode ||
-          (formData.documentType === "Syllabus" ? "ALL_SUBJECTS" : ""),
+          (formData.documentType === "Syllabus" ? "ALL_SUBJECTS" : "") ||
+          (formData.documentType === "Internship Information" ? "INTERNSHIP" : ""),
         subjectName:
           formData.subjectName ||
-          (formData.documentType === "Syllabus" ? "Full Syllabus" : ""),
+          (formData.documentType === "Syllabus" ? "Full Syllabus" : "") ||
+          (formData.documentType === "Internship Information" ? "Internship Information" : ""),
         section: formData.section || "",
         status: formData.status,
         description: formData.description,
@@ -408,7 +425,7 @@ export default function AdminUpload() {
               <label className="text-xs font-medium text-gray-900 block">
                 Document Type *
               </label>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {DOCUMENT_TYPES.map((type) => (
                   <label key={type} className="flex items-center gap-2">
                     <input
@@ -434,7 +451,7 @@ export default function AdminUpload() {
                 ))}
               </div>
             </div>
-            {formData.documentType !== "Syllabus" && (
+            {formData.documentType !== "Syllabus" && !isInternship && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-xs font-medium text-gray-900">
@@ -455,7 +472,8 @@ export default function AdminUpload() {
                       required={
                         !isCustomSubject &&
                         formData.subjectCode === "" &&
-                        formData.documentType !== "Syllabus"
+                        formData.documentType !== "Syllabus" &&
+                        !isInternship
                       }
                     >
                       <option value="">
@@ -498,7 +516,7 @@ export default function AdminUpload() {
                             availableSubjects.length > 0 &&
                             formData.subjectCode !== ""
                           }
-                          required={formData.documentType !== "Syllabus"}
+                          required={formData.documentType !== "Syllabus" && !isInternship}
                         />
                       </div>
                       <div className="flex-[2] space-y-2">
@@ -515,7 +533,7 @@ export default function AdminUpload() {
                             availableSubjects.length > 0 &&
                             formData.subjectCode !== ""
                           }
-                          required={formData.documentType !== "Syllabus"}
+                          required={formData.documentType !== "Syllabus" && !isInternship}
                         />
                       </div>
                     </div>
@@ -525,24 +543,26 @@ export default function AdminUpload() {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-900">
-                  Course *
-                </label>
-                <Select
-                  name="course"
-                  value={formData.course}
-                  onChange={handleCourseChange}
-                  required
-                >
-                  <option value="">Select Course/Program</option>
-                  {availableCourses.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </Select>
-              </div>
+              {!isInternship && (
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-900">
+                    Course *
+                  </label>
+                  <Select
+                    name="course"
+                    value={formData.course}
+                    onChange={handleCourseChange}
+                    required={!isInternship}
+                  >
+                    <option value="">Select Course/Program</option>
+                    {availableCourses.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-xs font-medium text-gray-900">
                   Department *
@@ -552,14 +572,14 @@ export default function AdminUpload() {
                   value={formData.department}
                   onChange={handleChange}
                   required
-                  disabled={!formData.course}
+                  disabled={!formData.course && !isInternship}
                 >
                   <option value="">
-                    {formData.course
+                    {formData.course || isInternship
                       ? "Select Department"
                       : "Select Course First"}
                   </option>
-                  {availableDepartments.map((d) => (
+                  {(isInternship ? allAvailableDepartments : availableDepartments).map((d) => (
                     <option key={d} value={d}>
                       {d}
                     </option>
@@ -567,24 +587,26 @@ export default function AdminUpload() {
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-gray-900">
-                  Year *
-                </label>
-                <Select
-                  name="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  required
-                >
-                  {YEARS.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              {formData.documentType !== "Syllabus" && (
+              {!isInternship && (
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-900">
+                    Year *
+                  </label>
+                  <Select
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    required={!isInternship}
+                  >
+                    {YEARS.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+              )}
+              {formData.documentType !== "Syllabus" && !isInternship && (
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-900">
                     Semester *
@@ -593,7 +615,7 @@ export default function AdminUpload() {
                     name="semester"
                     value={formData.semester}
                     onChange={handleChange}
-                    required
+                    required={!isInternship}
                   >
                     {SEMESTERS.map((s) => (
                       <option key={s} value={s}>
@@ -639,19 +661,21 @@ export default function AdminUpload() {
                 </>
               )}
 
-              <div
-                className={`space-y-2 ${formData.documentType !== "PYQ" ? "md:col-span-2" : ""}`}
-              >
-                <label className="text-xs font-medium text-gray-900">
-                  Section (Optional)
-                </label>
-                <Input
-                  placeholder="e.g. A"
-                  name="section"
-                  value={formData.section}
-                  onChange={handleChange}
-                />
-              </div>
+              {!isInternship && (
+                <div
+                  className={`space-y-2 ${formData.documentType !== "PYQ" ? "md:col-span-2" : ""}`}
+                >
+                  <label className="text-xs font-medium text-gray-900">
+                    Section (Optional)
+                  </label>
+                  <Input
+                    placeholder="e.g. A"
+                    name="section"
+                    value={formData.section}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
 
               <div className="space-y-2">
                 <label className="text-xs font-medium text-gray-900">
@@ -817,32 +841,34 @@ export default function AdminUpload() {
           </form>
         </div>
 
-        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 mt-4 shadow-sm">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-indigo-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-xs font-medium text-indigo-800">
-                Time-saving tip
-              </h3>
-              <p className="mt-1 text-xs text-indigo-700">
-                Selecting a predefined subject will automatically fill in the
-                Course, Department, Year, and Semester fields for you.
-              </p>
+        {!isInternship && (
+          <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-3 mt-4 shadow-sm">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-indigo-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-xs font-medium text-indigo-800">
+                  Time-saving tip
+                </h3>
+                <p className="mt-1 text-xs text-indigo-700">
+                  Selecting a predefined subject will automatically fill in the
+                  Course, Department, Year, and Semester fields for you.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
