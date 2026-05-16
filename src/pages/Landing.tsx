@@ -361,14 +361,14 @@ export default function Landing() {
 
               {/* Logo & Header */}
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white backdrop-blur-md mb-6 border border-amber-700/10 rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                  <UserCog className="text-amber-700 w-8 h-8 drop-shadow-[0_0_12px_rgba(125,211,252,0.6)]" />
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white backdrop-blur-md mb-6 border border-amber-700/10 shadow-[0_0_20px_rgba(217,119,6,0.08)] rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                  <UserCog className="text-amber-600 w-8 h-8 drop-shadow-[0_0_12px_rgba(217,119,6,0.4)]" />
                 </div>
-                <h2 className="text-xl font-bold text-stone-900 tracking-tight">
-                  Secure Login
+                <h2 className="text-3xl font-black text-stone-900 tracking-tight mb-2">
+                  Student Login
                 </h2>
-                <p className="text-[8px] sm:text-[10px] text-stone-9000 uppercase tracking-[0.15em] mt-3 leading-relaxed">
-                  Access portal with your Gmail ID
+                <p className="text-[13px] md:text-sm font-bold text-stone-500 leading-relaxed tracking-wide">
+                  Access the portal with your <span className="text-amber-700 underline decoration-amber-700/30 underline-offset-4">Gmail ID</span>
                 </p>
               </div>
 
@@ -408,12 +408,12 @@ export default function Landing() {
               </div>
 
               {/* Security Alert */}
-              <div className="mt-8 pt-6 sm:pt-8 border-t border-stone-200 text-center">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 text-stone-9000 mb-2">
-                  <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                  <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-snug text-center">
+              <div className="mt-8 pt-6 sm:pt-8 border-t border-stone-200/60 text-center">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-stone-500 mb-2">
+                  <ShieldAlert className="w-4 h-4 shrink-0 text-amber-600" />
+                  <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] leading-snug text-center">
                     Authorized Access Only{" "}
-                    <span className="hidden sm:inline">•</span>
+                    <span className="hidden sm:inline mx-1 text-stone-300">•</span>
                     <br className="sm:hidden" /> AES-256 Encrypted
                   </p>
                 </div>
