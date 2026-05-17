@@ -44,8 +44,11 @@ export default function AdminAnalytics() {
   const [downloadTrends, setDownloadTrends] = useState<any[]>([]);
   const [deptData, setDeptData] = useState<any[]>([]);
   const [examTypeData, setExamTypeData] = useState<any[]>([]);
+  const [uploadTypeData, setUploadTypeData] = useState<any[]>([]);
   const [topPapers, setTopPapers] = useState<any[]>([]);
   const [totalDownloads, setTotalDownloads] = useState(0);
+  const [totalUploads, setTotalUploads] = useState(0);
+  const [totalStorage, setTotalStorage] = useState(0);
 
   useEffect(() => {
     fetchAnalytics();
@@ -63,7 +66,15 @@ export default function AdminAnalytics() {
           (d) =>
             assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
         );
+        pyqDocs = pyqDocs.filter(
+          (d) =>
+            assignedDepartments.some((ad) => ad === d.department || ad.endsWith(`::${d.department}`)),
+        );
       }
+      
+      setTotalUploads(pyqDocs.length);
+      const totalSize = pyqDocs.reduce((acc, curr) => acc + (curr.fileSize || 0), 0);
+      setTotalStorage(totalSize);
 
       setTotalDownloads(docs.length);
 
@@ -74,7 +85,16 @@ export default function AdminAnalytics() {
 
       const distributionRaw: Record<string, number> = {};
       const typeRaw: Record<string, number> = {};
+      const typeUploadsRaw: Record<string, number> = {};
       const papersRaw: Record<string, any> = {};
+      
+      pyqDocs.forEach((doc: any) => {
+        let typeKey = doc.documentType || doc.examType || "Previous Year Question (PYQ)";
+        if(typeKey === "PYQ" || typeKey === "Mid Sem" || typeKey === "End Sem" || typeKey === "Class Test") typeKey = "Previous Year Question (PYQ)";
+        if(typeKey === "Notes") typeKey = "Handwritten Notes";
+        if(typeKey === "Syllabus") typeKey = "Course Syllabus";
+        typeUploadsRaw[typeKey] = (typeUploadsRaw[typeKey] || 0) + 1;
+      });
 
       docs.forEach((doc: any) => {
         if (doc.downloadedAt) {
@@ -95,16 +115,25 @@ export default function AdminAnalytics() {
           }
         }
 
-        const typeKey = doc.documentType || doc.examType || "Unknown";
+        let typeKey = doc.documentType || doc.examType || "Previous Year Question (PYQ)";
+        if(typeKey === "PYQ" || typeKey === "Mid Sem" || typeKey === "End Sem" || typeKey === "Class Test") typeKey = "Previous Year Question (PYQ)";
+        if(typeKey === "Notes") typeKey = "Handwritten Notes";
+        if(typeKey === "Syllabus") typeKey = "Course Syllabus";
+        
         typeRaw[typeKey] = (typeRaw[typeKey] || 0) + 1;
 
         if (doc.pyqId) {
           if (!papersRaw[doc.pyqId]) {
+            let pType = doc.documentType || doc.examType || "Previous Year Question (PYQ)";
+            if(pType === "PYQ" || pType === "Mid Sem" || pType === "End Sem" || pType === "Class Test") pType = "Previous Year Question (PYQ)";
+            if(pType === "Notes") pType = "Handwritten Notes";
+            if(pType === "Syllabus") pType = "Course Syllabus";
+
             papersRaw[doc.pyqId] = {
               name: doc.subjectName || "Unknown",
               code: doc.subjectCode || "UNK",
               dept: doc.department || "-",
-              type: doc.documentType || doc.examType || "-",
+              type: pType,
               downloads: 0,
             };
           }
@@ -128,6 +157,11 @@ export default function AdminAnalytics() {
           .map(([name, value]) => ({ name, value }))
           .sort((a, b) => b.value - a.value),
       );
+      setUploadTypeData(
+        Object.entries(typeUploadsRaw)
+          .map(([name, value]) => ({ name, value }))
+          .sort((a, b) => b.value - a.value),
+      );
 
       const sortedPapers = Object.values(papersRaw)
         .sort((a: any, b: any) => b.downloads - a.downloads)
@@ -140,7 +174,10 @@ export default function AdminAnalytics() {
       setDownloadTrends([]);
       setDeptData([]);
       setExamTypeData([]);
+      setUploadTypeData([]);
       setTopPapers([]);
+      setTotalUploads(0);
+      setTotalStorage(0);
     }
     setLoading(false);
   };
@@ -157,7 +194,7 @@ export default function AdminAnalytics() {
       <div>
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-bold tracking-tight text-gray-900">
-            Download Analytics
+            Platform & Engagement Analytics
           </h1>
         </div>
         <p className="mt-2 text-[11px] text-gray-500">
@@ -166,8 +203,8 @@ export default function AdminAnalytics() {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 w-full md:w-64 flex flex-col justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between text-indigo-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Total Downloads
@@ -178,15 +215,37 @@ export default function AdminAnalytics() {
             {totalDownloads}
           </span>
         </div>
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 w-full md:w-64 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between text-green-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Total Uploads
+            </span>
+            <FolderOpen className="w-5 h-5" />
+          </div>
+          <span className="text-3xl font-black text-gray-900 mt-2">
+            {totalUploads}
+          </span>
+        </div>
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-amber-600">
+            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Storage Used
+            </span>
+            <Activity className="w-5 h-5" />
+          </div>
+          <span className="text-3xl font-black text-gray-900 mt-2">
+            {(totalStorage / (1024 * 1024)).toFixed(2)} MB
+          </span>
+        </div>
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 flex flex-col justify-between">
+          <div className="flex items-center justify-between text-rose-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Peak Download Day
             </span>
             <TrendingUp className="w-5 h-5" />
           </div>
           <span className="text-3xl font-black text-gray-900 mt-2">
-            {downloadTrends.length > 0
+            {downloadTrends.length > 0 && Math.max(...downloadTrends.map(t => t.downloads)) > 0
               ? downloadTrends.reduce((max, obj) =>
                   obj.downloads > max.downloads ? obj : max,
                 ).date
@@ -259,58 +318,59 @@ export default function AdminAnalytics() {
           </div>
         </div>
 
-        {/* Exam Type Bar Chart */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
-          <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
-            <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
-                <FileText className="w-4 h-4 text-indigo-700" />
+        {/* Exam Type Bar Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden flex flex-col">
+            <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+                  <FileText className="w-4 h-4 text-indigo-700" />
+                </div>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                  Engagement by Document Type
+                </h2>
               </div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
-                Downloads by Exam Type
-              </h2>
+            </div>
+            <div className="h-64 w-full p-4 shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={examTypeData}
+                  margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} allowDecimals={false} />
+                  <Tooltip cursor={{ fill: "#f3f4f6" }} contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }} />
+                  <Bar dataKey="value" name="Downloads" fill="#8b5cf6" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
-          <div className="h-64 w-full p-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={examTypeData}
-                margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e5e7eb"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
-                  allowDecimals={false}
-                />
-                <Tooltip
-                  cursor={{ fill: "#f3f4f6" }}
-                  contentStyle={{
-                    borderRadius: "8px",
-                    border: "none",
-                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                  }}
-                />
-                <Bar
-                  dataKey="value"
-                  fill="#8b5cf6"
-                  radius={[4, 4, 0, 0]}
-                  maxBarSize={50}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden flex flex-col">
+            <div className="bg-green-50 px-4 py-3 flex items-center justify-between border-b border-green-100 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-md bg-white shadow-sm border border-green-100">
+                  <FolderOpen className="w-4 h-4 text-green-700" />
+                </div>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-green-900">
+                  Uploads by Document Type
+                </h2>
+              </div>
+            </div>
+            <div className="h-64 w-full p-4 shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={uploadTypeData}
+                  margin={{ top: 5, right: 0, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} allowDecimals={false} />
+                  <Tooltip cursor={{ fill: "#f3f4f6" }} contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }} />
+                  <Bar dataKey="value" name="Uploads" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
