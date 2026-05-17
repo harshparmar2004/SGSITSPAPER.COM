@@ -28,6 +28,7 @@ import {
   BookOpen,
   Layers,
   Download,
+  LineChart,
 } from "lucide-react";
 import { Link } from "react-router";
 import {
@@ -351,7 +352,7 @@ export default function AdminDashboard() {
 
       {/* Top Stats Row */}
       <div
-        className={`grid grid-cols-1 md:grid-cols-3 ${adminRole === "superadmin" ? "lg:grid-cols-4" : ""} gap-4`}
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`}
       >
         <Link to="/admin/subject-pyqs" className="block outline-none group">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
@@ -480,6 +481,24 @@ export default function AdminDashboard() {
                   <span className="text-xs text-amber-600 font-medium group-hover:underline">
                     View All →
                   </span>
+                </div>
+              </div>
+            </Link>
+            <Link to="/admin/analytics" className="block outline-none group">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
+                <div className="bg-indigo-500 px-3 py-2.5 flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-white">
+                    Analytics
+                  </span>
+                  <LineChart className="w-4 h-4 text-white opacity-90" />
+                </div>
+                <div className="p-4 flex items-baseline justify-between w-full h-full flex-col justify-end">
+                  <span className="text-sm font-medium text-gray-500 mb-2">View downloads & engagement</span>
+                  <div className="w-full text-right">
+                    <span className="text-xs text-indigo-600 font-medium group-hover:underline">
+                      Go to Analytics →
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
