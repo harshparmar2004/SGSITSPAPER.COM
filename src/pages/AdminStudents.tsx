@@ -100,7 +100,7 @@ export default function AdminStudents() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
         <div className="p-3 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row gap-3 items-center justify-between">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -158,7 +158,7 @@ export default function AdminStudents() {
                           <img
                             src={u.photoURL}
                             alt={u.displayName || "Avatar"}
-                            className="w-8 h-8 rounded-full border border-gray-200 shadow-sm object-cover"
+                            className="w-8 h-8 rounded-full border border-gray-300 shadow-md object-cover"
                           />
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">

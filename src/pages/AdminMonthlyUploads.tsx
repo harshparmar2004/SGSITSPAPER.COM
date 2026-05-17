@@ -156,7 +156,7 @@ export default function AdminMonthlyUploads() {
       </div>
 
       {uploads.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-8 text-center">
           <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
             <CalendarDays className="w-8 h-8 text-gray-400" />
           </div>
@@ -168,7 +168,7 @@ export default function AdminMonthlyUploads() {
       ) : (
         <>
           {/* Graphical Analysis Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
             <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -240,7 +240,7 @@ export default function AdminMonthlyUploads() {
           </div>
 
           {/* Detailed Data Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
             <div className="bg-indigo-50 px-4 py-3 border-b border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">

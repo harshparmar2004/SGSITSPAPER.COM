@@ -291,7 +291,7 @@ export default function AdminReports() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
         <div className="bg-indigo-50 px-4 py-3 border-b border-indigo-100 flex justify-between items-center">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">

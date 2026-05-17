@@ -399,7 +399,7 @@ export default function AdminUpload() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-3">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
         <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100 mb-4 sm:mb-6">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">

@@ -392,7 +392,7 @@ export default function AdminAllPYQs() {
       {/* Replace PDF Modal */}
       {replacingPyq && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-200">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-300">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <h3 className="font-semibold text-gray-900">Replace Document</h3>
               <button
@@ -432,14 +432,14 @@ export default function AdminAllPYQs() {
                     <button
                       type="button"
                       onClick={() => setReplaceMethod("link")}
-                      className={`text-[11px] px-3 py-1.5 rounded-md transition-colors ${replaceMethod === "link" ? "bg-white shadow-sm text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-700"}`}
+                      className={`text-[11px] px-3 py-1.5 rounded-md transition-colors ${replaceMethod === "link" ? "bg-white shadow-md text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-700"}`}
                     >
                       External Link
                     </button>
                     <button
                       type="button"
                       onClick={() => setReplaceMethod("storage")}
-                      className={`text-[11px] px-3 py-1.5 rounded-md transition-colors ${replaceMethod === "storage" ? "bg-white shadow-sm text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-700"}`}
+                      className={`text-[11px] px-3 py-1.5 rounded-md transition-colors ${replaceMethod === "storage" ? "bg-white shadow-md text-gray-900 font-semibold" : "text-gray-500 hover:text-gray-700"}`}
                     >
                       Upload File
                     </button>
@@ -509,7 +509,7 @@ export default function AdminAllPYQs() {
       )}
 
       {/* Main UI */}
-      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-6 pb-5 rounded-xl shadow-sm border mb-4 ${selectedDept ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-gray-200'}`}>
+      <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-6 pb-5 rounded-xl shadow-md border mb-4 ${selectedDept ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-gray-200'}`}>
         <div>
           <div className="flex items-center gap-3">
             {!selectedDept ? (
@@ -558,7 +558,7 @@ export default function AdminAllPYQs() {
                 placeholder="Search by Subject Code or Name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-11 w-full bg-white border-indigo-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm font-medium text-sm text-indigo-900 placeholder:text-indigo-300"
+                className="pl-10 h-11 w-full bg-white border-indigo-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-md font-medium text-sm text-indigo-900 placeholder:text-indigo-300"
               />
             </div>
           )}
@@ -573,11 +573,11 @@ export default function AdminAllPYQs() {
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-24 bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="flex items-center justify-center py-24 bg-white rounded-xl shadow-md border border-gray-300">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
         </div>
       ) : !selectedDept ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {Object.keys(pyqsByDept)
               .sort()
@@ -585,9 +585,9 @@ export default function AdminAllPYQs() {
                 <div
                   key={dept}
                   onClick={() => setSelectedDept(dept)}
-                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-sm text-center group flex flex-col items-center"
+                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
                 >
-                  <div className="w-12 h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center mb-3 shadow-sm group-hover:scale-105 transition-transform">
+                  <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
                     <FolderOpen className="w-5 h-5 text-indigo-500" />
                   </div>
                   <h3
@@ -609,7 +609,7 @@ export default function AdminAllPYQs() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col animate-in fade-in duration-200">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden flex flex-col animate-in fade-in duration-200">
           <div className="border-b border-gray-200 bg-gray-50/50 px-2 pt-2 overflow-x-auto hide-scrollbar">
             <div className="flex gap-2">
               {DOC_TYPES.map((type) => (
@@ -730,7 +730,7 @@ export default function AdminAllPYQs() {
                           variant="outline"
                           size="sm"
                           onClick={() => setReplacingPyq(pyq)}
-                          className="h-8 px-3 text-xs shadow-sm flex items-center justify-center gap-1.5 border-gray-300 hover:bg-gray-50 hover:text-gray-900 font-semibold"
+                          className="h-8 px-3 text-xs shadow-md flex items-center justify-center gap-1.5 border-gray-300 hover:bg-gray-50 hover:text-gray-900 font-semibold"
                           title="Replace PDF"
                         >
                           <Edit className="w-3.5 h-3.5" />
@@ -742,7 +742,7 @@ export default function AdminAllPYQs() {
                           variant="primary"
                           size="sm"
                           onClick={() => handleDeleteClick(pyq)}
-                          className="h-8 w-8 p-0 shadow-sm bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border border-red-200 disabled:opacity-50 flex items-center justify-center rounded-md transition-colors"
+                          className="h-8 w-8 p-0 shadow-md bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 border border-red-200 disabled:opacity-50 flex items-center justify-center rounded-md transition-colors"
                           title="Delete PDF"
                         >
                           <Trash2 className="w-4 h-4" />

@@ -167,7 +167,7 @@ export default function AdminAnalytics() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 w-full md:w-64 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 w-full md:w-64 flex flex-col justify-between">
           <div className="flex items-center justify-between text-indigo-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Total Downloads
@@ -178,7 +178,7 @@ export default function AdminAnalytics() {
             {totalDownloads}
           </span>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 w-full md:w-64 flex flex-col justify-between">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 w-full md:w-64 flex flex-col justify-between">
           <div className="flex items-center justify-between text-green-600">
             <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
               Peak Download Day
@@ -198,7 +198,7 @@ export default function AdminAnalytics() {
       {/* Graphical Section */}
       <div className="flex flex-col gap-5">
         {/* Download Activity Area Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -260,7 +260,7 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Exam Type Bar Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -315,7 +315,7 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Distribution Pie Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -384,7 +384,7 @@ export default function AdminAnalytics() {
                 {deptData.map((d, i) => (
                   <div
                     key={d.name}
-                    className="flex text-sm text-gray-700 font-semibold justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200"
+                    className="flex text-sm text-gray-700 font-semibold justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-300"
                   >
                     <div className="flex items-center truncate min-w-0 pr-2">
                       <span
@@ -395,7 +395,7 @@ export default function AdminAnalytics() {
                         {d.name}
                       </span>
                     </div>
-                    <span className="text-base font-bold text-gray-900 bg-white px-2.5 py-1 rounded shadow border border-gray-200">
+                    <span className="text-base font-bold text-gray-900 bg-white px-2.5 py-1 rounded shadow border border-gray-300">
                       {d.value}
                     </span>
                   </div>
@@ -411,7 +411,7 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Extracted Leaderboard Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">

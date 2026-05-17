@@ -208,7 +208,7 @@ export default function AdminStaffInsights() {
           <div className="space-y-6 animate-in fade-in duration-200">
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <div className="bg-white p-5 rounded-xl border border-gray-300 shadow-md">
                 <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 block">
                   Total Uploads
                 </span>
@@ -216,7 +216,7 @@ export default function AdminStaffInsights() {
                   {selectedStaffInsight.totalUploads}
                 </span>
               </div>
-              <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <div className="bg-white p-5 rounded-xl border border-gray-300 shadow-md">
                 <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 block">
                   Courses Handled
                 </span>
@@ -224,7 +224,7 @@ export default function AdminStaffInsights() {
                   {selectedStaffInsight.coursesCount}
                 </span>
               </div>
-              <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <div className="bg-white p-5 rounded-xl border border-gray-300 shadow-md">
                 <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 block">
                   Top Doc Type
                 </span>
@@ -238,7 +238,7 @@ export default function AdminStaffInsights() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Document Types Breakdown */}
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col">
+              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-300 flex flex-col">
                 <h3 className="text-sm font-bold text-gray-800 mb-5 border-b border-gray-100 pb-2">
                   Document Types
                 </h3>
@@ -268,7 +268,7 @@ export default function AdminStaffInsights() {
               </div>
 
               {/* Activity Timeline */}
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+              <div className="bg-white p-5 rounded-xl shadow-md border border-gray-300 lg:col-span-2">
                 <h3 className="text-sm font-bold text-gray-800 mb-5 border-b border-gray-100 pb-2">
                   Recent Upload Timeline
                 </h3>
@@ -339,7 +339,7 @@ export default function AdminStaffInsights() {
             </div>
 
             {/* All History Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
               <div className="p-5 border-b border-gray-200 bg-gray-50">
                 <h3 className="text-sm font-bold text-gray-800">
                   All Upload History (From Day One)
@@ -379,7 +379,7 @@ export default function AdminStaffInsights() {
                           {file.fileName}
                         </td>
                         <td className="px-5 py-4 text-sm text-gray-600">
-                          <span className="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-200">
+                          <span className="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-xs font-medium border border-gray-300">
                             {file.documentType}
                           </span>
                         </td>
@@ -417,15 +417,15 @@ export default function AdminStaffInsights() {
             </h1>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {Object.values(staffInsights).map((staff: any) => (
                 <div
                   key={staff.email}
                   onClick={() => setSelectedStaffInsight(staff)}
-                  className="p-3 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-lg cursor-pointer transition-colors shadow-sm text-center flex flex-col"
+                  className="p-3 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-lg cursor-pointer transition-colors shadow-md text-center flex flex-col"
                 >
-                  <div className="w-8 h-8 mx-auto bg-white border border-gray-200 rounded-full flex items-center justify-center mb-2 shadow-sm">
+                  <div className="w-8 h-8 mx-auto bg-white border border-gray-300 rounded-full flex items-center justify-center mb-2 shadow-md">
                     <UserCircle className="w-4 h-4 text-indigo-500" />
                   </div>
                   <h3

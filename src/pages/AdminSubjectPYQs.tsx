@@ -7,9 +7,6 @@ import { Input, Button } from "../components/ui";
 import {
   Loader2,
   Search,
-  FileText,
-  ChevronDown,
-  ChevronRight,
   Download,
   BookOpen,
   Layers,
@@ -62,310 +59,124 @@ export default function AdminSubjectPYQs() {
       p.department.toLowerCase().includes(search.toLowerCase()),
   );
 
-  // Group by Department
-  const groupedByDepartment = filteredPyqs.reduce(
-    (acc, pyq) => {
-      const deptKey = `${pyq.course} - ${pyq.department}`;
-      if (!acc[deptKey]) acc[deptKey] = [];
-      acc[deptKey].push(pyq);
-      return acc;
-    },
-    {} as Record<string, PYQ[]>,
-  );
-
-  // Group by Semester within a Department
-  const organizeBySemester = (deptPyqs: PYQ[]) => {
-    return deptPyqs.reduce(
-      (acc, pyq) => {
-        if (!acc[pyq.semester]) acc[pyq.semester] = [];
-        acc[pyq.semester].push(pyq);
-        return acc;
-      },
-      {} as Record<string, PYQ[]>,
-    );
-  };
-
-  // Further Group by Subject within a Semester
-  const organizeBySubject = (semPyqs: PYQ[]) => {
-    return semPyqs.reduce(
-      (acc, pyq) => {
-        const displayCode =
-          pyq.subjectCode === "ALL_SUBJECTS" ? "All Subjects" : pyq.subjectCode;
-        const subKey = `${displayCode} - ${pyq.subjectName}`;
-        if (!acc[subKey]) acc[subKey] = [];
-        acc[subKey].push(pyq);
-        return acc;
-      },
-      {} as Record<string, PYQ[]>,
-    );
-  };
 
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-3 max-w-6xl mx-auto pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="space-y-4 max-w-7xl mx-auto pb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-6 pb-5 rounded-xl shadow-md border bg-white border-gray-200">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold tracking-tight text-gray-900">
-              Subject-wise View
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              Subject-wise View (All Documents)
             </h1>
           </div>
-          <p className="mt-2 text-[11px] text-gray-500">
-            View PYQs organized by semester and subject.
+          <p className="mt-2 text-sm font-medium text-gray-500 max-w-lg">
+            A flat view of all uploaded documents. Search to instantly find PDFs across all departments and subjects.
           </p>
         </div>
-        <div className="relative max-w-xs w-full">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        <div className="relative max-w-md w-full">
+          <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400" />
           <Input
-            placeholder="Search semester, code or title..."
+            placeholder="Search by code, subject, department..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 w-full bg-white"
+            className="pl-10 h-11 w-full bg-white border-indigo-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm font-medium text-sm text-indigo-900 placeholder:text-indigo-300"
           />
         </div>
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-20">
+        <div className="flex items-center justify-center py-20 bg-white rounded-xl shadow-md border border-gray-300">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
         </div>
-      ) : Object.keys(groupedByDepartment).length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center text-gray-500">
-          No matching PDFs found.
+      ) : filteredPyqs.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-12 text-center text-gray-500">
+          No matching PDFs found. Try adjusting your search query.
         </div>
       ) : (
-        <div className="space-y-3">
-          {Object.keys(groupedByDepartment)
-            .sort((a, b) => a.localeCompare(b))
-            .map((departmentKey) => {
-              const deptGroup = groupedByDepartment[departmentKey];
-              const semestersObj = organizeBySemester(deptGroup);
-              const isDeptExpanded =
-                expandedDepartment === departmentKey || (search && true);
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {filteredPyqs.map((pyq) => {
+             let type = pyq.documentType || "Previous Year Question (PYQ)";
+             if(type === "PYQ") type = "Previous Year Question (PYQ)";
+             if(type === "Notes") type = "Handwritten Notes";
+             if(type === "Syllabus") type = "Course Syllabus";
+             let badgeColor = "bg-gray-100 text-gray-800 border-gray-200";
+             if (type.includes("PYQ") || type.includes("Question")) badgeColor = "bg-indigo-100 text-indigo-800 border-indigo-200";
+             if (type.includes("Notes")) badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
+             if (type.includes("Syllabus")) badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
+             
+             return (
+              <div
+                key={pyq.id}
+                className="bg-white border border-gray-300 rounded-xl p-4 shadow-md hover:shadow-lg transition-all flex flex-col group h-full"
+              >
+                <div className="flex justify-between items-start mb-3 gap-2">
+                   <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold border ${badgeColor} uppercase tracking-wider`}>
+                     {type}
+                   </span>
+                   {pyq.status === "Verified" && (
+                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800 shrink-0">
+                        Verified
+                     </span>
+                   )}
+                   {pyq.status === "Unverified" && (
+                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 shrink-0">
+                        Unverified
+                     </span>
+                   )}
+                </div>
 
-              return (
-                <div
-                  key={departmentKey}
-                  className="bg-white border text-gray-900 border-gray-200 rounded-xl overflow-hidden shadow-sm"
-                >
-                  <button
-                    onClick={() =>
-                      setExpandedDepartment(
-                        isDeptExpanded ? null : departmentKey,
-                      )
-                    }
-                    className="w-full flex items-center justify-between p-3 bg-gray-100 hover:bg-gray-200 transition-colors border-b border-gray-200/50"
-                    style={{
-                      borderBottomWidth: isDeptExpanded ? "1px" : "0px",
-                    }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Layers className="w-6 h-6 text-indigo-700" />
-                      <span className="font-semibold text-gray-900 text-xl">
-                        {departmentKey}
-                      </span>
-                      <span className="ml-2 text-xs font-medium bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full">
-                        {deptGroup.length} PDFs
-                      </span>
-                    </div>
-                    {isDeptExpanded ? (
-                      <ChevronDown className="w-5 h-5 text-gray-600" />
-                    ) : (
-                      <ChevronRight className="w-5 h-5 text-gray-600" />
-                    )}
-                  </button>
-
-                  {isDeptExpanded && (
-                    <div className="bg-white flex flex-col gap-[2px] p-2">
-                      {Object.keys(semestersObj)
-                        .sort((a, b) => a.localeCompare(b))
-                        .map((semesterKey) => {
-                          const semGroup = semestersObj[semesterKey];
-                          const subjectsObj = organizeBySubject(semGroup);
-                          const isSemExpanded =
-                            expandedSemester === semesterKey ||
-                            (search && true);
-
-                          return (
-                            <div
-                              key={semesterKey}
-                              className="border border-gray-100 rounded-lg overflow-hidden mb-2 last:mb-0"
-                            >
-                              <button
-                                onClick={() =>
-                                  setExpandedSemester(
-                                    isSemExpanded ? null : semesterKey,
-                                  )
-                                }
-                                className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <BookOpen className="w-5 h-5 text-indigo-500" />
-                                  <span className="font-medium text-gray-800 text-lg">
-                                    {semesterKey}
-                                  </span>
-                                  <span className="ml-2 text-xs font-medium bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                                    {semGroup.length} PDFs
-                                  </span>
-                                </div>
-                                {isSemExpanded ? (
-                                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                                ) : (
-                                  <ChevronRight className="w-4 h-4 text-gray-500" />
-                                )}
-                              </button>
-
-                              {isSemExpanded && (
-                                <div className="bg-white p-2">
-                                  {Object.keys(subjectsObj)
-                                    .sort((a, b) => a.localeCompare(b))
-                                    .map((subjectKey) => {
-                                      const subjPyqs = subjectsObj[subjectKey];
-                                      const isSubjExpanded =
-                                        expandedSubject === subjectKey ||
-                                        (search && true);
-
-                                      return (
-                                        <div
-                                          key={subjectKey}
-                                          className="border border-gray-100 rounded-lg overflow-hidden mb-2 last:mb-0"
-                                        >
-                                          <button
-                                            onClick={() =>
-                                              setExpandedSubject(
-                                                isSubjExpanded
-                                                  ? null
-                                                  : subjectKey,
-                                              )
-                                            }
-                                            className="w-full flex items-center justify-between p-3 bg-white hover:bg-gray-50 transition-colors"
-                                          >
-                                            <div className="flex flex-col text-left">
-                                              <span className="font-medium text-gray-900 flex items-center gap-2">
-                                                <Layers className="w-4 h-4 text-indigo-400" />{" "}
-                                                {subjectKey}
-                                              </span>
-                                            </div>
-                                            <div className="flex items-center gap-3">
-                                              <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                                {subjPyqs.length} Files
-                                              </span>
-                                              {isSubjExpanded ? (
-                                                <ChevronDown className="w-4 h-4 text-gray-400" />
-                                              ) : (
-                                                <ChevronRight className="w-4 h-4 text-gray-400" />
-                                              )}
-                                            </div>
-                                          </button>
-
-                                          {isSubjExpanded && (
-                                            <div className="p-3 pt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 bg-gray-50/50">
-                                              {subjPyqs.map((pyq) => (
-                                                <div
-                                                  key={pyq.id}
-                                                  className="bg-white border border-gray-200 rounded-lg p-3 hover:border-indigo-300 hover:shadow-sm transition-all flex flex-col justify-between group"
-                                                >
-                                                  <div className="flex items-start gap-3 mb-3">
-                                                    <div className="p-2 bg-red-50 text-red-600 rounded-lg group-hover:bg-red-100 transition-colors">
-                                                      <FileText className="w-6 h-6" />
-                                                    </div>
-                                                    <div>
-                                                      <p className="font-medium text-xs text-gray-900 line-clamp-2 leading-snug">
-                                                        {pyq.documentType ===
-                                                        "Notes"
-                                                          ? "Class Notes"
-                                                          : pyq.documentType ===
-                                                              "Syllabus"
-                                                            ? "Syllabus PDF"
-                                                            : pyq.documentType ===
-                                                                "Lab Manual"
-                                                              ? "Lab Manual"
-                                                              : pyq.documentType ===
-                                                                  "Books & Resources"
-                                                                ? "Books & Resources"
-                                                                : pyq.documentType === "Internship Information"
-                                                                ? "Internship"
-                                                                : `${pyq.examYear} ${pyq.examType}`}
-                                                      </p>
-                                                      <p className="text-[11px] text-gray-500 mt-1">
-                                                        {(
-                                                          pyq.fileSize / 1024
-                                                        ).toFixed(1)}{" "}
-                                                        KB •{" "}
-                                                        {typeof pyq.uploadedAt ===
-                                                        "string"
-                                                          ? new Date(
-                                                              pyq.uploadedAt,
-                                                            ).toLocaleDateString()
-                                                          : new Date(
-                                                              pyq.uploadedAt
-                                                                ?.seconds *
-                                                                1000,
-                                                            ).toLocaleDateString()}
-                                                      </p>
-                                                      {(pyq.status ||
-                                                        pyq.description) && (
-                                                        <div className="mt-2 flex flex-col items-start gap-1">
-                                                          {pyq.status ===
-                                                          "Verified" ? (
-                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
-                                                              Verified
-                                                            </span>
-                                                          ) : pyq.status ===
-                                                            "Unverified" ? (
-                                                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800">
-                                                              Unverified
-                                                            </span>
-                                                          ) : null}
-                                                          {pyq.description && (
-                                                            <span
-                                                              className="text-[10px] text-gray-500 line-clamp-1"
-                                                              title={
-                                                                pyq.description
-                                                              }
-                                                            >
-                                                              {pyq.description}
-                                                            </span>
-                                                          )}
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                  <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                                                    <span
-                                                      className="text-[10px] text-gray-400 max-w-[120px] truncate"
-                                                      title={pyq.fileName}
-                                                    >
-                                                      {pyq.fileName}
-                                                    </span>
-                                                    <a
-                                                      href={pyq.fileUrl || "#"}
-                                                      target="_blank"
-                                                      rel="noopener noreferrer"
-                                                      className="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded"
-                                                    >
-                                                      View{" "}
-                                                      <Download className="w-3 h-3" />
-                                                    </a>
-                                                  </div>
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                    </div>
+                <div className="mb-3">
+                  <h3 className="font-bold text-gray-900 text-sm line-clamp-2 leading-snug" title={pyq.fileName}>
+                    {pyq.examYear ? `${pyq.examYear} ${pyq.examType || ""}` : pyq.fileName}
+                  </h3>
+                  {pyq.description && (
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-2" title={pyq.description}>
+                      {pyq.description}
+                    </p>
                   )}
                 </div>
-              );
-            })}
+
+                <div className="bg-gray-50 rounded-lg p-2.5 mb-3 space-y-1.5 border border-gray-100">
+                  <div className="flex items-start gap-2">
+                    <BookOpen className="w-3.5 h-3.5 text-gray-400 mt-0.5 shrink-0" />
+                    <span className="text-xs font-semibold text-gray-700 line-clamp-2">
+                      {pyq.subjectCode === "ALL_SUBJECTS" ? "All Subjects" : pyq.subjectCode} - {pyq.subjectName}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Layers className="w-3.5 h-3.5 text-gray-400 mt-0.5 shrink-0" />
+                    <span className="text-[11px] font-medium text-gray-600 truncate">
+                      {pyq.course} • {pyq.department}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-1 border-t border-gray-200 mt-1.5">
+                    <span className="text-[10px] font-bold bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-600">
+                      {pyq.semester}
+                    </span>
+                    <span className="text-[10px] font-bold bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-600">
+                      {pyq.year}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
+                  <div>
+                    <span className="block text-[11px] font-medium text-gray-500">
+                      {(pyq.fileSize / 1024).toFixed(1)} KB
+                    </span>
+                    <span className="block text-[10px] text-gray-400">
+                      {typeof pyq.uploadedAt === "string" ? new Date(pyq.uploadedAt).toLocaleDateString() : new Date(pyq.uploadedAt?.seconds * 1000).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <a href={pyq.fileUrl || "#"} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5">
+                    View <Download className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+             );
+          })}
         </div>
       )}
     </div>

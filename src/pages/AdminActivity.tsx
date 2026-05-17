@@ -294,7 +294,7 @@ export default function AdminActivity() {
       </div>
 
       {activeTab === "your" && adminRole === "superadmin" && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden mb-4">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -397,7 +397,7 @@ export default function AdminActivity() {
       )}
 
       {activeTab === "superadmin" && adminRole === "superadmin" && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden mb-4">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -527,7 +527,7 @@ export default function AdminActivity() {
       )}
 
       {activeTab === "staff" && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden mb-4">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -655,7 +655,7 @@ export default function AdminActivity() {
       )}
 
       {activeTab === "student" && adminRole === "superadmin" && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">

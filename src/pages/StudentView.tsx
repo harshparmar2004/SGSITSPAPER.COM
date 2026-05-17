@@ -348,44 +348,44 @@ export default function StudentView() {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row flex-wrap bg-gray-100 p-1 rounded-lg w-full max-w-5xl mb-4 gap-1">
         <button
           onClick={() => setActiveTab("PYQ")}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "PYQ" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "PYQ" ? "bg-white text-indigo-700 shadow-md" : "text-gray-500 hover:text-gray-700"}`}
         >
           Previous Year Questions
         </button>
         <button
           onClick={() => setActiveTab("Notes")}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "Notes" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "Notes" ? "bg-white text-indigo-700 shadow-md" : "text-gray-500 hover:text-gray-700"}`}
         >
           Handwritten Notes
         </button>
         <button
           onClick={() => setActiveTab("Syllabus")}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "Syllabus" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "Syllabus" ? "bg-white text-indigo-700 shadow-md" : "text-gray-500 hover:text-gray-700"}`}
         >
           Course Syllabus
         </button>
         <button
           onClick={() => setActiveTab("Lab Manual")}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "Lab Manual" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all ${activeTab === "Lab Manual" ? "bg-white text-indigo-700 shadow-md" : "text-gray-500 hover:text-gray-700"}`}
         >
           Lab Manuals
         </button>
         <button
           onClick={() => setActiveTab("Books & Resources")}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all border-none ${activeTab === "Books & Resources" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all border-none ${activeTab === "Books & Resources" ? "bg-white text-indigo-700 shadow-md" : "text-gray-500 hover:text-gray-700"}`}
         >
           Books & Resources
         </button>
         <button
           onClick={() => setActiveTab("Internship Information")}
-          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all border-none ${activeTab === "Internship Information" ? "bg-white text-indigo-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 flex items-center justify-center px-2 py-2 md:py-2.5 text-xs md:text-xs font-medium rounded-md transition-all border-none ${activeTab === "Internship Information" ? "bg-white text-indigo-700 shadow-md" : "text-gray-500 hover:text-gray-700"}`}
         >
           Internships
         </button>
       </div>
 
       {/* Advanced Filter Form */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+      <div className="bg-white p-4 rounded-xl shadow-md border border-gray-300">
         <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
           <Search className="w-4 h-4 text-indigo-500" />
           Search Criteria
@@ -399,7 +399,7 @@ export default function StudentView() {
                 placeholder="Search by Subject Code (e.g. CS101) - Highest Priority"
                 value={subjectCode}
                 onChange={(e) => setSubjectCode(e.target.value)}
-                className="pl-9 w-full text-sm h-10 border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm"
+                className="pl-9 w-full text-sm h-10 border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-md"
               />
             </div>
           )}
@@ -553,7 +553,7 @@ export default function StudentView() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center p-12">
             <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
@@ -695,7 +695,7 @@ export default function StudentView() {
                             setReportSuccess(false);
                             setReportIssue("");
                           }}
-                          className="flex space-x-1.5 shadow-sm text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100"
+                          className="flex space-x-1.5 shadow-md text-amber-700 bg-amber-50 border-amber-100 hover:bg-amber-100"
                         >
                           <AlertTriangle className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">Report</span>
@@ -704,7 +704,7 @@ export default function StudentView() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleDownload(pyq)}
-                          className="flex space-x-1.5 shadow-sm text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100"
+                          className="flex space-x-1.5 shadow-md text-indigo-700 bg-indigo-50 border-indigo-100 hover:bg-indigo-100"
                         >
                           <Download className="w-3.5 h-3.5" />
                           <span className="hidden sm:inline">Download</span>
@@ -771,7 +771,7 @@ export default function StudentView() {
                         required
                         value={reporterName}
                         onChange={(e) => setReporterName(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-md focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                         placeholder="John Doe"
                       />
                     </div>
@@ -784,7 +784,7 @@ export default function StudentView() {
                         required
                         value={reporterId}
                         onChange={(e) => setReporterId(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-md focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                         placeholder="0801CS201..."
                       />
                     </div>
@@ -800,7 +800,7 @@ export default function StudentView() {
                         required
                         value={reporterBranch}
                         onChange={(e) => setReporterBranch(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-md focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                         placeholder="Computer Science"
                       />
                     </div>
@@ -812,7 +812,7 @@ export default function StudentView() {
                         required
                         value={reportCategory}
                         onChange={(e) => setReportCategory(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-md focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                       >
                         <option value="Broken Link">Broken Link / PDF</option>
                         <option value="Wrong Info">Wrong Information</option>
@@ -834,7 +834,7 @@ export default function StudentView() {
                       rows={3}
                       value={reportIssue}
                       onChange={(e) => setReportIssue(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-xs"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-md focus:ring-indigo-500 focus:border-indigo-500 text-xs"
                       placeholder="e.g. Missing page 4, Wrong semester marked, Broken link..."
                     />
                   </div>

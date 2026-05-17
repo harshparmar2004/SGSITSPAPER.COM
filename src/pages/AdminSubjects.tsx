@@ -387,10 +387,10 @@ export default function AdminSubjects() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden mb-4">
         <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+            <div className="p-1.5 rounded-md bg-white shadow-md border border-indigo-100">
               {editingSubjectCode ? (
                 <Edit className="w-4 h-4 text-indigo-700" />
               ) : (
@@ -406,7 +406,7 @@ export default function AdminSubjects() {
               variant="ghost"
               size="sm"
               onClick={resetForm}
-              className="text-gray-500 hover:text-gray-900 border border-gray-300 bg-white shadow-sm h-8 mt-1"
+              className="text-gray-500 hover:text-gray-900 border border-gray-300 bg-white shadow-md h-8 mt-1"
             >
               <X className="w-4 h-4 mr-1" /> Cancel
             </Button>
@@ -480,7 +480,7 @@ export default function AdminSubjects() {
               <label className="text-xs font-medium text-gray-900">
                 Assign to Departments *
               </label>
-              <div className="max-h-48 overflow-y-auto space-y-3 p-3 bg-white border border-gray-200 rounded-md">
+              <div className="max-h-48 overflow-y-auto space-y-3 p-3 bg-white border border-gray-300 rounded-md">
                 {availablePrograms.map((prog) => (
                   <div key={prog.course}>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">
@@ -564,10 +564,10 @@ export default function AdminSubjects() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden">
         <div className="bg-indigo-50 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-indigo-100">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+            <div className="p-1.5 rounded-md bg-white shadow-md border border-indigo-100">
               <BookOpen className="w-4 h-4 text-indigo-700" />
             </div>
             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">

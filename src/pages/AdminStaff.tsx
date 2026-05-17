@@ -266,7 +266,7 @@ export default function AdminStaff() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 p-3">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <UserPlus className="w-5 h-5 text-indigo-600" />
           Add New Staff Member
@@ -318,7 +318,7 @@ export default function AdminStaff() {
           </div>
 
           {newRole === "department" && (
-            <div className="space-y-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="space-y-3 p-3 bg-gray-50 border border-gray-300 rounded-lg">
               <label className="text-xs font-medium text-gray-900">
                 Assign Departments *
               </label>
@@ -390,10 +390,10 @@ export default function AdminStaff() {
         </form>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-4">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden mt-4">
         <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+            <div className="p-1.5 rounded-md bg-white shadow-md border border-indigo-100">
               <Shield className="w-4 h-4 text-indigo-700" />
             </div>
             <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
@@ -552,7 +552,7 @@ export default function AdminStaff() {
               </div>
 
               {editRole === "department" && (
-                <div className="space-y-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                <div className="space-y-3 p-3 bg-gray-50 border border-gray-300 rounded-lg">
                   <label className="text-xs font-medium text-gray-900">
                     Assign Departments *
                   </label>

@@ -268,7 +268,7 @@ export default function AdminDepartments() {
             be available when users upload PYQs.
           </p>
         </div>
-        <div className="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-2 border border-indigo-100 shadow-sm w-fit">
+        <div className="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-2 border border-indigo-100 shadow-md w-fit">
           <Layers className="w-5 h-5" />
           <span>
             {Object.values(stats).reduce(
@@ -280,10 +280,10 @@ export default function AdminDepartments() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden mb-4">
         <div className="bg-indigo-50 px-4 py-3 flex flex-col md:flex-row gap-3 md:items-center justify-between border-b border-indigo-100">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
+            <div className="p-1.5 rounded-md bg-white shadow-md border border-indigo-100">
               <Plus className="w-4 h-4 text-indigo-700" />
             </div>
             <div>
@@ -326,7 +326,7 @@ export default function AdminDepartments() {
             return (
               <div
                 key={course}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-md"
+                className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden transition-all duration-200 hover:shadow-md"
               >
                 {/* Course Header */}
                 <div
@@ -334,7 +334,7 @@ export default function AdminDepartments() {
                   onClick={() => toggleCourse(course)}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="p-1.5 bg-white border border-indigo-100 shadow-sm rounded-md text-indigo-700">
+                    <div className="p-1.5 bg-white border border-indigo-100 shadow-md rounded-md text-indigo-700">
                       <BookMarked className="w-4 h-4" />
                     </div>
                     <div>
@@ -348,7 +348,7 @@ export default function AdminDepartments() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="hidden sm:flex text-[11px] text-gray-400 font-medium bg-white border border-gray-200 px-3 py-1 rounded-md shadow-sm">
+                    <div className="hidden sm:flex text-[11px] text-gray-400 font-medium bg-white border border-gray-300 px-3 py-1 rounded-md shadow-md">
                       {prog.departments.length} Active Branches
                     </div>
                     <button
@@ -383,7 +383,7 @@ export default function AdminDepartments() {
                             key={dept}
                             className={`flex items-center justify-between p-3 rounded-lg border ${
                               isActive
-                                ? "border-indigo-100 bg-indigo-50/20 shadow-sm hover:border-indigo-300 transition-colors"
+                                ? "border-indigo-100 bg-indigo-50/20 shadow-md hover:border-indigo-300 transition-colors"
                                 : "border-gray-100 bg-gray-50/50 opacity-70"
                             }`}
                           >
@@ -408,7 +408,7 @@ export default function AdminDepartments() {
 
                             <div className="flex items-center gap-2">
                               {isActive && (
-                                <div className="bg-white border border-indigo-100 w-8 h-8 rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
+                                <div className="bg-white border border-indigo-100 w-8 h-8 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
                                   <FileText className="w-3.5 h-3.5 text-indigo-500" />
                                 </div>
                               )}

@@ -355,7 +355,7 @@ export default function AdminDashboard() {
         className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`}
       >
         <Link to="/admin/subject-pyqs" className="block outline-none group">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
             <div className="bg-indigo-500 px-3 py-2.5 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-white">
                 Total PYQs
@@ -375,7 +375,7 @@ export default function AdminDashboard() {
 
         {adminRole === "superadmin" && (
           <Link to="/admin/students" className="block outline-none group">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-green-500 ring-offset-2 h-full overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-green-500 ring-offset-2 h-full overflow-hidden">
               <div className="bg-emerald-500 px-3 py-2.5 flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-white">
                   Student Logins
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
 
         {adminRole === "superadmin" && (
           <Link to="/admin/staff" className="block outline-none group">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-purple-500 ring-offset-2 h-full overflow-hidden">
+            <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-purple-500 ring-offset-2 h-full overflow-hidden">
               <div className="bg-purple-500 px-3 py-2.5 flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-white">
                   Active Staff
@@ -416,7 +416,7 @@ export default function AdminDashboard() {
         )}
 
         {adminRole === "superadmin" && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col transition-shadow hover:shadow-md h-full overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col transition-shadow hover:shadow-md h-full overflow-hidden">
             <div className="bg-blue-500 px-3 py-2.5 flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-white">
                 Drive Storage
@@ -448,7 +448,7 @@ export default function AdminDashboard() {
         {adminRole === "department" && (
           <>
             <Link to="/admin/subjects" className="block outline-none group">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-emerald-500 ring-offset-2 h-full overflow-hidden">
+              <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-emerald-500 ring-offset-2 h-full overflow-hidden">
                 <div className="bg-emerald-500 px-3 py-2.5 flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-white">
                     Total Subjects
@@ -467,7 +467,7 @@ export default function AdminDashboard() {
             </Link>
 
             <Link to="/admin/pyqs" className="block outline-none group">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-amber-500 ring-offset-2 h-full overflow-hidden">
+              <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-amber-500 ring-offset-2 h-full overflow-hidden">
                 <div className="bg-amber-500 px-3 py-2.5 flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-white">
                     Total PDFs Uploaded
@@ -485,7 +485,7 @@ export default function AdminDashboard() {
               </div>
             </Link>
             <Link to="/admin/analytics" className="block outline-none group">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
+              <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col justify-between cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group-focus-visible:ring-2 ring-indigo-500 ring-offset-2 h-full overflow-hidden">
                 <div className="bg-indigo-500 px-3 py-2.5 flex items-center justify-between">
                   <span className="text-xs font-bold uppercase tracking-wider text-white">
                     Analytics
@@ -509,7 +509,7 @@ export default function AdminDashboard() {
       {/* Charts Row */}
       <div className="flex flex-col gap-6">
         {/* Upload Activity Chart */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 w-full overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -583,7 +583,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Subject Distribution */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md border border-gray-300 w-full overflow-hidden">
           <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
@@ -645,7 +645,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Uploads (Full Width) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md border border-gray-300 flex flex-col overflow-hidden">
         <div className="bg-indigo-50 px-4 py-3 flex items-center justify-between border-b border-indigo-100">
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 rounded-md bg-white shadow-sm border border-indigo-100">
