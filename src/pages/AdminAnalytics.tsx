@@ -384,18 +384,18 @@ export default function AdminAnalytics() {
                 {deptData.map((d, i) => (
                   <div
                     key={d.name}
-                    className="flex text-[11px] text-gray-600 justify-between items-center bg-gray-50/50 p-2 rounded border border-gray-100"
+                    className="flex text-sm text-gray-700 font-semibold justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200"
                   >
                     <div className="flex items-center truncate min-w-0 pr-2">
                       <span
-                        className="w-2 h-2 rounded-full mr-2 shrink-0"
+                        className="w-3 h-3 rounded-full mr-3 shrink-0"
                         style={{ backgroundColor: COLORS[i % COLORS.length] }}
                       ></span>
-                      <span className="truncate font-medium" title={d.name}>
+                      <span className="truncate" title={d.name}>
                         {d.name}
                       </span>
                     </div>
-                    <span className="font-bold text-gray-900 bg-white px-1.5 py-0.5 rounded shadow-sm border border-gray-100">
+                    <span className="text-base font-bold text-gray-900 bg-white px-2.5 py-1 rounded shadow border border-gray-200">
                       {d.value}
                     </span>
                   </div>
