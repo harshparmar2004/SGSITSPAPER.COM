@@ -34,7 +34,6 @@ export default function AdminSubjectPYQs() {
     try {
       let data = await getCachedCollection("pyqs");
 
-      // Filter by department if not superadmin
       if (adminRole === "department") {
         data = data.filter(
           (p) =>
@@ -56,7 +55,6 @@ export default function AdminSubjectPYQs() {
       p.semester.toLowerCase().includes(search.toLowerCase()) ||
       p.department.toLowerCase().includes(search.toLowerCase()),
   );
-
 
   if (!isAdmin) return null;
 
@@ -173,7 +171,7 @@ export default function AdminSubjectPYQs() {
                   </div>
                 )}
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                   {pyqsToRender.map(pyq => {
                      let type = pyq.documentType || "Previous Year Question (PYQ)";
                      if (type === "PYQ") type = "Previous Year Question (PYQ)";
@@ -186,74 +184,58 @@ export default function AdminSubjectPYQs() {
                      if (type.includes("Syllabus")) badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
                      
                      return (
-                      <div
+                      <a
+                        href={pyq.fileUrl || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         key={pyq.id}
-                        className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all flex flex-col group h-full"
+                        className="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all flex flex-col group h-full cursor-pointer relative"
                       >
-                        <div className="flex justify-between items-start mb-3 gap-2">
-                           <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold border ${badgeColor} uppercase tracking-wider`}>
-                             {type}
+                        <div className="flex justify-between items-start mb-2.5">
+                           <div className="flex flex-wrap gap-2 items-center">
+                             <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black border ${badgeColor} uppercase tracking-wider`}>
+                               {type}
+                             </span>
+                             {pyq.status === "Verified" && (
+                               <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-green-100 text-green-800 border border-green-200 shrink-0">
+                                  Verified
+                               </span>
+                             )}
+                           </div>
+                           <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 shrink-0">
+                             {(pyq.fileSize / 1024).toFixed(0)} KB
                            </span>
-                           {pyq.status === "Verified" && (
-                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800 shrink-0">
-                                Verified
-                             </span>
-                           )}
-                           {pyq.status === "Unverified" && (
-                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 shrink-0">
-                                Unverified
-                             </span>
-                           )}
                         </div>
 
-                        <div className="mb-3">
-                          <h3 className="font-bold text-gray-900 text-sm line-clamp-2 leading-snug" title={pyq.fileName}>
+                        <div className="mb-3 pr-6 relative">
+                          <h3 className="font-bold text-gray-900 text-[13px] line-clamp-2 leading-tight group-hover:text-indigo-600 transition-colors" title={pyq.fileName}>
                             {pyq.examYear ? `${pyq.examYear} ${pyq.examType || ""}` : pyq.fileName}
                           </h3>
+                          <Download className="w-3.5 h-3.5 text-gray-300 absolute -right-2 top-0 group-hover:text-indigo-500 transition-colors" />
                           {pyq.description && (
-                            <p className="text-xs text-gray-500 mt-1 line-clamp-2" title={pyq.description}>
+                            <p className="text-[11px] text-gray-500 mt-1 line-clamp-1" title={pyq.description}>
                               {pyq.description}
                             </p>
                           )}
                         </div>
 
-                        <div className="bg-gray-50 rounded-md p-2 mb-2 space-y-1 border border-gray-100">
-                          <div className="flex items-start gap-2">
-                            <BookOpen className="w-3.5 h-3.5 text-gray-400 mt-0.5 shrink-0" />
-                            <span className="text-xs font-semibold text-gray-700 line-clamp-2">
-                              {pyq.subjectCode === "ALL_SUBJECTS" ? "All Subjects" : pyq.subjectCode} - {pyq.subjectName}
-                            </span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <Layers className="w-3.5 h-3.5 text-gray-400 mt-0.5 shrink-0" />
-                            <span className="text-[11px] font-medium text-gray-600 truncate">
-                              {pyq.course} • {pyq.department}
-                            </span>
-                          </div>
-                          <div className="flex flex-wrap gap-2 pt-1 border-t border-gray-200 mt-1.5">
-                            <span className="text-[10px] font-bold bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-600">
-                              {pyq.semester}
-                            </span>
-                            <span className="text-[10px] font-bold bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-600">
-                              {pyq.year}
-                            </span>
-                          </div>
+                        <div className="mt-auto pt-2 flex flex-wrap gap-1.5 border-t border-gray-100">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100" title={pyq.subjectName}>
+                            <BookOpen className="w-2.5 h-2.5" />
+                            {pyq.subjectCode === "ALL_SUBJECTS" ? "All Subjects" : pyq.subjectCode}
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                            <Layers className="w-2.5 h-2.5" />
+                            {pyq.department}
+                          </span>
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-100">
+                            {pyq.semester}
+                          </span>
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100">
+                            {pyq.year}
+                          </span>
                         </div>
-
-                        <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
-                          <div>
-                            <span className="block text-[11px] font-medium text-gray-500">
-                              {(pyq.fileSize / 1024).toFixed(1)} KB
-                            </span>
-                            <span className="block text-[10px] text-gray-400">
-                              {typeof pyq.uploadedAt === "string" ? new Date(pyq.uploadedAt).toLocaleDateString() : new Date(pyq.uploadedAt?.seconds * 1000).toLocaleDateString()}
-                            </span>
-                          </div>
-                          <a href={pyq.fileUrl || "#"} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5">
-                            View <Download className="w-3 h-3" />
-                          </a>
-                        </div>
-                      </div>
+                      </a>
                      );
                   })}
                 </div>
