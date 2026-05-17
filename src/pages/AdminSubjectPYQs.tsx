@@ -62,24 +62,24 @@ export default function AdminSubjectPYQs() {
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 lg:p-6 pb-5 rounded-xl shadow-md border bg-white border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 lg:px-5 lg:py-4 rounded-xl shadow-sm border bg-white border-gray-200">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-bold tracking-tight text-gray-900">
               Subject-wise View (All Documents)
             </h1>
           </div>
-          <p className="mt-2 text-sm font-medium text-gray-500 max-w-lg">
-            A flat view of all uploaded documents. Search to instantly find PDFs across all departments and subjects.
+          <p className="mt-1 text-xs font-medium text-gray-500 max-w-lg">
+            A flat view of all uploaded documents. Search to instantly find PDFs.
           </p>
         </div>
-        <div className="relative max-w-md w-full">
-          <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400" />
+        <div className="relative max-w-sm w-full">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400" />
           <Input
-            placeholder="Search by code, subject, department..."
+            placeholder="Search code, subject, dept..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 h-11 w-full bg-white border-indigo-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm font-medium text-sm text-indigo-900 placeholder:text-indigo-300"
+            className="pl-9 h-9 w-full bg-gray-50 border-gray-200 focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm font-medium text-sm text-gray-900 placeholder:text-gray-400"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function AdminSubjectPYQs() {
 
             if (!selectedType && search === "") {
                return (
-                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                    {types.map(type => {
                      let Icon = FileText;
                      let colorClass = "text-indigo-600 bg-indigo-50 border-indigo-100";
@@ -131,19 +131,19 @@ export default function AdminSubjectPYQs() {
                        <div 
                          key={type} 
                          onClick={() => setSelectedType(type)}
-                         className="cursor-pointer bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 group flex items-center justify-between"
+                         className="cursor-pointer bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 group flex items-center justify-between"
                        >
                          <div className="flex items-center gap-4">
-                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${colorClass} group-hover:scale-105 transition-transform`}>
-                             <Icon className="w-6 h-6" />
+                           <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${colorClass} group-hover:scale-105 transition-transform`}>
+                             <Icon className="w-5 h-5" />
                            </div>
                            <div>
-                             <h3 className="font-bold text-gray-900 text-lg group-hover:text-indigo-600 transition-colors">{type}</h3>
-                             <p className="text-sm font-medium text-gray-500 mt-0.5">{groupedByType[type].length} documents</p>
+                             <h3 className="font-bold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">{type}</h3>
+                             <p className="text-xs font-medium text-gray-500 mt-0.5">{groupedByType[type].length} documents</p>
                            </div>
                          </div>
-                         <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-200 transition-colors">
-                           <Layers className="w-4 h-4" />
+                         <div className="w-7 h-7 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-200 transition-colors">
+                           <Layers className="w-3.5 h-3.5" />
                          </div>
                        </div>
                      );
@@ -188,7 +188,7 @@ export default function AdminSubjectPYQs() {
                      return (
                       <div
                         key={pyq.id}
-                        className="bg-white border border-gray-300 rounded-xl p-4 shadow-sm hover:shadow-md transition-all flex flex-col group h-full"
+                        className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-all flex flex-col group h-full"
                       >
                         <div className="flex justify-between items-start mb-3 gap-2">
                            <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold border ${badgeColor} uppercase tracking-wider`}>
@@ -217,7 +217,7 @@ export default function AdminSubjectPYQs() {
                           )}
                         </div>
 
-                        <div className="bg-gray-50 rounded-lg p-2.5 mb-3 space-y-1.5 border border-gray-100">
+                        <div className="bg-gray-50 rounded-md p-2 mb-2 space-y-1 border border-gray-100">
                           <div className="flex items-start gap-2">
                             <BookOpen className="w-3.5 h-3.5 text-gray-400 mt-0.5 shrink-0" />
                             <span className="text-xs font-semibold text-gray-700 line-clamp-2">
