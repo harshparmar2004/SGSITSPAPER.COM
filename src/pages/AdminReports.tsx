@@ -277,7 +277,7 @@ export default function AdminReports() {
                 </span>
                 {data.reports[0].fileUrl && (
                   <a
-                    href={data.reports[0].fileUrl}
+                    href={data.reports[0].fileUrl} download={data.reports[0].fileName || "document.pdf"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-1 text-red-600 hover:text-red-800 underline"
@@ -425,7 +425,7 @@ export default function AdminReports() {
                         </span>
                         {report.fileUrl && (
                           <a
-                            href={report.fileUrl}
+                            href={report.fileUrl} download={report.fileName || "document.pdf"}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-indigo-600 hover:text-indigo-800 hover:underline text-[10px] font-medium ml-1"

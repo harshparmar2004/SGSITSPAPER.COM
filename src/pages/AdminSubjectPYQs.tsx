@@ -50,10 +50,10 @@ export default function AdminSubjectPYQs() {
 
   const filteredPyqs = pyqs.filter(
     (p) =>
-      p.subjectCode.toLowerCase().includes(search.toLowerCase()) ||
-      p.subjectName.toLowerCase().includes(search.toLowerCase()) ||
-      p.semester.toLowerCase().includes(search.toLowerCase()) ||
-      p.department.toLowerCase().includes(search.toLowerCase()),
+      (p.subjectCode || "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.subjectName || "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.semester || "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.department || "").toLowerCase().includes(search.toLowerCase()),
   );
 
   if (!isAdmin) return null;
@@ -179,17 +179,30 @@ export default function AdminSubjectPYQs() {
                      if (type === "Syllabus") type = "Course Syllabus";
 
                      let badgeColor = "bg-gray-100 text-gray-800 border-gray-200";
-                     if (type.includes("PYQ") || type.includes("Question")) badgeColor = "bg-indigo-100 text-indigo-800 border-indigo-200";
-                     if (type.includes("Notes")) badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
-                     if (type.includes("Syllabus")) badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                     let cardBgColor = "bg-white border-gray-200";
+                     let cardHoverClass = "hover:border-indigo-300 hover:shadow-md";
+
+                     if (type.includes("PYQ") || type.includes("Question")) {
+                       badgeColor = "bg-indigo-100 text-indigo-800 border-indigo-200";
+                       cardBgColor = "bg-indigo-50/40 border-indigo-100";
+                       cardHoverClass = "hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-100";
+                     } else if (type.includes("Notes")) {
+                       badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
+                       cardBgColor = "bg-amber-50/40 border-amber-100";
+                       cardHoverClass = "hover:border-amber-300 hover:shadow-md hover:shadow-amber-100";
+                     } else if (type.includes("Syllabus")) {
+                       badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                       cardBgColor = "bg-emerald-50/40 border-emerald-100";
+                       cardHoverClass = "hover:border-emerald-300 hover:shadow-md hover:shadow-emerald-100";
+                     }
                      
                      return (
                       <a
-                        href={pyq.fileUrl || "#"}
+                        href={pyq.fileUrl || "#"} download={pyq.fileName || "document.pdf"}
                         target="_blank"
                         rel="noopener noreferrer"
                         key={pyq.id}
-                        className="bg-white border border-gray-200 rounded-lg p-3.5 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all flex flex-col group h-full cursor-pointer relative"
+                        className={`${cardBgColor} border rounded-lg p-3.5 transition-all flex flex-col group h-full cursor-pointer relative ${cardHoverClass}`}
                       >
                         <div className="flex justify-between items-start mb-2.5">
                            <div className="flex flex-wrap gap-2 items-center">
@@ -202,7 +215,7 @@ export default function AdminSubjectPYQs() {
                                </span>
                              )}
                            </div>
-                           <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 shrink-0">
+                           <span className="text-[10px] font-bold text-gray-400 bg-white/60 px-1.5 py-0.5 rounded border border-gray-100 shrink-0">
                              {(pyq.fileSize / 1024).toFixed(0)} KB
                            </span>
                         </div>
@@ -219,19 +232,19 @@ export default function AdminSubjectPYQs() {
                           )}
                         </div>
 
-                        <div className="mt-auto pt-2 flex flex-wrap gap-1.5 border-t border-gray-100">
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100" title={pyq.subjectName}>
-                            <BookOpen className="w-2.5 h-2.5" />
-                            {pyq.subjectCode === "ALL_SUBJECTS" ? "All Subjects" : pyq.subjectCode}
+                        <div className="mt-auto pt-2 flex flex-wrap gap-1.5 border-t border-gray-200/50">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 max-w-full" title={pyq.subjectName}>
+                            <BookOpen className="w-2.5 h-2.5 shrink-0" />
+                            <span className="truncate">{pyq.subjectCode === "ALL_SUBJECTS" ? "All Subjects" : `${pyq.subjectCode} - ${pyq.subjectName}`}</span>
                           </span>
                           <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                            <Layers className="w-2.5 h-2.5" />
-                            {pyq.department}
+                            <Layers className="w-2.5 h-2.5 shrink-0" />
+                            <span className="truncate">{pyq.department}</span>
                           </span>
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-100">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-100 shrink-0">
                             {pyq.semester}
                           </span>
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100 shrink-0">
                             {pyq.year}
                           </span>
                         </div>

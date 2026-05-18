@@ -7,7 +7,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+
 import { db, storage } from "../lib/firebase";
 import { clearCache } from "../lib/cache";
 import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from "../types";
@@ -231,6 +231,7 @@ export default function AdminUpload() {
       }
 
       let fileUrl = "";
+      console.log("Before upload Method check");
       let fileName = "";
       let fileSize = 0;
 
@@ -274,30 +275,15 @@ export default function AdminUpload() {
           );
         }
 
-        const storageRef = ref(storage, `documents/${fileName}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-
-        await new Promise<void>((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setUploadProgress(progress);
-            },
-            (error) => {
-              reject(error);
-            },
-            async () => {
-              try {
-                fileUrl = await getDownloadURL(uploadTask.snapshot.ref);
-                resolve();
-              } catch (e) {
-                reject(e);
-              }
-            }
-          );
+                console.log("Starting local to Data URL encoding:", fileName);
+        fileUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (err) => reject(new Error("Failed to read file"));
+          reader.readAsDataURL(file);
         });
-
+        console.log("Data URL encoded successfully");
+        
         fileName = fileName; // Keep our generated descriptive filename
         fileSize = file.size;
       } else {
@@ -339,7 +325,9 @@ export default function AdminUpload() {
 
       // 3. Save to Firestore
       try {
-        await addDoc(collection(db, "pyqs"), payload);
+        const addDocPromise = addDoc(collection(db, "pyqs"), payload);
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Firestore addition timed out after 10s. Are you offline or is there a permission issue?")), 10000));
+        await Promise.race([addDocPromise, timeoutPromise]);
         clearCache("pyqs");
       } catch (err: any) {
         if (err.message && err.message.includes("permission")) {

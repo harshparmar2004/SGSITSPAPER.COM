@@ -180,11 +180,29 @@ export default function StudentView() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       } else {
-        window.open(pyq.fileUrl, "_blank");
+        if (pyq.fileUrl && pyq.fileUrl.startsWith("data:")) {
+          const link = document.createElement("a");
+          link.href = pyq.fileUrl;
+          link.download = pyq.fileName || "document.pdf";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          window.open(pyq.fileUrl, "_blank");
+        }
       }
     } catch (e) {
       console.error("Error creating zip", e);
-      window.open(pyq.fileUrl, "_blank");
+      if (pyq.fileUrl && pyq.fileUrl.startsWith("data:")) {
+          const link = document.createElement("a");
+          link.href = pyq.fileUrl;
+          link.download = pyq.fileName || "document.pdf";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          window.open(pyq.fileUrl, "_blank");
+        }
     }
   };
 

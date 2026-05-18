@@ -285,8 +285,8 @@ export default function AdminAllPYQs() {
     const dType = p.documentType || "PYQ";
     const matchesTab = selectedDocType === "All" || dType === selectedDocType;
     const matchesSearch =
-      p.subjectCode.toLowerCase().includes(search.toLowerCase()) ||
-      p.subjectName.toLowerCase().includes(search.toLowerCase());
+      (p.subjectCode || "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.subjectName || "").toLowerCase().includes(search.toLowerCase());
     return matchesTab && matchesSearch;
   });
 
