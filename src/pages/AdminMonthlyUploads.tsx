@@ -19,6 +19,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
+  Legend
 } from "recharts";
 import { format, parseISO } from "date-fns";
 import { useAuth } from "../hooks/useAuth";
@@ -33,6 +34,7 @@ interface UploadRecord {
   uploadedAt: Date;
   monthYear: string; // YYYY-MM format for easy grouping
   documentType?: string;
+  actionType: "UPLOAD" | "DELETE";
 }
 
 export default function AdminMonthlyUploads() {
@@ -49,21 +51,42 @@ export default function AdminMonthlyUploads() {
     if (!adminRole) return;
     setLoading(true);
     try {
-      // 1. Fetch Users to map UID -> Email
-      const cachedUsers = await getCachedCollection("users");
+      const [cachedUsers, cachedPyqs, activityLogsSnap] = await Promise.all([
+        getCachedCollection("users"),
+        getCachedCollection("pyqs"),
+        getDocs(collection(db, "activity_logs")).catch(() => ({ docs: [] }))
+      ]);
+
       const userMap: Record<string, string> = {};
       cachedUsers.forEach((data: any) => {
         userMap[data.id] = data.email || data.name || "Unknown User";
       });
 
-      // 2. Fetch PYQs
-      const cachedPyqs = await getCachedCollection("pyqs");
-
       const records: UploadRecord[] = [];
-      cachedPyqs.forEach((data: any) => {
+      
+      const activityLogs = activityLogsSnap.docs?.map(d => ({id: d.id, ...d.data()})) || [];
+      
+      const loggedUploadsIds = new Set(activityLogs.filter(l => l.type === "UPLOAD").map(l => l.documentId));
+
+      const processedLogs = activityLogs.map(log => ({
+        ...log,
+        actionType: log.type || "DELETE",
+        uploadedBy: log.deletedBy,
+        uploadedAt: log.deletedAt
+      }));
+      
+      const mappedUploads = cachedPyqs
+        .filter(p => !loggedUploadsIds.has(p.id)) // avoid double counting new uploads
+        .map(p => ({
+          ...p,
+          actionType: "UPLOAD"
+        }));
+
+      const unifiedActivities = [...mappedUploads, ...processedLogs];
+
+      unifiedActivities.forEach((data: any) => {
         // Filter by assigned departments if department admin
         if (adminRole === "department") {
-          const fullDept = `${data.course}::${data.department}`;
           if (
             !assignedDepartments.some((ad) => ad === data.department || ad.endsWith(`::${data.department}`))
           ) {
@@ -79,13 +102,14 @@ export default function AdminMonthlyUploads() {
           );
           records.push({
             id: data.id,
+            actionType: data.actionType || "UPLOAD",
             documentType: data.documentType,
             subjectCode: data.subjectCode || "N/A",
             subjectName: data.subjectName || "Unknown Subject",
             department: data.department || "N/A",
             uploadedBy: data.uploadedBy || "unknown",
             uploaderEmail:
-              userMap[data.uploadedBy] ||
+              data.deletedByEmail || userMap[data.uploadedBy] ||
               `Admin (${data.uploadedBy.slice(0, 6)})`,
             uploadedAt: dateObj,
             monthYear: format(dateObj, "yyyy-MM"),
@@ -114,16 +138,24 @@ export default function AdminMonthlyUploads() {
 
   // Aggregate data for the chart (last 12 months with data, sorted chronologically)
   const chartData = useMemo(() => {
-    const aggregated: Record<string, number> = {};
+    const aggregated: Record<string, { uploadsCount: number, deletesCount: number }> = {};
     uploads.forEach((u) => {
-      aggregated[u.monthYear] = (aggregated[u.monthYear] || 0) + 1;
+      if (!aggregated[u.monthYear]) {
+        aggregated[u.monthYear] = { uploadsCount: 0, deletesCount: 0 };
+      }
+      if (u.actionType === "DELETE") {
+        aggregated[u.monthYear].deletesCount += 1;
+      } else {
+        aggregated[u.monthYear].uploadsCount += 1;
+      }
     });
 
     return Object.entries(aggregated)
-      .map(([monthYear, count]) => ({
+      .map(([monthYear, counts]) => ({
         monthYear,
         label: format(parseISO(`${monthYear}-01`), "MMM yyyy"),
-        count,
+        uploadsCount: counts.uploadsCount,
+        deletesCount: counts.deletesCount,
       }))
       .sort((a, b) => a.monthYear.localeCompare(b.monthYear)) // chronological for chart
       .slice(-12); // Keep only last 12 months minimum
@@ -147,10 +179,10 @@ export default function AdminMonthlyUploads() {
     <div className="space-y-3 max-w-6xl mx-auto pb-8">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-gray-900">
-          Monthly Uploads
+          Monthly Upload / Delete History
         </h1>
         <p className="mt-2 text-[11px] text-gray-500">
-          Analyze PYQ upload trends, track contributor activity, and view
+          Analyze upload and delete trends, track contributor activity, and view
           departmental distributions over time.
         </p>
       </div>
@@ -160,9 +192,9 @@ export default function AdminMonthlyUploads() {
           <div className="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
             <CalendarDays className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900">No Upload Data</h3>
+          <h3 className="text-lg font-medium text-gray-900">No Log Data</h3>
           <p className="text-gray-500 text-xs mt-1">
-            There are no PYQs uploaded yet to generate monthly reports.
+            There are no PYQ uploads or deletes yet to generate monthly reports.
           </p>
         </div>
       ) : (
@@ -175,7 +207,7 @@ export default function AdminMonthlyUploads() {
                   <BarChart2 className="w-4 h-4 text-indigo-700" />
                 </div>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
-                  Upload Trends (Last 12 Active Months)
+                  Upload & Delete Trends (Last 12 Active Months)
                 </h2>
               </div>
             </div>
@@ -211,21 +243,33 @@ export default function AdminMonthlyUploads() {
                       boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
                     }}
                   />
+                  <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: "12px", fontWeight: "bold" }} />
                   <Bar
-                    dataKey="count"
-                    name="PDFs Uploaded"
+                    dataKey="uploadsCount"
+                    name="Uploaded"
                     radius={[6, 6, 0, 0]}
-                    maxBarSize={60}
+                    maxBarSize={40}
                   >
                     {chartData.map((entry, index) => (
                       <Cell
-                        key={`cell-${index}`}
-                        fill={
-                          entry.monthYear === selectedMonth
-                            ? "#4f46e5"
-                            : "#a5b4fc"
-                        }
+                        key={`cell-up-${index}`}
+                        fill={entry.monthYear === selectedMonth ? "#4f46e5" : "#a5b4fc"}
                         className="cursor-pointer transition-colors duration-300 hover:fill-indigo-500"
+                        onClick={() => setSelectedMonth(entry.monthYear)}
+                      />
+                    ))}
+                  </Bar>
+                  <Bar
+                    dataKey="deletesCount"
+                    name="Deleted"
+                    radius={[6, 6, 0, 0]}
+                    maxBarSize={40}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-del-${index}`}
+                        fill={entry.monthYear === selectedMonth ? "#ef4444" : "#fca5a5"}
+                        className="cursor-pointer transition-colors duration-300 hover:fill-red-500"
                         onClick={() => setSelectedMonth(entry.monthYear)}
                       />
                     ))}
@@ -234,7 +278,7 @@ export default function AdminMonthlyUploads() {
               </ResponsiveContainer>
             </div>
             <p className="text-[11px] text-gray-500 text-center mt-4 italic">
-              Click on any bar to view the detailed upload breakdown for that
+              Click on any bar to view the detailed activity breakdown for that
               month.
             </p>
           </div>
@@ -280,7 +324,7 @@ export default function AdminMonthlyUploads() {
 
             {filteredUploads.length === 0 ? (
               <div className="p-8 text-center text-gray-500">
-                No uploads found for this month.
+                No activity found for this month.
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -288,9 +332,10 @@ export default function AdminMonthlyUploads() {
                   <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                     <tr>
                       <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                      <th className="px-3 py-2 text-center">Action</th>
                       <th className="px-3 py-2">Document Details</th>
                       <th className="px-3 py-2">Department</th>
-                      <th className="px-3 py-2">Uploaded By</th>
+                      <th className="px-3 py-2">Action By</th>
                       <th className="px-3 py-2 whitespace-nowrap">
                         Date & Time
                       </th>
@@ -305,9 +350,14 @@ export default function AdminMonthlyUploads() {
                         <td className="px-3 py-2 text-center text-gray-500 font-medium">
                           {index + 1}
                         </td>
+                        <td className="px-3 py-2 text-center">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${record.actionType === "DELETE" ? "bg-red-100 text-red-800 border border-red-200" : "bg-green-100 text-green-800 border border-green-200"}`}>
+                            {record.actionType === "DELETE" ? "Delete" : "Upload"}
+                          </span>
+                        </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                            <div className={`p-2 rounded-lg ${record.actionType === "DELETE" ? "bg-red-50 text-red-600" : "bg-indigo-50 text-indigo-600"}`}>
                               <FileText className="w-4 h-4" />
                             </div>
                             <div>

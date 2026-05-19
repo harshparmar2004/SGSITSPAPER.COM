@@ -344,7 +344,28 @@ export default function AdminUpload() {
       try {
         const addDocPromise = addDoc(collection(db, "pyqs"), payload);
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Firestore addition timed out after 10s. Are you offline or is there a permission issue?")), 10000));
-        await Promise.race([addDocPromise, timeoutPromise]);
+        const newDocRef = await Promise.race([addDocPromise, timeoutPromise]);
+        
+        // Log upload activity
+        try {
+          await addDoc(collection(db, "activity_logs"), {
+            type: "UPLOAD",
+            documentId: newDocRef.id || "Unknown",
+            subjectCode: payload.subjectCode || "Unknown",
+            subjectName: payload.subjectName || "Unknown",
+            department: payload.department || "Unknown",
+            course: payload.course || "",
+            semester: payload.semester || "",
+            documentType: payload.documentType || "PYQ",
+            deletedBy: user?.uid || "Unknown",
+            deletedByEmail: user?.email || "Unknown",
+            deletedAt: serverTimestamp(),
+            originalUploader: user?.email || "Unknown"
+          });
+        } catch (logErr) {
+          console.error("Failed to log upload", logErr);
+        }
+
         clearCache("pyqs");
       } catch (err: any) {
         if (err.message && err.message.includes("permission")) {

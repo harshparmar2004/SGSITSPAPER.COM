@@ -67,19 +67,23 @@ export default function AdminActivity() {
           }
         });
         setUsersInfo(uidToUserMap);
-        const mappedDeletes = activityLogs.map(log => ({
+        const loggedUploadsIds = new Set(activityLogs.filter(l => l.type === "UPLOAD").map(l => l.documentId));
+
+        const processedLogs = activityLogs.map(log => ({
           ...log,
-          actionType: "DELETE",
-          uploadedBy: log.deletedBy,
-          uploadedAt: log.deletedAt
+          actionType: log.type || "DELETE",
+          uploadedBy: log.deletedBy || log.uploadedBy,
+          uploadedAt: log.deletedAt || log.uploadedAt
         }));
         
-        const mappedUploads = allPyqs.map(p => ({
-          ...p,
-          actionType: "UPLOAD"
-        }));
+        const mappedUploads = allPyqs
+          .filter(p => !loggedUploadsIds.has(p.id))
+          .map(p => ({
+            ...p,
+            actionType: "UPLOAD"
+          }));
 
-        const unifiedActivities = [...mappedUploads, ...mappedDeletes].sort((a, b) => {
+        const unifiedActivities = [...mappedUploads, ...processedLogs].sort((a, b) => {
           const aTime = a.uploadedAt?.seconds || 0;
           const bTime = b.uploadedAt?.seconds || 0;
           return bTime - aTime;

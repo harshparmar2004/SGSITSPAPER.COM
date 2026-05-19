@@ -112,7 +112,7 @@ service cloud.firestore {
     }
 
     function isValidActivityLog(data) {
-      return data.type == "DELETE" &&
+      return (data.type == "DELETE" || data.type == "UPLOAD") &&
       data.documentId is string &&
       data.subjectCode is string &&
       data.subjectName is string &&
