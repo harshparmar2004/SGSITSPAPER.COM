@@ -7,6 +7,8 @@ import {
   doc,
   updateDoc,
   orderBy,
+  addDoc,
+  serverTimestamp
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "../lib/firebase";
@@ -39,7 +41,7 @@ const DOC_TYPES = [
 ];
 
 export default function AdminAllPYQs() {
-  const { isAdmin, adminRole, assignedDepartments } = useAuth();
+  const { user, isAdmin, adminRole, assignedDepartments } = useAuth();
   const [pyqsByDept, setPyqsByDept] = useState<Record<string, PYQ[]>>({});
   const [selectedDept, setSelectedDept] = useState<string | null>(null);
   const [selectedDocType, setSelectedDocType] = useState<string>("All");
@@ -117,6 +119,27 @@ export default function AdminAllPYQs() {
         ]).catch((e) => console.log("Storage delete error", e)); // Ignore if not found
       }
       await deleteDoc(doc(db, "pyqs", pyq.id));
+      
+      // Log deletion activity
+      try {
+        await addDoc(collection(db, "activity_logs"), {
+          type: "DELETE",
+          documentId: pyq.id || "Unknown",
+          subjectCode: pyq.subjectCode || "Unknown",
+          subjectName: pyq.subjectName || "Unknown",
+          department: pyq.department || "Unknown",
+          course: pyq.course || "",
+          semester: pyq.semester || "",
+          documentType: pyq.documentType || "PYQ",
+          deletedBy: user?.uid || "Unknown",
+          deletedByEmail: user?.email || "Unknown",
+          deletedAt: serverTimestamp(),
+          originalUploader: pyq.uploadedBy || "Unknown"
+        });
+      } catch (logErr) {
+        console.error("Failed to log deletion", logErr);
+      }
+      
       clearCache("pyqs");
 
       setPyqsByDept((prev) => {

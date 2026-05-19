@@ -20,10 +20,10 @@ export default function AdminActivity() {
   const [activeTab, setActiveTab] = useState<
     "your" | "superadmin" | "staff" | "student"
   >("your");
-  const [myHistory, setMyHistory] = useState<PYQ[]>([]);
-  const [superadminHistory, setSuperadminHistory] = useState<PYQ[]>([]);
-  const [staffHistory, setStaffHistory] = useState<PYQ[]>([]);
-  const [studentHistory, setStudentHistory] = useState<PYQ[]>([]);
+  const [myHistory, setMyHistory] = useState<any[]>([]);
+  const [superadminHistory, setSuperadminHistory] = useState<any[]>([]);
+  const [staffHistory, setStaffHistory] = useState<any[]>([]);
+  const [studentHistory, setStudentHistory] = useState<any[]>([]);
   const [admins, setAdmins] = useState<AdminData[]>([]);
   const [usersInfo, setUsersInfo] = useState<
     Map<string, { email: string; name?: string }>
@@ -40,11 +40,14 @@ export default function AdminActivity() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [adminList, allPyqs, userList] = await Promise.all([
+        const [adminList, allPyqs, userList, activityLogsSnap] = await Promise.all([
           getCachedCollection("admins"),
           getCachedCollection("pyqs"),
           getCachedCollection("users"),
+          getDocs(collection(db, "activity_logs")).catch(() => ({ docs: [] }))
         ]);
+        
+        const activityLogs = activityLogsSnap.docs?.map(d => ({id: d.id, ...d.data()})) || [];
 
         setAdmins(adminList as AdminData[]);
 
@@ -64,6 +67,24 @@ export default function AdminActivity() {
           }
         });
         setUsersInfo(uidToUserMap);
+        const mappedDeletes = activityLogs.map(log => ({
+          ...log,
+          actionType: "DELETE",
+          uploadedBy: log.deletedBy,
+          uploadedAt: log.deletedAt
+        }));
+        
+        const mappedUploads = allPyqs.map(p => ({
+          ...p,
+          actionType: "UPLOAD"
+        }));
+
+        const unifiedActivities = [...mappedUploads, ...mappedDeletes].sort((a, b) => {
+          const aTime = a.uploadedAt?.seconds || 0;
+          const bTime = b.uploadedAt?.seconds || 0;
+          return bTime - aTime;
+        });
+
 
         const superadminEmails = new Set(
           adminList
@@ -110,8 +131,8 @@ export default function AdminActivity() {
           return false;
         };
 
-        const superadminPyqs = allPyqs.filter((p) => isSuperadmin(p));
-        let staffPyqs = allPyqs.filter((p) => !isSuperadmin(p) && isStaff(p));
+        const superadminPyqs = unifiedActivities.filter((p) => isSuperadmin(p));
+        let staffPyqs = unifiedActivities.filter((p) => !isSuperadmin(p) && isStaff(p));
 
         // Filter staff Pyqs based on assigned departments if not superadmin
         if (adminRole !== "superadmin") {
@@ -123,7 +144,7 @@ export default function AdminActivity() {
           });
         }
 
-        const studentPyqs = allPyqs.filter(
+        const studentPyqs = unifiedActivities.filter(
           (p) =>
             p.uploadedBy &&
             !isSuperadmin(p) &&
@@ -139,7 +160,7 @@ export default function AdminActivity() {
         if (user && user.email) {
           // Your Last 50 Actions
           const userEmailLower = user.email.toLowerCase();
-          const myDocs = allPyqs.filter(
+          const myDocs = unifiedActivities.filter(
             (p) =>
               p.uploadedBy &&
               (p.uploadedBy.toLowerCase() === userEmailLower ||
@@ -180,7 +201,8 @@ export default function AdminActivity() {
 
     const headers = [
       "ID",
-      "Uploaded By",
+      "Action",
+      "Action By",
       "Subject Code",
       "Subject Name",
       "Department",
@@ -208,6 +230,7 @@ export default function AdminActivity() {
       }
       return [
         p.id,
+        `"${p.actionType || "UPLOAD"}"`,
         `"${uploader}"`,
         `"${p.subjectCode}"`,
         `"${p.subjectName}"`,
@@ -323,6 +346,7 @@ export default function AdminActivity() {
                 <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                   <tr>
                     <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                     <th className="px-3 py-2">Action Done By</th>
                     <th className="px-3 py-2">Target Document</th>
                     <th className="px-3 py-2">Department Addressed</th>
@@ -338,6 +362,11 @@ export default function AdminActivity() {
                       >
                         <td className="px-3 py-2 text-center text-gray-500 font-medium">
                           {index + 1}
+                        </td>
+                        <td className="px-3 py-2 text-center">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${pyq.actionType === "DELETE" ? "bg-red-100 text-red-800 border border-red-200" : "bg-green-100 text-green-800 border border-green-200"}`}>
+                            {pyq.actionType === "DELETE" ? "Delete" : "Upload"}
+                          </span>
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-2">
@@ -426,6 +455,7 @@ export default function AdminActivity() {
                 <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                   <tr>
                     <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                     <th className="px-3 py-2">Action Done By</th>
                     <th className="px-3 py-2">Target Document</th>
                     <th className="px-3 py-2">Department Addressed</th>
@@ -466,6 +496,11 @@ export default function AdminActivity() {
                       >
                         <td className="px-3 py-2 text-center text-gray-500 font-medium">
                           {index + 1}
+                        </td>
+                        <td className="px-3 py-2 text-center">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${pyq.actionType === "DELETE" ? "bg-red-100 text-red-800 border border-red-200" : "bg-green-100 text-green-800 border border-green-200"}`}>
+                            {pyq.actionType === "DELETE" ? "Delete" : "Upload"}
+                          </span>
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-2">
@@ -556,6 +591,7 @@ export default function AdminActivity() {
                 <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                   <tr>
                     <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                     <th className="px-3 py-2">Action Done By</th>
                     <th className="px-3 py-2">Target Document</th>
                     <th className="px-3 py-2">Department Addressed</th>
@@ -594,6 +630,11 @@ export default function AdminActivity() {
                       >
                         <td className="px-3 py-2 text-center text-gray-500 font-medium">
                           {index + 1}
+                        </td>
+                        <td className="px-3 py-2 text-center">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${pyq.actionType === "DELETE" ? "bg-red-100 text-red-800 border border-red-200" : "bg-green-100 text-green-800 border border-green-200"}`}>
+                            {pyq.actionType === "DELETE" ? "Delete" : "Upload"}
+                          </span>
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-2">
@@ -684,6 +725,7 @@ export default function AdminActivity() {
                 <thead className="bg-white text-gray-500 font-medium border-b border-gray-200 text-xs uppercase tracking-wider">
                   <tr>
                     <th className="px-3 py-2 w-12 text-center">S.No.</th>
+                    <th className="px-3 py-2 text-center">Action</th>
                     <th className="px-3 py-2">Action Done By</th>
                     <th className="px-3 py-2">Target Document</th>
                     <th className="px-3 py-2">Department Addressed</th>
@@ -699,6 +741,11 @@ export default function AdminActivity() {
                       >
                         <td className="px-3 py-2 text-center text-gray-500 font-medium">
                           {index + 1}
+                        </td>
+                        <td className="px-3 py-2 text-center">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider ${pyq.actionType === "DELETE" ? "bg-red-100 text-red-800 border border-red-200" : "bg-green-100 text-green-800 border border-green-200"}`}>
+                            {pyq.actionType === "DELETE" ? "Delete" : "Upload"}
+                          </span>
                         </td>
                         <td className="px-3 py-2">
                           <div className="flex items-center gap-2">

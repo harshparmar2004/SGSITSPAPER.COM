@@ -111,6 +111,21 @@ service cloud.firestore {
       // Removed exists(/databases/$(database)/documents/pyqs/$(data.pyqId)) for performance/resilience since pyqId might be missing occasionally. (actually wait, let's keep it safe. But wait, in the create method the error could be thrown if user has no read access to pyqs. But students have read access to PYQs).
     }
 
+    function isValidActivityLog(data) {
+      return data.type == "DELETE" &&
+      data.documentId is string &&
+      data.subjectCode is string &&
+      data.subjectName is string &&
+      data.department is string &&
+      (data.course is string) &&
+      (data.semester is string) &&
+      data.documentType is string &&
+      (data.deletedBy == request.auth.uid || isAdmin()) &&
+      (data.get("deletedByEmail", "") is string) &&
+      data.deletedAt == request.time &&
+      (data.get("originalUploader", "") is string);
+    }
+
     match /admins/{adminId} {
       allow read: if request.auth.uid == adminId || (request.auth.token != null && request.auth.token.email != null && request.auth.token.email == adminId) || isAdmin();
       allow create: if isSuperAdmin();
@@ -152,6 +167,12 @@ service cloud.firestore {
                     incoming().diff(existing()).affectedKeys().hasOnly(['status']) &&
                     incoming().status == 'resolved';
       allow delete: if isAdmin();
+    }
+
+    match /activity_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && isValidActivityLog(incoming());
+      allow update, delete: if false;
     }
 
     match /settings/{docId} {
