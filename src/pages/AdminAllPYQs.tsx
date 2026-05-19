@@ -63,6 +63,7 @@ export default function AdminAllPYQs() {
     pyq: PYQ;
     step: 1 | 2;
   } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetchPyqs();
@@ -103,15 +104,17 @@ export default function AdminAllPYQs() {
   const executeDelete = async () => {
     if (!deleteModal) return;
     const { pyq } = deleteModal;
+    setDeleteLoading(true);
 
     try {
       if (pyq.fileSize && pyq.fileSize > 0) {
         // Assume it's from storage
         const storagePath = `pyqs/${pyq.department}/${pyq.semester}/${pyq.fileName}`;
         const pRef = ref(storage, storagePath);
-        await deleteObject(pRef).catch((e) =>
-          console.log("Storage delete error", e),
-        ); // Ignore if not found
+        await Promise.race([
+          deleteObject(pRef),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000))
+        ]).catch((e) => console.log("Storage delete error", e)); // Ignore if not found
       }
       await deleteDoc(doc(db, "pyqs", pyq.id));
       clearCache("pyqs");
@@ -131,11 +134,13 @@ export default function AdminAllPYQs() {
 
       setDeleteModal(null);
       setSuccessMsg(`Successfully deleted document for ${pyq.subjectCode}`);
-      setTimeout(() => setSuccessMsg(""), 5000);
+      // // // setTimeout(() => setSuccessMsg(""), 5000);
     } catch (e) {
       console.error("Error deleting PYQ", e);
       setError("Error deleting PYQ");
       setDeleteModal(null);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -368,23 +373,31 @@ export default function AdminAllPYQs() {
                 </>
               )}
             </p>
-            <div className="flex justify-end gap-3 mt-6">
-              <Button variant="outline" onClick={() => setDeleteModal(null)}>
-                Cancel
-              </Button>
-              {deleteModal.step === 1 ? (
-                <Button
-                  variant="danger"
-                  onClick={() => setDeleteModal({ ...deleteModal, step: 2 })}
-                >
-                  Yes, continue
+            {deleteLoading ? (
+              <div className="flex flex-col items-center justify-center p-6 space-y-4">
+                <div className="w-10 h-10 border-4 border-red-200 border-t-red-600 rounded-full animate-spin"></div>
+                <p className="text-sm font-medium text-gray-700 animate-pulse">Deleting document...</p>
+              </div>
+            ) : (
+              <div className="flex justify-end gap-3 mt-6">
+                <Button variant="outline" onClick={() => setDeleteModal(null)} disabled={deleteLoading}>
+                  Cancel
                 </Button>
-              ) : (
-                <Button variant="danger" onClick={executeDelete}>
-                  I am absolutely sure, Delete
-                </Button>
-              )}
-            </div>
+                {deleteModal.step === 1 ? (
+                  <Button
+                    variant="danger"
+                    onClick={() => setDeleteModal({ ...deleteModal, step: 2 })}
+                    disabled={deleteLoading}
+                  >
+                    Yes, continue
+                  </Button>
+                ) : (
+                  <Button variant="danger" onClick={executeDelete} disabled={deleteLoading}>
+                    I am absolutely sure, Delete
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -566,9 +579,17 @@ export default function AdminAllPYQs() {
       </div>
 
       {successMsg && (
-        <div className="fixed bottom-4 right-4 z-50 p-4 bg-white text-green-800 rounded-lg shadow-xl border-l-4 border-green-500 text-sm flex items-center gap-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-          <span className="font-medium">{successMsg}</span>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 text-center animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Success!</h3>
+            <p className="text-sm text-gray-600 mb-6">{successMsg}</p>
+            <Button variant="primary" className="w-full" onClick={() => setSuccessMsg("")}>
+              Done
+            </Button>
+          </div>
         </div>
       )}
 
