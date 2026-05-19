@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 
 import { db, storage } from "../lib/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { clearCache } from "../lib/cache";
 import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from "../types";
 import { Button, Input, Select } from "../components/ui";
@@ -172,10 +173,7 @@ export default function AdminUpload() {
         setError("Only PDF files are allowed.");
         return;
       }
-      if (selectedFile.size > 700 * 1024) {
-        setError("File size must be less than 700KB to fit in Firestore.");
-        return;
-      }
+
       setError("");
       setFile(selectedFile);
     }
@@ -214,6 +212,7 @@ export default function AdminUpload() {
     }
 
     setError("");
+    setUploadProgress(0);
     setUploading(true);
     setSuccess("");
 
@@ -275,14 +274,32 @@ export default function AdminUpload() {
           );
         }
 
-                console.log("Starting local to Data URL encoding:", fileName);
+                console.log("Uploading to Firebase Storage...", fileName);
+        const storagePath = `pyqs/${formData.department || "Other"}/${formData.semester || "All"}/${fileName}`;
+        const storageRef = ref(storage, storagePath);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
         fileUrl = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = (err) => reject(new Error("Failed to read file"));
-          reader.readAsDataURL(file);
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setUploadProgress(progress);
+            },
+            (error) => {
+              reject(error);
+            },
+            async () => {
+              try {
+                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadURL);
+              } catch (err) {
+                reject(err);
+              }
+            }
+          );
         });
-        console.log("Data URL encoded successfully");
+        console.log("Uploaded successfully to Storage");
         
         fileName = fileName; // Keep our generated descriptive filename
         fileSize = file.size;
@@ -398,7 +415,7 @@ export default function AdminUpload() {
                 Upload Study Material
               </h2>
               <p className="mt-0.5 text-[11px] text-indigo-500/80 font-medium">
-                Fill in the metadata and upload a PDF. Max size 700KB.
+                Fill in the metadata and upload a PDF.
               </p>
             </div>
           </div>
@@ -810,12 +827,27 @@ export default function AdminUpload() {
                       <p className="pl-1 mt-1">or drag and drop</p>
                     </div>
                     <p className="text-xs leading-5 text-gray-500 mt-2">
-                      PDF up to 700KB
+                      PDF document
                     </p>
                   </div>
                 </div>
               )}
             </div>
+
+            {uploading && uploadMethod === "storage" && uploadProgress > 0 && (
+              <div className="mt-4">
+                <div className="flex justify-between text-xs font-medium mb-1">
+                  <span className="text-gray-700">Uploading PDF...</span>
+                  <span className="text-indigo-600">{Math.round(uploadProgress)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300 ease-out" 
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end pt-4">
               <Button
