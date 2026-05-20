@@ -582,53 +582,13 @@ export default function AdminAllPYQs() {
                   }}
                   className="flex items-center gap-1.5 text-sm text-indigo-700 font-bold hover:text-indigo-800 mb-2 transition-colors cursor-pointer w-fit"
                 >
-                  <ArrowLeft className="w-4 h-4" /> 
-                  {selectedSubject ? "Back to Subjects" : 
-                   selectedSemester ? "Back to Semesters" : 
-                   selectedYear === "Internships" ? "Back to Departments" :
-                   selectedYear ? "Back to Years" : 
-                   "Back to Departments"}
+                  <ArrowLeft className="w-4 h-4" /> Back to Departments
                 </button>
-                <div className="flex flex-wrap items-center gap-2 text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
-                  <span 
-                    onClick={() => { setSelectedYear(null); setSelectedSemester(null); setSelectedSubject(null); }}
-                    className={`cursor-pointer hover:text-indigo-600 transition-colors ${selectedYear ? 'text-gray-400' : 'text-gray-900'}`}
-                  >
-                    {selectedDept}
-                  </span>
-                  
-                  {selectedYear && (
-                    <>
-                      <span className="text-gray-300 font-normal">/</span>
-                      <span 
-                        onClick={() => { setSelectedSemester(null); setSelectedSubject(null); }}
-                        className={`cursor-pointer hover:text-indigo-600 transition-colors ${selectedSemester ? 'text-gray-400' : 'text-gray-800'}`}
-                      >
-                        {selectedYear}
-                      </span>
-                    </>
-                  )}
-                  
-                  {selectedSemester && (
-                    <>
-                      <span className="text-gray-300 font-normal">/</span>
-                      <span 
-                        onClick={() => setSelectedSubject(null)}
-                        className={`cursor-pointer hover:text-indigo-600 transition-colors ${selectedSubject ? 'text-gray-400' : 'text-gray-800'}`}
-                      >
-                        {selectedSemester}
-                      </span>
-                    </>
-                  )}
-
-                  {selectedSubject && (
-                    <>
-                      <span className="text-gray-300 font-normal">/</span>
-                      <span className="text-indigo-600 truncate max-w-[200px] sm:max-w-xs" title={selectedSubject}>
-                        {selectedSubject}
-                      </span>
-                    </>
-                  )}
+                <div className="flex flex-wrap items-center gap-2 text-3xl font-black tracking-tight text-indigo-900">
+                  {selectedDept} 
+                  {selectedYear && <span className="text-indigo-400 font-medium"> / {selectedYear}</span>}
+                  {selectedSemester && <span className="text-indigo-300 font-medium"> / {selectedSemester}</span>}
+                  {selectedSubject && <span className="text-indigo-200 font-medium truncate max-w-xs" title={selectedSubject}> / {selectedSubject}</span>}
                 </div>
               </div>
             )}
@@ -636,7 +596,7 @@ export default function AdminAllPYQs() {
           <p className={`mt-2 text-sm font-medium ${selectedDept ? 'text-indigo-800/80' : 'text-gray-500'} max-w-lg`}>
             {!selectedDept
               ? "Select a department to view and manage all its documents, including PYQs, Notes, and Syllabus."
-              : "View, search, replace, and delete uploaded documents."}
+              : "View, search, replace, and delete uploaded papers for this department."}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto mt-4 sm:mt-0">
@@ -725,19 +685,17 @@ export default function AdminAllPYQs() {
                 <div
                   key={year}
                   onClick={() => setSelectedYear(year)}
-                  className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-center gap-4 shadow-sm"
+                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
                 >
-                  <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                    <FolderOpen className="w-5 h-5 text-indigo-600" />
+                  <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
+                    <FolderOpen className="w-5 h-5 text-indigo-500" />
                   </div>
-                  <div className="flex flex-col text-left">
-                    <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                      {year}
-                    </h3>
-                    <span className="mt-0.5 text-xs font-medium text-gray-500">
-                      {count} Documents
-                    </span>
-                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                    {year}
+                  </h3>
+                  <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
+                    {count} Docs
+                  </span>
                 </div>
               );
             })}
@@ -757,42 +715,13 @@ export default function AdminAllPYQs() {
                 <div
                   key={sem}
                   onClick={() => setSelectedSemester(sem)}
-                  className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-center gap-4 shadow-sm"
-                >
-                  <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                    <FolderOpen className="w-5 h-5 text-indigo-600" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                      {sem}
-                    </h3>
-                    <span className="mt-0.5 text-xs font-medium text-gray-500">
-                      {count} Documents
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : selectedDept && selectedYear && selectedSemester && !selectedSubject && !search ? (
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 animate-in fade-in zoom-in-95 duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {Array.from(new Set(currentList.filter(p => p.year === selectedYear && p.semester === selectedSemester).map(p => p.subjectName))).map((subName) => {
-              const count = currentList.filter(p => p.year === selectedYear && p.semester === selectedSemester && p.subjectName === subName).length;
-              const titleName = subName || "Unknown Subject";
-              return (
-                <div
-                  key={titleName}
-                  onClick={() => setSelectedSubject(titleName)}
                   className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
-                  title={titleName}
                 >
                   <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
                     <FolderOpen className="w-5 h-5 text-indigo-500" />
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-tight line-clamp-2">
-                    {titleName}
+                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                    {sem}
                   </h3>
                   <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
                     {count} Docs
@@ -800,11 +729,6 @@ export default function AdminAllPYQs() {
                 </div>
               );
             })}
-            {Array.from(new Set(currentList.filter(p => p.year === selectedYear && p.semester === selectedSemester).map(p => p.subjectName))).length === 0 && (
-              <div className="col-span-full py-12 text-center text-xs text-gray-500">
-                No subjects found in {selectedSemester}.
-              </div>
-            )}
           </div>
         </div>
       ) : (

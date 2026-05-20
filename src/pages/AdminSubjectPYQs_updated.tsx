@@ -202,19 +202,17 @@ export default function AdminSubjectPYQs() {
                         <div
                           key={year}
                           onClick={() => setSelectedYear(year)}
-                          className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-center gap-4 shadow-sm"
+                          className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
                         >
-                          <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                            <Folder className="w-5 h-5 text-indigo-600" />
+                          <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
+                            <Folder className="w-5 h-5 text-indigo-500" />
                           </div>
-                          <div className="flex flex-col text-left">
-                            <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                              {year}
-                            </h3>
-                            <span className="mt-0.5 text-xs font-medium text-gray-500">
-                              {count} Documents
-                            </span>
-                          </div>
+                          <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                            {year}
+                          </h3>
+                          <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
+                            {count} Docs
+                          </span>
                         </div>
                       );
                     })}
@@ -228,20 +226,18 @@ export default function AdminSubjectPYQs() {
                         <div
                           key={titleName}
                           onClick={() => setSelectedSubject(titleName)}
-                          className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-start gap-3 shadow-sm"
+                          className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
                           title={titleName}
                         >
-                          <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                            <Folder className="w-5 h-5 text-indigo-600" />
+                          <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
+                            <Folder className="w-5 h-5 text-indigo-500" />
                           </div>
-                          <div className="flex flex-col text-left mt-0.5">
-                            <h3 className="text-[13px] font-bold text-gray-900 leading-tight line-clamp-2">
-                              {titleName}
-                            </h3>
-                            <span className="mt-1 text-xs font-medium text-gray-500">
-                              {count} Documents
-                            </span>
-                          </div>
+                          <h3 className="text-sm font-bold text-gray-900 leading-tight line-clamp-2">
+                            {titleName}
+                          </h3>
+                          <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
+                            {count} Docs
+                          </span>
                         </div>
                       );
                     })}
@@ -264,19 +260,17 @@ export default function AdminSubjectPYQs() {
                         <div
                           key={sem}
                           onClick={() => setSelectedSemester(sem)}
-                          className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-center gap-4 shadow-sm"
+                          className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
                         >
-                          <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                            <Folder className="w-5 h-5 text-indigo-600" />
+                          <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
+                            <Folder className="w-5 h-5 text-indigo-500" />
                           </div>
-                          <div className="flex flex-col text-left">
-                            <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                              {sem}
-                            </h3>
-                            <span className="mt-0.5 text-xs font-medium text-gray-500">
-                              {count} Documents
-                            </span>
-                          </div>
+                          <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                            {sem}
+                          </h3>
+                          <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
+                            {count} Docs
+                          </span>
                         </div>
                       );
                     })}

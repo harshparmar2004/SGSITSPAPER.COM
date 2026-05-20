@@ -25,7 +25,6 @@ export default function AdminSubjectPYQs() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPyqs();
@@ -153,40 +152,20 @@ export default function AdminSubjectPYQs() {
                );
             }
 
-            
-            let pyqsToRender = (selectedType && search === "") ? (groupedByType[selectedType] || []) : filteredPyqs;
-            
-            if (selectedType && search === "") {
-              if (selectedYear && selectedYear !== "Internships") pyqsToRender = pyqsToRender.filter(p => p.year === selectedYear);
-              if (selectedSemester) pyqsToRender = pyqsToRender.filter(p => p.semester === selectedSemester);
-              if (selectedSubject) pyqsToRender = pyqsToRender.filter(p => p.subjectName === selectedSubject);
-            }
+            const pyqsToRender = (selectedType && search === "") ? (groupedByType[selectedType] || []) : filteredPyqs;
 
             return (
               <div className="space-y-4">
                 {(selectedType && search === "") && (
                   <div className="flex items-center gap-4 mb-4 pb-4 border-b border-gray-200">
                     <button 
-                      onClick={() => {
-                        if (selectedSubject) {
-                          setSelectedSubject(null);
-                        } else if (selectedSemester) {
-                          setSelectedSemester(null);
-                        } else if (selectedYear) {
-                          setSelectedYear(null);
-                        } else {
-                          setSelectedType(null);
-                        }
-                      }} 
+                      onClick={() => setSelectedType(null)} 
                       className="text-gray-500 hover:text-indigo-600 flex items-center gap-1.5 font-medium text-sm transition-colors bg-gray-50 hover:bg-indigo-50 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-indigo-200"
                     >
-                      <ArrowLeft className="w-4 h-4" /> 
-                      {selectedSubject ? "Back to Subjects" : selectedSemester ? "Back to Semesters" : selectedYear === "Internships" ? "Back to Categories" : selectedYear ? "Back to Years" : "Back to Categories"}
+                      <ArrowLeft className="w-4 h-4" /> Back to Categories
                     </button>
-                    <h2 className="text-xl font-bold text-gray-900 flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       {selectedType} 
-                      {selectedYear && <span className="text-indigo-400 font-medium"> / {selectedYear}</span>}
-                      {selectedSemester && <span className="text-indigo-300 font-medium"> / {selectedSemester}</span>}
                       <span className="text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-md">
                         {pyqsToRender.length} documents
                       </span>
@@ -194,100 +173,8 @@ export default function AdminSubjectPYQs() {
                   </div>
                 )}
                 
-                {selectedType && !selectedYear && search === "" && selectedType !== "Internship Information" ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                    {["1st Year", "2nd Year", "3rd Year", "4th Year"].map((year) => {
-                      const count = (groupedByType[selectedType] || []).filter(p => p.year === year).length;
-                      return (
-                        <div
-                          key={year}
-                          onClick={() => setSelectedYear(year)}
-                          className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-center gap-4 shadow-sm"
-                        >
-                          <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                            <Folder className="w-5 h-5 text-indigo-600" />
-                          </div>
-                          <div className="flex flex-col text-left">
-                            <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                              {year}
-                            </h3>
-                            <span className="mt-0.5 text-xs font-medium text-gray-500">
-                              {count} Documents
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : selectedType && selectedYear && selectedSemester && !selectedSubject && selectedType !== "Internship Information" && search === "" ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                    {Array.from(new Set((groupedByType[selectedType] || []).filter(p => p.year === selectedYear && p.semester === selectedSemester).map(p => p.subjectName))).map((subName) => {
-                      const count = (groupedByType[selectedType] || []).filter(p => p.year === selectedYear && p.semester === selectedSemester && p.subjectName === subName).length;
-                      const titleName = subName || "Unknown Subject";
-                      return (
-                        <div
-                          key={titleName}
-                          onClick={() => setSelectedSubject(titleName)}
-                          className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-start gap-3 shadow-sm"
-                          title={titleName}
-                        >
-                          <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                            <Folder className="w-5 h-5 text-indigo-600" />
-                          </div>
-                          <div className="flex flex-col text-left mt-0.5">
-                            <h3 className="text-[13px] font-bold text-gray-900 leading-tight line-clamp-2">
-                              {titleName}
-                            </h3>
-                            <span className="mt-1 text-xs font-medium text-gray-500">
-                              {count} Documents
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {Array.from(new Set((groupedByType[selectedType] || []).filter(p => p.year === selectedYear && p.semester === selectedSemester).map(p => p.subjectName))).length === 0 && (
-                      <div className="col-span-full py-12 text-center text-xs text-gray-500">
-                        No subjects found in {selectedSemester}.
-                      </div>
-                    )}
-                  </div>
-                ) : selectedType && selectedYear && !selectedSemester && selectedType !== "Internship Information" && search === "" ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                    {(
-                      selectedYear === "1st Year" ? ["Sem 1", "Sem 2"] :
-                      selectedYear === "2nd Year" ? ["Sem 3", "Sem 4"] :
-                      selectedYear === "3rd Year" ? ["Sem 5", "Sem 6"] :
-                      ["Sem 7", "Sem 8"]
-                    ).map((sem) => {
-                      const count = (groupedByType[selectedType] || []).filter(p => p.year === selectedYear && p.semester === sem).length;
-                      return (
-                        <div
-                          key={sem}
-                          onClick={() => setSelectedSemester(sem)}
-                          className="p-4 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md hover:border-indigo-300 group flex items-center gap-4 shadow-sm"
-                        >
-                          <div className="w-10 h-10 shrink-0 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                            <Folder className="w-5 h-5 text-indigo-600" />
-                          </div>
-                          <div className="flex flex-col text-left">
-                            <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                              {sem}
-                            </h3>
-                            <span className="mt-0.5 text-xs font-medium text-gray-500">
-                              {count} Documents
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                    {pyqsToRender.length === 0 ? (
-                      <div className="col-span-full py-12 text-center text-gray-500 bg-gray-50 border border-gray-200 rounded-xl">
-                        No documents found.
-                      </div>
-                    ) : pyqsToRender.map(pyq => {
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {pyqsToRender.map(pyq => {
                      let type = pyq.documentType || "Previous Year Question (PYQ)";
                      if (type === "PYQ") type = "Previous Year Question (PYQ)";
                      if (type === "Notes") type = "Handwritten Notes";
@@ -366,8 +253,7 @@ export default function AdminSubjectPYQs() {
                       </a>
                      );
                   })}
-                  </div>
-                )}
+                </div>
               </div>
             );
           })()}
