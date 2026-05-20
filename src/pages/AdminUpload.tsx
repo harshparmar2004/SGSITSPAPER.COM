@@ -1,3 +1,4 @@
+import firebaseConfig from "../../firebase-applet-config.json";
 import React, { useState } from "react";
 import {
   collection,
@@ -9,7 +10,7 @@ import {
 } from "firebase/firestore";
 
 import { db, storage } from "../lib/firebase";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, uploadBytes, getDownloadURL } from "firebase/storage";
 import { clearCache } from "../lib/cache";
 import { YEARS, SEMESTERS, EXAM_TYPES, MONTHS, DOCUMENT_TYPES } from "../types";
 import { Button, Input, Select } from "../components/ui";
@@ -274,32 +275,36 @@ export default function AdminUpload() {
           );
         }
 
-                console.log("Uploading to Firebase Storage...", fileName);
+        console.log("Uploading via proxy...", fileName);
         const storagePath = `pyqs/${formData.department || "Other"}/${formData.semester || "All"}/${fileName}`;
-        const storageRef = ref(storage, storagePath);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-
-        fileUrl = await new Promise((resolve, reject) => {
-          uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setUploadProgress(progress);
-            },
-            (error) => {
-              reject(error);
-            },
-            async () => {
-              try {
-                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                resolve(downloadURL);
-              } catch (err) {
-                reject(err);
-              }
-            }
-          );
+        
+        setUploadProgress(50); // Fake progress for non-resumable
+        
+        // Grab the bucket name from config (requires default import or require. Use inline fetch or generic bucket config)
+        // Since we import firebaseConfig in lib/firebase.ts, but let us just read it
+        
+        const bucketMatch = firebaseConfig.storageBucket;
+        
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", file);
+        uploadFormData.append("storagePath", storagePath);
+        uploadFormData.append("bucket", bucketMatch);
+        
+        const response = await fetch("/api/upload-proxy", {
+          method: "POST",
+          body: uploadFormData
         });
-        console.log("Uploaded successfully to Storage");
+        
+        if (!response.ok) {
+          const errData = await response.json().catch(() => null);
+          throw new Error("Upload proxy failed: " + (errData?.error || response.statusText));
+        }
+        
+        const data = await response.json();
+        
+        setUploadProgress(100);
+        fileUrl = data.fileUrl;
+        console.log("Uploaded successfully via proxy");
         
         fileName = fileName; // Keep our generated descriptive filename
         fileSize = file.size;
