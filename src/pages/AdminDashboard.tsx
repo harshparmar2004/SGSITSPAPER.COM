@@ -60,6 +60,7 @@ export default function AdminDashboard() {
   const [storageUsed, setStorageUsed] = useState(0);
   const [loading, setLoading] = useState(true);
   const STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
+  const [adminUsers, setAdminUsers] = useState<Record<string, {name: string, dept: string}>>({});
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [editingPyq, setEditingPyq] = useState<PYQ | null>(null);
   const [updatingPyq, setUpdatingPyq] = useState(false);
@@ -119,6 +120,25 @@ export default function AdminDashboard() {
     if (!adminRole) return;
     setLoading(true);
     try {
+      // Fetch admins and create a map
+      const adminMap: Record<string, {name: string, dept: string}> = {};
+      try {
+        const adminSnap = await getDocs(collection(db, "admins"));
+        adminSnap.forEach(doc => {
+          const data = doc.data();
+          const depts = data.departments || [];
+          adminMap[doc.id] = {
+            name: data.name || data.email,
+            dept: depts.length > 0 ? (depts[0].includes('::') ? depts[0].split('::')[1] : depts[0]) : ''
+          };
+          if (data.email) {
+            adminMap[data.email] = adminMap[doc.id];
+          }
+        });
+        setAdminUsers(adminMap);
+      } catch (err) {
+        console.error("Could not fetch admins", err);
+      }
       const pyqColl = collection(db, "pyqs");
 
       let finalTotal = 0;
@@ -764,13 +784,20 @@ export default function AdminDashboard() {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center uppercase">
-                          {pyq.uploadedBy?.[0] || "?"}
+                          {(adminUsers[pyq.uploadedBy]?.name?.[0]) || pyq.uploadedBy?.[0] || "?"}
                         </div>
-                        <div
-                          className="text-xs font-medium text-gray-700 truncate max-w-[150px]"
-                          title={pyq.uploadedBy || "Unknown"}
-                        >
-                          {pyq.uploadedBy || "Unknown"}
+                        <div className="flex flex-col">
+                          <div
+                            className="text-[13px] font-bold text-gray-900 truncate max-w-[150px]"
+                            title={adminUsers[pyq.uploadedBy]?.name || pyq.uploadedBy || "Unknown"}
+                          >
+                            {adminUsers[pyq.uploadedBy]?.name || pyq.uploadedBy || "Unknown"}
+                          </div>
+                          {adminUsers[pyq.uploadedBy]?.dept && (
+                            <div className="text-[10px] text-gray-500 truncate max-w-[150px] uppercase tracking-wider font-semibold">
+                              {adminUsers[pyq.uploadedBy]?.dept}
+                            </div>
+                          )}
                         </div>
                       </div>
                       {pyq.uploadedAt && (
