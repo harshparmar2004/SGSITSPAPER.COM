@@ -47,8 +47,6 @@ export default function AdminAllPYQs() {
   const [selectedDocType, setSelectedDocType] = useState<string>("All");
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
-  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
 
   // Replace Modal State
   const [replacingPyq, setReplacingPyq] = useState<PYQ | null>(null);
@@ -312,14 +310,6 @@ export default function AdminAllPYQs() {
   const currentList = selectedDept ? pyqsByDept[selectedDept] || [] : [];
 
   const filteredPyqs = currentList.filter((p) => {
-    if (selectedYear && !search) {
-      if (selectedYear === "Internships") {
-        if (p.documentType !== "Internship Information") return false;
-      } else {
-        if (p.year !== selectedYear) return false;
-        if (selectedSemester && p.semester !== selectedSemester) return false;
-      }
-    }
     const dType = p.documentType || "PYQ";
     const matchesTab = selectedDocType === "All" || dType === selectedDocType;
     const matchesSearch =
@@ -566,25 +556,17 @@ export default function AdminAllPYQs() {
               <div className="flex flex-col">
                 <button
                   onClick={() => {
-                    if (selectedSemester) {
-                      setSelectedSemester(null);
-                    } else if (selectedYear) {
-                      setSelectedYear(null);
-                    } else {
-                      setSelectedDept(null);
-                      setSearch("");
-                    }
+                    setSelectedDept(null);
+                    setSearch("");
                     setSelectedDocType("All");
                   }}
                   className="flex items-center gap-1.5 text-sm text-indigo-700 font-bold hover:text-indigo-800 mb-2 transition-colors cursor-pointer w-fit"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back to Departments
                 </button>
-                <div className="flex flex-wrap items-center gap-2 text-3xl font-black tracking-tight text-indigo-900">
-                  {selectedDept} 
-                  {selectedYear && <span className="text-indigo-400 font-medium"> / {selectedYear}</span>}
-                  {selectedSemester && <span className="text-indigo-300 font-medium"> / {selectedSemester}</span>}
-                </div>
+                <h1 className="text-3xl font-black tracking-tight text-indigo-900">
+                  {selectedDept}
+                </h1>
               </div>
             )}
           </div>
@@ -670,64 +652,7 @@ export default function AdminAllPYQs() {
             )}
           </div>
         </div>
-      ) : selectedDept && !selectedYear && !search ? (
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 animate-in fade-in zoom-in-95 duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {["1st Year", "2nd Year", "3rd Year", "4th Year", "Internships"].map((year) => {
-              // Count docs for this year
-              const count = currentList.filter(p => year === "Internships" ? p.documentType === "Internship Information" : p.year === year).length;
-              return (
-                <div
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
-                >
-                  <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
-                    <FolderOpen className="w-5 h-5 text-indigo-500" />
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                    {year}
-                  </h3>
-                  <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
-                    {count} Docs
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : selectedDept && selectedYear && !selectedSemester && selectedYear !== "Internships" && !search ? (
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 animate-in fade-in zoom-in-95 duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {(
-              selectedYear === "1st Year" ? ["Sem 1", "Sem 2"] :
-              selectedYear === "2nd Year" ? ["Sem 3", "Sem 4"] :
-              selectedYear === "3rd Year" ? ["Sem 5", "Sem 6"] :
-              ["Sem 7", "Sem 8"]
-            ).map((sem) => {
-              const count = currentList.filter(p => p.year === selectedYear && p.semester === sem).length;
-              return (
-                <div
-                  key={sem}
-                  onClick={() => setSelectedSemester(sem)}
-                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
-                >
-                  <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
-                    <FolderOpen className="w-5 h-5 text-indigo-500" />
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                    {sem}
-                  </h3>
-                  <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
-                    {count} Docs
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       ) : (
-
         <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden flex flex-col animate-in fade-in duration-200">
           <div className="border-b border-gray-200 bg-gray-50/50 px-2 pt-2 overflow-x-auto hide-scrollbar">
             <div className="flex gap-2">

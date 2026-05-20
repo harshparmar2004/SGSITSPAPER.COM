@@ -670,64 +670,7 @@ export default function AdminAllPYQs() {
             )}
           </div>
         </div>
-      ) : selectedDept && !selectedYear && !search ? (
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 animate-in fade-in zoom-in-95 duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {["1st Year", "2nd Year", "3rd Year", "4th Year", "Internships"].map((year) => {
-              // Count docs for this year
-              const count = currentList.filter(p => year === "Internships" ? p.documentType === "Internship Information" : p.year === year).length;
-              return (
-                <div
-                  key={year}
-                  onClick={() => setSelectedYear(year)}
-                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
-                >
-                  <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
-                    <FolderOpen className="w-5 h-5 text-indigo-500" />
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                    {year}
-                  </h3>
-                  <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
-                    {count} Docs
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : selectedDept && selectedYear && !selectedSemester && selectedYear !== "Internships" && !search ? (
-        <div className="bg-white rounded-xl shadow-md border border-gray-300 p-4 animate-in fade-in zoom-in-95 duration-200">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {(
-              selectedYear === "1st Year" ? ["Sem 1", "Sem 2"] :
-              selectedYear === "2nd Year" ? ["Sem 3", "Sem 4"] :
-              selectedYear === "3rd Year" ? ["Sem 5", "Sem 6"] :
-              ["Sem 7", "Sem 8"]
-            ).map((sem) => {
-              const count = currentList.filter(p => p.year === selectedYear && p.semester === sem).length;
-              return (
-                <div
-                  key={sem}
-                  onClick={() => setSelectedSemester(sem)}
-                  className="p-4 bg-gray-50/80 hover:bg-indigo-50 border border-gray-100 rounded-xl cursor-pointer transition-all hover:shadow-md text-center group flex flex-col items-center"
-                >
-                  <div className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center mb-3 shadow-md group-hover:scale-105 transition-transform">
-                    <FolderOpen className="w-5 h-5 text-indigo-500" />
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900 leading-tight">
-                    {sem}
-                  </h3>
-                  <span className="mt-2 text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-bold">
-                    {count} Docs
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       ) : (
-
         <div className="bg-white rounded-xl shadow-md border border-gray-300 overflow-hidden flex flex-col animate-in fade-in duration-200">
           <div className="border-b border-gray-200 bg-gray-50/50 px-2 pt-2 overflow-x-auto hide-scrollbar">
             <div className="flex gap-2">

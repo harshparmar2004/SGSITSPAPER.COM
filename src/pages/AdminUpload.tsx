@@ -355,7 +355,7 @@ export default function AdminUpload() {
         try {
           await addDoc(collection(db, "activity_logs"), {
             type: "UPLOAD",
-            documentId: newDocRef.id || "Unknown",
+            documentId: (newDocRef as any).id || "Unknown",
             subjectCode: payload.subjectCode || "Unknown",
             subjectName: payload.subjectName || "Unknown",
             department: payload.department || "Unknown",

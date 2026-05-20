@@ -1,0 +1,374 @@
+import React, { useState, useEffect } from "react";
+import {
+  collection,
+  query,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
+  orderBy,
+  addDoc,
+  serverTimestamp
+} from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from "../lib/firebase";
+import { PYQ } from "../types";
+import { Button, Input } from "../components/ui";
+import {
+  Loader2,
+  Search,
+  Trash2,
+  Edit,
+  FileText,
+  UploadCloud,
+  X,
+  Download,
+  FolderOpen,
+  ArrowLeft,
+  CheckCircle2,
+} from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import { getCachedCollection, clearCache } from "../lib/cache";
+
+const DOC_TYPES = [
+  "All",
+  "PYQ",
+  "Notes",
+  "Syllabus",
+  "Lab Manual",
+  "Books & Resources",
+  "Internship Information",
+];
+
+export default function AdminAllPYQs() {
+  const { user, isAdmin, adminRole, assignedDepartments } = useAuth();
+  const [pyqsByDept, setPyqsByDept] = useState<Record<string, PYQ[]>>({});
+  const [selectedDept, setSelectedDept] = useState<string | null>(null);
+  const [selectedDocType, setSelectedDocType] = useState<string>("All");
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  // Replace Modal State
+  const [replacingPyq, setReplacingPyq] = useState<PYQ | null>(null);
+  const [replaceMethod, setReplaceMethod] = useState<"link" | "storage">(
+    "link",
+  );
+  const [externalLink, setExternalLink] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [replaceLoading, setReplaceLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  // Delete Modal State
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    pyq: PYQ;
+    step: 1 | 2;
+  } | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  useEffect(() => {
+    fetchPyqs();
+  }, [adminRole, assignedDepartments]); // Re-fetch if role or assignments change
+
+  const fetchPyqs = async (forceRefresh = false) => {
+    if (!adminRole) return;
+    setLoading(true);
+    try {
+      let data = await getCachedCollection("pyqs", forceRefresh);
+
+      // Filter by department if not superadmin
+      if (adminRole === "department") {
+        data = data.filter(
+          (p) =>
+            assignedDepartments.some((ad) => ad === p.department || ad.endsWith(`::${p.department}`)),
+        );
+      }
+
+      const grouped: Record<string, PYQ[]> = {};
+      data.forEach((p) => {
+        const dept = p.department || "Other";
+        if (!grouped[dept]) grouped[dept] = [];
+        grouped[dept].push(p);
+      });
+
+      setPyqsByDept(grouped);
+    } catch (e) {
+      console.error("Error fetching PYQs", e);
+    }
+    setLoading(false);
+  };
+
+  const handleDeleteClick = (pyq: PYQ) => {
+    setDeleteModal({ isOpen: true, pyq, step: 1 });
+  };
+
+  const executeDelete = async () => {
+    if (!deleteModal) return;
+    const { pyq } = deleteModal;
+    setDeleteLoading(true);
+
+    try {
+      if (pyq.fileSize && pyq.fileSize > 0) {
+        // Assume it's from storage
+        const storagePath = `pyqs/${pyq.department}/${pyq.semester}/${pyq.fileName}`;
+        const pRef = ref(storage, storagePath);
+        await Promise.race([
+          deleteObject(pRef),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000))
+        ]).catch((e) => console.log("Storage delete error", e)); // Ignore if not found
+      }
+      await deleteDoc(doc(db, "pyqs", pyq.id));
+      
+      // Log deletion activity
+      try {
+        await addDoc(collection(db, "activity_logs"), {
+          type: "DELETE",
+          documentId: pyq.id || "Unknown",
+          subjectCode: pyq.subjectCode || "Unknown",
+          subjectName: pyq.subjectName || "Unknown",
+          department: pyq.department || "Unknown",
+          course: pyq.course || "",
+          semester: pyq.semester || "",
+          documentType: pyq.documentType || "PYQ",
+          deletedBy: user?.uid || "Unknown",
+          deletedByEmail: user?.email || "Unknown",
+          deletedAt: serverTimestamp(),
+          originalUploader: pyq.uploadedBy || "Unknown"
+        });
+      } catch (logErr) {
+        console.error("Failed to log deletion", logErr);
+      }
+      
+      clearCache("pyqs");
+
+      setPyqsByDept((prev) => {
+        const next = { ...prev };
+        if (next[pyq.department]) {
+          next[pyq.department] = next[pyq.department].filter(
+            (p) => p.id !== pyq.id,
+          );
+          if (next[pyq.department].length === 0) {
+            delete next[pyq.department];
+          }
+        }
+        return next;
+      });
+
+      setDeleteModal(null);
+      setSuccessMsg(`Successfully deleted document for ${pyq.subjectCode}`);
+      // // // setTimeout(() => setSuccessMsg(""), 5000);
+    } catch (e) {
+      console.error("Error deleting PYQ", e);
+      setError("Error deleting PYQ");
+      setDeleteModal(null);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      if (selectedFile.type !== "application/pdf") {
+        setError("Only PDF files are allowed.");
+        return;
+      }
+      if (selectedFile.size > 700 * 1024) {
+        setError(
+          "File size must be less than 700KB to fit in Firestore limit.",
+        );
+        return;
+      }
+      setError("");
+      setFile(selectedFile);
+    }
+  };
+
+  const submitReplace = async () => {
+    if (!replacingPyq) return;
+    if (replaceMethod === "storage" && !file) {
+      setError("Please select a file.");
+      return;
+    }
+    if (replaceMethod === "link" && !externalLink) {
+      setError("Please provide a link.");
+      return;
+    }
+
+    setReplaceLoading(true);
+    setError("");
+
+    try {
+      let fileUrl = "";
+      let fileName = "";
+      let fileSize = 0;
+
+      if (replaceMethod === "storage" && file) {
+        if (replacingPyq.documentType === "Notes") {
+          fileName =
+            `${replacingPyq.subjectCode}_Notes_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else if (replacingPyq.documentType === "Syllabus") {
+          fileName =
+            `${replacingPyq.subjectCode}_Syllabus_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else if (replacingPyq.documentType === "Lab Manual") {
+          fileName =
+            `${replacingPyq.subjectCode}_Lab_Manual_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else if (replacingPyq.documentType === "Books & Resources") {
+          fileName =
+            `${replacingPyq.subjectCode}_Books_Resources_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else if (replacingPyq.documentType === "Internship Information") {
+          fileName =
+            `${(replacingPyq.department||"").substring(0, 15).toUpperCase()}_Internship_${Date.now()}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        } else {
+          fileName =
+            `${replacingPyq.subjectCode}_${replacingPyq.examType || "Exam"}_${replacingPyq.examYear || "0000"}.pdf`.replace(
+              /[^a-zA-Z0-9.\-_]/g,
+              "_",
+            );
+        }
+
+        const readFileAsDataUrl = (f: File): Promise<string> => {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(f);
+          });
+        };
+
+        try {
+          fileUrl = await readFileAsDataUrl(file);
+        } catch (err: any) {
+          throw new Error("Failed to read file: " + err.message);
+        }
+
+        fileName = file.name;
+        fileSize = file.size;
+      } else {
+        fileUrl = externalLink;
+        fileName = `${replacingPyq.subjectCode}_External_Link_${replacingPyq.examYear || "0000"}`;
+        fileSize = 0;
+      }
+
+      await updateDoc(doc(db, "pyqs", replacingPyq.id), {
+        fileUrl,
+        fileName,
+        fileSize,
+      });
+      clearCache("pyqs");
+
+      setPyqsByDept((prev) => {
+        const next = { ...prev };
+        if (next[replacingPyq.department]) {
+          next[replacingPyq.department] = next[replacingPyq.department].map(
+            (p) => {
+              if (p.id === replacingPyq.id) {
+                return { ...p, fileUrl, fileName, fileSize };
+              }
+              return p;
+            },
+          );
+        }
+        return next;
+      });
+
+      closeReplaceModal();
+      setSuccessMsg(
+        `Successfully updated document for ${replacingPyq.subjectCode} to "${fileName}"`,
+      );
+      setTimeout(() => setSuccessMsg(""), 5000);
+    } catch (e: any) {
+      console.error(e);
+      setError(e.message || "Failed to replace");
+    }
+    setReplaceLoading(false);
+  };
+
+  const closeReplaceModal = () => {
+    setReplacingPyq(null);
+    setFile(null);
+    setExternalLink("");
+    setError("");
+  };
+
+  const currentList = selectedDept ? pyqsByDept[selectedDept] || [] : [];
+
+  const filteredPyqs = currentList.filter((p) => {
+    const dType = p.documentType || "PYQ";
+    const matchesTab = selectedDocType === "All" || dType === selectedDocType;
+    const matchesSearch =
+      (p.subjectCode || "").toLowerCase().includes(search.toLowerCase()) ||
+      (p.subjectName || "").toLowerCase().includes(search.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
+
+  const exportToCsv = () => {
+    // Export all data, not just current tab/department
+    const allDocs = Object.values(pyqsByDept).flat() as PYQ[];
+    if (allDocs.length === 0) return;
+
+    const headers = [
+      "ID",
+      "Subject Code",
+      "Subject Name",
+      "Department",
+      "Course",
+      "Year",
+      "Semester",
+      "Exam Type",
+      "Exam Year",
+      "Document Type",
+      "File Size (KB)",
+    ];
+
+    const rows = allDocs.map((p) => [
+      p.id,
+      `"${p.subjectCode}"`,
+      `"${p.subjectName}"`,
+      `"${p.department}"`,
+      `"${p.course}"`,
+      `"${p.year}"`,
+      `"${p.semester}"`,
+      `"${p.examType || ""}"`,
+      `"${p.examYear || ""}"`,
+      `"${p.documentType || "PYQ"}"`,
+      p.fileSize ? Math.round(p.fileSize / 1024) : 0,
+    ]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      headers.join(",") +
+      "\n" +
+      rows.map((e) => e.join(",")).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `all_resources_export_${new Date().toISOString().split("T")[0]}.csv`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (!isAdmin) return null;
+
+  return (

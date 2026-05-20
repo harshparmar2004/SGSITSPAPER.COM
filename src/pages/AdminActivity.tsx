@@ -234,7 +234,7 @@ export default function AdminActivity() {
       }
       return [
         p.id,
-        `"${p.actionType || "UPLOAD"}"`,
+        `"${(p as any).actionType || "UPLOAD"}"`,
         `"${uploader}"`,
         `"${p.subjectCode}"`,
         `"${p.subjectName}"`,
