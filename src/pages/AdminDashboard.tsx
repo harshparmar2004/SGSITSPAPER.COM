@@ -7,6 +7,7 @@ import {
   limit,
   getCountFromServer,
   deleteDoc,
+  updateDoc,
   doc,
   getAggregateFromServer,
   sum,
@@ -60,6 +61,42 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const STORAGE_LIMIT = 5 * 1024 * 1024 * 1024; // 5 GB
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingPyq, setEditingPyq] = useState<PYQ | null>(null);
+  const [updatingPyq, setUpdatingPyq] = useState(false);
+  const [editFormData, setEditFormData] = useState<Partial<PYQ>>({});
+
+  const handleEditClick = (pyq: PYQ) => {
+    setEditingPyq(pyq);
+    setEditFormData({
+      subjectCode: pyq.subjectCode,
+      subjectName: pyq.subjectName,
+      examYear: pyq.examYear,
+      examType: pyq.examType,
+      session: pyq.session || '',
+      department: pyq.department,
+      semester: pyq.semester,
+      year: pyq.year
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingPyq || !editingPyq.id) return;
+    setUpdatingPyq(true);
+    try {
+      await updateDoc(doc(db, "pyqs", editingPyq.id), editFormData);
+      
+      // Update local state
+      setRecentPyqs(prev => prev.map(p => 
+        p.id === editingPyq.id ? { ...p, ...editFormData } : p
+      ));
+      
+      setEditingPyq(null);
+    } catch (err) {
+      console.error("Error updating", err);
+    }
+    setUpdatingPyq(false);
+  };
+
 
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -746,9 +783,9 @@ export default function AdminDashboard() {
                       )}
                     </td>
                     <td className="px-3 py-2 text-right">
-                      <div className="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {/* We simulate edit by navigating or just leaving the button */}
+                      <div className="flex items-center justify-end space-x-2 opacity-100 transition-opacity">
                         <button
+                          onClick={() => handleEditClick(pyq)}
                           className="p-1.5 text-gray-400 hover:text-indigo-600 rounded hover:bg-indigo-50 transition-colors"
                           title="Edit Metadata"
                         >
@@ -774,7 +811,69 @@ export default function AdminDashboard() {
             </table>
           </div>
         )}
-      </div>
+      
+      {/* Edit Modal */}
+      {editingPyq && (
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95">
+            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <h3 className="text-lg font-bold text-gray-900">
+                Edit Document Metadata
+              </h3>
+            </div>
+            <div className="p-4 space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Subject Code</label>
+                <input 
+                  type="text"
+                  value={editFormData.subjectCode || ''}
+                  onChange={e => setEditFormData({...editFormData, subjectCode: e.target.value})}
+                  className="w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Subject Name</label>
+                <input 
+                  type="text"
+                  value={editFormData.subjectName || ''}
+                  onChange={e => setEditFormData({...editFormData, subjectName: e.target.value})}
+                  className="w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Exam Year / Session</label>
+                  <input 
+                    type="text"
+                    value={editFormData.examYear || ''}
+                    onChange={e => setEditFormData({...editFormData, examYear: e.target.value})}
+                    className="w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Type</label>
+                  <input 
+                    type="text"
+                    value={editFormData.examType || ''}
+                    onChange={e => setEditFormData({...editFormData, examType: e.target.value})}
+                    className="w-full border-gray-300 rounded-md shadow-sm text-sm p-2 border focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="p-4 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+              <Button variant="outline" onClick={() => setEditingPyq(null)} disabled={updatingPyq}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveEdit} disabled={updatingPyq}>
+                {updatingPyq ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  </div>
   );
 }
