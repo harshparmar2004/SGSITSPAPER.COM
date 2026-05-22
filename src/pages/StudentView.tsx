@@ -98,6 +98,9 @@ export default function StudentView() {
     if (year && p.year !== year) return false;
 
     // Syllabus is for the whole year and department, so skip semester/subject filtering
+    // Internship Information only needs department filter
+    if (activeTab === "Internship Information") return true;
+
     if (activeTab === "Syllabus") return true;
 
     if (semester && p.semester !== semester) return false;

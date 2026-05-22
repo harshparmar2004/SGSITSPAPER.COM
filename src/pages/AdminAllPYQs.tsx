@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "../lib/firebase";
+import firebaseConfig from "../../firebase-applet-config.json";
 import { PYQ } from "../types";
 import { Button, Input } from "../components/ui";
 import {
@@ -246,20 +247,17 @@ export default function AdminAllPYQs() {
             );
         }
 
-        const readFileAsDataUrl = (f: File): Promise<string> => {
-          return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(f);
-          });
-        };
-
-        try {
-          fileUrl = await readFileAsDataUrl(file);
-        } catch (err: any) {
-          throw new Error("Failed to read file: " + err.message);
-        }
+        const storagePath = "pyqs/" + (replacingPyq.department || "Other") + "/" + (replacingPyq.semester || "All") + "/" + fileName;
+const bucketMatch = firebaseConfig.storageBucket;
+const uploadFormData = new FormData();
+uploadFormData.append("file", file);
+uploadFormData.append("storagePath", storagePath);
+uploadFormData.append("bucket", bucketMatch);
+const response = await fetch("/api/upload-proxy", { method: "POST", body: uploadFormData });
+if (!response.ok) { const errData = await response.json().catch(() => null); throw new Error("Upload failed: " + (errData?.error || response.statusText)); }
+const data = await response.json();
+fileUrl = data.fileUrl;
+console.log("Uploaded successfully via proxy");
 
         fileName = file.name;
         fileSize = file.size;

@@ -85,14 +85,23 @@ export default function AdminDepartments() {
 
       // Aggregate data
       allPyqs.forEach((data: any) => {
-        if (data.course && data.department && newStats[data.course]) {
-          newStats[data.course].total += 1;
-          if (
-            newStats[data.course].departments[data.department] !== undefined
-          ) {
-            newStats[data.course].departments[data.department] += 1;
+        let course = data.course;
+        let dept = data.department;
+
+        // If course is missing, try to infer it from department
+        if (!course && dept) {
+          const foundProg = programs.find((p) => p.departments.includes(dept));
+          if (foundProg) {
+            course = foundProg.course;
+          }
+        }
+
+        if (course && dept && newStats[course]) {
+          newStats[course].total += 1;
+          if (newStats[course].departments[dept] !== undefined) {
+            newStats[course].departments[dept] += 1;
           } else {
-            newStats[data.course].departments[data.department] = 1;
+            newStats[course].departments[dept] = 1;
           }
         }
       });
